@@ -28,6 +28,7 @@ bun run start    # ※ output: "export" では next start は使えない（page
 - [`docs/release.md`](./docs/release.md) — リリース sprint / ブランチモデル / 配信フロー
 - [`docs/security.md`](./docs/security.md) — セキュリティアドバイザリ対応 / Dependabot
 - [`docs/troubleshooting.md`](./docs/troubleshooting.md) — よくあるエラーと復旧手順
+- [`docs/adr/`](./docs/adr/) — 設計の決定は ADR を参照
 
 ## コントリビューション
 
