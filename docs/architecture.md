@@ -101,6 +101,12 @@ public/**
 現状は `images.unoptimized: true` で完全無効化。  
 将来的に最適化が必要になった場合はカスタムローダーを導入する（Next.js 公式 `static-exports` ガイド参照）。
 
+## アーキテクチャ決定記録（ADR）
+
+設計上の重要な決定は `docs/adr/` 配下の ADR として記録する。
+
+- [ADR-0001: GitHub Pages (organization page) + Next.js output: "export" で配信する](./adr/0001-static-export-github-pages.md)
+
 ## アーキテクチャ変更時の手順
 
 1. Issue を起票し、影響範囲と ADR 候補かを明示する
