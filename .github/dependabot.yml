@@ -1,0 +1,51 @@
+# https://docs.github.com/ja/code-security/dependabot/dependabot-version-updates
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    # 10 件まで同時オープンに制限し、対応漏れを防ぐ
+    open-pull-requests-limit: 10
+    # メジャー更新は無効（破壊変更が大きいため手動で対応）
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    labels:
+      - "type: chore"
+      - "area: deps"
+    commit-message:
+      prefix: "deps"
+    # group で minor/patch をまとめ、PR 数を抑える
+    groups:
+      next-and-react:
+        patterns:
+          - "next"
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      dev-tools:
+        patterns:
+          - "eslint*"
+          - "@types/*"
+          - "typescript"
+          - "prettier"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 10
+    labels:
+      - "type: chore"
+      - "area: ci"
+    commit-message:
+      prefix: "ci"

@@ -1,0 +1,57 @@
+name: バグ報告
+description: 不具合を報告する
+labels: ["type: bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        再現可能な形で書く。
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 再現手順
+      description: 1. 2. 3. ... の形式で。
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待される挙動
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の挙動
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 環境
+      description: ブラウザ / OS / Pages ビルド SHA など。
+    validations:
+      required: false
+
+  - type: input
+    id: deploy-sha
+    attributes:
+      label: 該当 commit / deploy SHA
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 重要度
+      options:
+        - Critical (本番停止相当)
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
