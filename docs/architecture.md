@@ -96,6 +96,55 @@ public/**
 - `bun.lock` — Bun の lockfile（**コミットする**）
 - `.tmp/` — 一時領域（`.gitignore` 済み）
 
+## デザインシステム
+
+[Panda CSS](https://panda-css.com/) を採用する。PostCSS ベース / build-time 生成の
+ゼロランタイム CSS-in-JS で、`output: "export"` 環境でも問題なく動作する。
+
+### 構成
+
+| 役割                       | 場所                                                                 |
+| -------------------------- | -------------------------------------------------------------------- |
+| 設定エントリポイント       | `panda.config.ts`                                                    |
+| PostCSS プラグイン設定     | `postcss.config.cjs`                                                 |
+| トークン / recipes 一覧    | `src/styles/`（`recipes.ts` ほか）                                  |
+| 生成された runtime ヘルパー | `src/styled-system/`（**`.gitignore` 済み / コミットしない**）      |
+
+### ライフサイクル
+
+```bash
+bun install        # @pandacss/dev を導入
+bun run prepare    # panda codegen → src/styled-system/ を生成
+bun run dev        # next dev が PostCSS 経由で Panda を取り込む
+bun run build      # next build が静的書き出し時に Panda CSS もバンドル
+```
+
+`bun run prepare` は `package.json` の `scripts.prepare` に紐付いており、
+`bun install` 初回時にも自動実行される（CI でも再現性確保）。
+
+### トークン設計
+
+- `colors.neutral` / `colors.accent` を生トークンとして定義
+- `colors.bg.*` / `colors.fg.*` / `colors.border.*` / `colors.accent.*` を
+  semantic token として定義し、`{base, _dark}` でダークモード対応
+- spacing / radii / fonts / fontSizes / fontWeights / lineHeights / shadows を
+  用途別のキーで揃える
+
+### 利用方法
+
+- コンポーネント内で `import { css } from "@/styled-system/css"` を使い、
+  `css({ ... })` でユーティリティクラスを生成する
+- 共通スタイルは `src/styles/recipes.ts` の `cva()` に切り出す
+- 命名衝突を避けるため、CSS Modules（`page.module.css` 等）と併用しない
+
+### 注意点
+
+- `panda.config.ts` の `exclude` には glob pattern（`"**/styled-system/**"` 等）を
+  使う。RegExp（`/styled-system/` 等）は Node 24 + Panda 1.12.1 で
+  `Expected a string` エラーを誘発する（設定の JSON 化時に `{}` になるため）。
+- `globals.css` にはリセットを書かない。リセットは Panda の `preflight: true` が
+  PostCSS 経由で出力する。
+
 ## 画像最適化
 
 現状は `images.unoptimized: true` で完全無効化。  
