@@ -26,10 +26,10 @@ merge into main
 
 ### ブランチ規約
 
-| 用途              | 名称                 | 派生元             |
-| ----------------- | -------------------- | ------------------ |
-| released source   | `main`               | —                  |
-| active sprint     | `release-x-y-z`      | `main`             |
+| 用途                      | 名称             | 派生元                               |
+| ------------------------- | ---------------- | ------------------------------------ |
+| released source           | `main`           | —                                    |
+| active sprint             | `release-x-y-z`  | `main`                               |
 | 1 Issue = 1 ticket branch | `<issue-number>` | `release-x-y-z` (推奨) または `main` |
 
 - `<issue-number>` 以外の prefix / slug / work-type は使わない

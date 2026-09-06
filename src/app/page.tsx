@@ -28,9 +28,7 @@ export default function Home() {
         <h1 id="hero-heading" className={title}>
           ido-bata（いど端）
         </h1>
-        <p className={subtitle}>
-          クリエイター・エンジニアのための実利 Discord コミュニティ。
-        </p>
+        <p className={subtitle}>クリエイター・エンジニアのための実利 Discord コミュニティ。</p>
         <p className={lede}>
           作り、学び、共有する循環を大切にしながら、静かに・誠実に長く続く居場所を育てます。
         </p>
@@ -76,8 +74,7 @@ export default function Home() {
             参加する
           </h2>
           <p className={ctaBody}>
-            Discord
-            サーバーで自己紹介と最近の制作物・気になっていることを共有して始めましょう。
+            Discord サーバーで自己紹介と最近の制作物・気になっていることを共有して始めましょう。
           </p>
           <a
             className={button({ variant: "solid", size: "lg" })}

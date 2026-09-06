@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { css } from "@/styled-system/css";
 import { DISCORD_INVITE } from "@/lib/env";
-import {
-  CHANNELS,
-  CHANNEL_CATEGORIES,
-  type ChannelCategory,
-} from "@/content/channels";
+import { CHANNELS, CHANNEL_CATEGORIES, type ChannelCategory } from "@/content/channels";
 
 export const metadata: Metadata = {
   title: "チャネル一覧 | ido-bata",
@@ -41,17 +37,11 @@ export default function ChannelsPage() {
         <p className={eyebrowClass}>Channels</p>
         <h1 className={titleClass}>チャネル一覧</h1>
         <p className={leadClass}>
-          ido-bata
-          の Discord サーバにある主なチャネルをカテゴリ別に紹介します。
+          ido-bata の Discord サーバにある主なチャネルをカテゴリ別に紹介します。
           参加する前にどんな話題があるかを確認できます。
         </p>
         {invite ? (
-          <a
-            className={ctaClass}
-            href={invite}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a className={ctaClass} href={invite} target="_blank" rel="noopener noreferrer">
             <Image
               src="/discord.svg"
               alt=""
@@ -79,9 +69,7 @@ export default function ChannelsPage() {
               <h2 id={`category-${category}`} className={categoryTitleClass}>
                 {category}
               </h2>
-              <span className={categoryCountClass}>
-                {channels.length} チャネル
-              </span>
+              <span className={categoryCountClass}>{channels.length} チャネル</span>
             </div>
             <ul className={channelListClass}>
               {channels.map((channel) => (
@@ -92,9 +80,7 @@ export default function ChannelsPage() {
                     </span>
                     <span className={channelNameClass}>{channel.name}</span>
                   </div>
-                  <p className={channelDescriptionClass}>
-                    {channel.description}
-                  </p>
+                  <p className={channelDescriptionClass}>{channel.description}</p>
                 </li>
               ))}
             </ul>

@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { css } from "@/styled-system/css";
-import {
-  rules,
-  type ChannelRule,
-  type RuleSection,
-} from "@/content/rules";
+import { rules, type ChannelRule, type RuleSection } from "@/content/rules";
 
 /**
  * /community/rules - サーバルール / ガイドライン
@@ -197,9 +193,9 @@ export default function CommunityRulesPage() {
         <p className={styles.eyebrow}>Community</p>
         <h1 className={styles.title}>サーバルール / ガイドライン</h1>
         <p className={styles.lede}>
-          ido-bata
-          の Discord コミュニティに参加する前に、サーバの理念・運営方針・禁止行為を確認してください。本ページは行動規範 (
-          コード・オブ・コンダクト / `docs/code-of-conduct.md`)
+          ido-bata の Discord
+          コミュニティに参加する前に、サーバの理念・運営方針・禁止行為を確認してください。本ページは行動規範
+          ( コード・オブ・コンダクト / `docs/code-of-conduct.md`)
           と整合する形で運用されており、変更は本リポジトリの Pull Request で行います。
         </p>
         <p className={styles.meta}>最終更新日: {rules.lastUpdated}</p>

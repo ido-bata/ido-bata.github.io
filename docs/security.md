@@ -20,17 +20,17 @@
 
 CVSS / severity だけでなく、以下の観点で優先度を判断する:
 
-| 観点               | 説明                                                          |
-| ------------------ | ------------------------------------------------------------- |
-| exploitability     | 攻撃の実現容易性                                              |
-| reachability       | 本プロジェクトへの影響有無                                    |
-| external exposure  | インターネット到達性 (本プロジェクトは静的サイトなので低い)    |
-| required privilege | 攻撃に必要な権限                                              |
-| impact             | データ漏えい / 改ざん / DoS 等の影響度                        |
-| fix availability   | upstream 修正の有無                                            |
-| workaround         | 一時回避策の品質                                               |
-| regression risk   | アップグレード時のリスク                                       |
-| release timing     | 公開タイミング (本プロジェクトは静的書き出しのため影響限定)   |
+| 観点               | 説明                                                        |
+| ------------------ | ----------------------------------------------------------- |
+| exploitability     | 攻撃の実現容易性                                            |
+| reachability       | 本プロジェクトへの影響有無                                  |
+| external exposure  | インターネット到達性 (本プロジェクトは静的サイトなので低い) |
+| required privilege | 攻撃に必要な権限                                            |
+| impact             | データ漏えい / 改ざん / DoS 等の影響度                      |
+| fix availability   | upstream 修正の有無                                         |
+| workaround         | 一時回避策の品質                                            |
+| regression risk    | アップグレード時のリスク                                    |
+| release timing     | 公開タイミング (本プロジェクトは静的書き出しのため影響限定) |
 
 ## Dependabot
 
@@ -45,8 +45,8 @@ CVSS / severity だけでなく、以下の観点で優先度を判断する:
 
 1. 即座に Issue を作成（タイトルに `[SECURITY]` を含める）
 2. 現在の sprint を停止
-4. patch release を最優先で main に反映
-3. 適用後に postmortem を Issue コメントへ記載
+3. patch release を最優先で main に反映
+4. 適用後に postmortem を Issue コメントへ記載
 
 ## シークレット管理
 

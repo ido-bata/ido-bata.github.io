@@ -14,12 +14,8 @@ describe("Home page", () => {
     expect(heading).toBeTruthy();
 
     // Section anchors are exposed as headings for assistive tech.
-    expect(
-      screen.getByRole("heading", { level: 2, name: /ido-bata について/ }),
-    ).toBeTruthy();
-    expect(
-      screen.getByRole("heading", { level: 2, name: /関連リンク/ }),
-    ).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: /ido-bata について/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: /関連リンク/ })).toBeTruthy();
 
     // Highlight cards cover the four key points.
     expect(screen.getByRole("heading", { name: /実利重視/ })).toBeTruthy();
@@ -29,15 +25,7 @@ describe("Home page", () => {
 
     // Related links must cover the routes owned by #14/#18/#19/#20/#21
     // (and the docs pages owned by other issues).
-    const links = [
-      "About",
-      "FAQ",
-      "Rules",
-      "Channels",
-      "News",
-      "Code of Conduct",
-      "Privacy",
-    ];
+    const links = ["About", "FAQ", "Rules", "Channels", "News", "Code of Conduct", "Privacy"];
     for (const label of links) {
       expect(screen.getByRole("link", { name: new RegExp(label) })).toBeTruthy();
     }
