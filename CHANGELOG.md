@@ -4,9 +4,11 @@
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-09-06 (sprint in progress)
+## [0.2.0] - Unreleased (planned)
 
 foundational sprint。Discord コミュニティ「ido-bata（いど端）」の公式 portal としての基盤を整備する。
+
+**Release date: TBD**（予定リリース日を Issue と PR で確定する。ad-hoc merge は行わない）。
 
 ### Added
 
@@ -15,6 +17,7 @@ foundational sprint。Discord コミュニティ「ido-bata（いど端）」の
 - Vitest + Playwright の足場とサンプルテスト (#7)
 - ADR-0001: GitHub Pages + `output: "export"` を採用した理由の記録 (#9)
 - Code of Conduct とプライバシーポリシー (#16, #17)
+- リリース計画フレーム（planned release / freeze 期間）(#15 を拡張)
 
 ### Follow-up (v0.3.0 以降に送る候補)
 
