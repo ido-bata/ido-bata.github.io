@@ -1,0 +1,91 @@
+name: 機能追加
+description: 新機能・ページ追加を提案する
+labels: ["type: feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        機能追加を提案するテンプレート。
+        1 Issue = 1 ticket branch の原則に従い、明確でテスト可能な acceptance criteria を書く。
+
+  - type: input
+    id: target-version
+    attributes:
+      label: 想定 target version
+      description: 例: 0.2.0
+      placeholder: 0.x.y
+    validations:
+      required: false
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何を実現したいか。1〜3 文で。
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: 完了条件をチェックリスト形式で。
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope / Non-scope
+      description: 含むもの / 含まないもの。
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependency
+    attributes:
+      label: 依存・前提
+      description: 他の Issue / 外部サービス / データ など。
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 対象エリア
+      multiple: true
+      options:
+        - ui / page
+        - build / ci
+        - docs
+        - infra / deploy
+        - accessibility
+        - performance
+        - design system
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先度
+      options:
+        - P0 (緊急)
+        - P1 (高)
+        - P2 (中)
+        - P3 (低)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: 見積もりサイズ
+      options:
+        - XS (< 1h)
+        - S (< 0.5d)
+        - M (< 1d)
+        - L (1-3d)
+        - XL (> 3d)
+    validations:
+      required: true

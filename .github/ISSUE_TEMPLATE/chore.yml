@@ -1,0 +1,29 @@
+name: 改善・運用作業
+description: 機能追加・バグ以外の改善作業 (依存更新 / refactor / docs など)
+labels: ["type: chore"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        機能追加・バグ以外の作業を起票するテンプレート。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 完了条件
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 対象エリア
+    validations:
+      required: false

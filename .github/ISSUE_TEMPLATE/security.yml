@@ -1,0 +1,46 @@
+name: セキュリティ報告
+description: 脆弱性・機密情報漏洩の可能性がある事象を報告する (公開 Issue には書かない)
+labels: ["type: security"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **機微な報告は GitHub Security Advisories へ**:
+        https://github.com/ido-bata/ido-bata.github.io/security/advisories/new
+
+        この Issue テンプレートは内部調整用。実際の脆弱性は Security Advisory 経由。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: 想定影響
+      description: confidentiality / integrity / availability への影響。
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 影響範囲
+      description: 該当 component / version / commit。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 暫定 severity
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true

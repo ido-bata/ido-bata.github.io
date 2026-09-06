@@ -1,0 +1,24 @@
+# 自動生成 / 依存 / ビルド成果物は Prettier の対象としない。
+.next/
+out/
+build/
+node_modules/
+.next-dev/
+coverage/
+
+# 一時領域・参照リポジトリ
+.tmp/
+.reference/
+
+# Markdown は整形するが、AGENTS.md / CLAUDE.md などのエージェント指示は
+# 自動再生成の影響を受けやすいので除外する。
+AGENTS.md
+CLAUDE.md
+
+# Next.js の自動生成ファイルを編集対象外にする
+next-env.d.ts
+
+# lockfile は Prettier の対象としない（依存解決の再現性を担保）
+package-lock.json
+bun.lock
+bun.lockb

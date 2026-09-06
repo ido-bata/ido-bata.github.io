@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // project-local 一時領域・参照リポジトリは lint 対象外
+    ".tmp/**",
+    ".reference/**",
+    // 依存解決 / ビルド成果物
+    "node_modules/**",
   ]),
 ]);
 

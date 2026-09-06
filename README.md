@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ido-bata / Website
 
-## Getting Started
+`ido-bata` 組織の公式ウェブサイト。Next.js (App Router) で構築し、`output: "export"` で生成した静的ファイルを GitHub Pages (https://ido-bata.github.io/) に配信している。
 
-First, run the development server:
+## 概要
+
+- フレームワーク: Next.js 16.x (App Router, Turbopack)
+- パッケージマネージャ: Bun
+- レンダリング: 完全静的書き出し (`next build` → `out/`)
+- 配信: GitHub Pages (organization page)
+- CI/CD: GitHub Actions (`lint` / `typecheck` / `build` / Pages deploy)
+
+## クイックスタート
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+bun run dev      # http://localhost:3000 でローカル開発
+bun run build    # ./out に静的書き出し
+bun run start    # ※ output: "export" では next start は使えない（pages 配信は Actions 経由）
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ドキュメント
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+詳細は `docs/` 配下を参照。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [`docs/architecture.md`](./docs/architecture.md) — ディレクトリ構成 / 依存方向 / ビルドパイプライン
+- [`docs/development.md`](./docs/development.md) — 開発フロー / テスト方針 / デバッグ Tips
+- [`docs/release.md`](./docs/release.md) — リリース sprint / ブランチモデル / 配信フロー
+- [`docs/security.md`](./docs/security.md) — セキュリティアドバイザリ対応 / Dependabot
+- [`docs/troubleshooting.md`](./docs/troubleshooting.md) — よくあるエラーと復旧手順
 
-## Learn More
+## コントリビューション
 
-To learn more about Next.js, take a look at the following resources:
+Issue 駆動で進める。フローの詳細は [`CONTRIBUTING.md`](./CONTRIBUTING.md) を参照。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ライセンス
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private リポジトリ。組織内での利用に限る。
