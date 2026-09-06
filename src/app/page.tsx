@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+import { css } from "@/styled-system/css";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -15,8 +17,7 @@ export default function Home() {
         />
         <div className={styles.intro}>
           <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
+            To get started, edit the <code className={styles.code}>page.tsx</code> file.
           </h1>
           <p>
             Looking for a starting point or more instructions? Head over to{" "}
@@ -64,6 +65,15 @@ export default function Home() {
           </a>
         </div>
       </main>
+      <p
+        className={css({
+          textAlign: "center",
+          padding: "8",
+          fontSize: "sm",
+        })}
+      >
+        <Link href="/about">About ページへ</Link>
+      </p>
     </div>
   );
 }
