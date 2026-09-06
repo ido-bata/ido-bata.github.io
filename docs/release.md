@@ -23,11 +23,51 @@ main                  released source
 - `<issue-number>` は `release-x-y-z` から派生する（緊急時のみ `main` 直でも可）
 - `main` 直接 commit は禁止
 
+## リリース計画 (planned release)
+
+リリースは **ad-hoc merge せず、計画的に行う**。
+
+- 各 sprint に「**予定リリース日**」を決める（例: `2026-09-20`）
+- 予定リリース日の **N 日前（既定: 3 営業日）** から **freeze 期間** に入り、新規 ticket branch / scope 追加を受け付けない
+- freeze 期間中は既存 ticket の bug fix のみ可
+- 予定リリース日に `release-x-y-z` → `main` を一括 merge し、CHANGELOG 確定・タグ付け・Pages デプロイを行う
+- merge の瞬間が release event。予定日が前後する場合は Issue / Project / CHANGELOG を更新する
+
+### Cadence
+
+| 種別           | 周期                  | 補足                                       |
+| -------------- | --------------------- | ------------------------------------------ |
+| minor (`x.y`)  | 2 週間に 1 回を目安   | 新機能・破壊的変更を含む                   |
+| patch (`x.y.z`)| 随時                  | バグ修正のみ。`release-x-y-z` から派生     |
+| hotfix         | 即時                  | `release-x-y-z-patch` を `main` から派生   |
+
+実際の sprint 計画は GitHub Project の **Target Version** で管理する。Project の Milestone view / Roadmap view で全 sprint の予定日を一覧化する。
+
+### Freeze 期間の運用
+
+| 状態                | branch 派生 | merge | commit    |
+| ------------------- | ----------- | ----- | --------- |
+| 通常期間            | 可          | 可    | 可        |
+| **freeze 期間**     | **禁止**    | 可    | bug fix のみ |
+| release 実行中      | 禁止        | 禁止  | 禁止      |
+
+freeze は `release-x-y-z` にラベル `release-freeze` を貼って可視化する。GitHub Projects の Status `Freeze` カラムで board 上も識別可能にする。
+
+### Sprint planning checklist
+
+- [ ] 予定リリース日を決める
+- [ ] 含める Issue を確定（acceptance criteria 込み）
+- [ ] owner を issue 単位にアサイン
+- [ ] freeze 開始日を逆算して Project に登録
+- [ ] CHANGELOG の `[Unreleased]` を該当 version セクションに下書き移動
+- [ ] release PR を Draft で作成（merge しない）
+
 ## スプリントの開始
 
 1. 直近の `main` から `release-x-y-z` を作成: `git checkout -b release-x-y-z main`
 2. 該当スプリントで扱う Issue を Project (Kanban) の Ready カラムへ移動
-3. 関係者間で目標・Done 条件を共有
+3. **予定リリース日** と **freeze 開始日** を Issue / PR / CHANGELOG に明記
+4. 関係者間で目標・Done 条件を共有
 
 ## スプリント中の作業
 

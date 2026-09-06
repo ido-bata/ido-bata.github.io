@@ -43,6 +43,9 @@ jobs:
       - name: Typecheck
         run: bun run typecheck
 
+      - name: Unit tests
+        run: bun run test:unit
+
       - name: Build (smoke)
         run: bun run build
         env:

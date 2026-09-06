@@ -12,6 +12,11 @@
 
 # testing
 /coverage
+/playwright-report
+/test-results
+/playwright/.cache
+/blob-report
+/playwright/.local
 
 # next.js
 /.next/
@@ -46,6 +51,9 @@ next-env.d.ts
 # project-local 一時領域・参照リポジトリ
 .tmp/
 .reference/
+
+# Panda CSS generated runtime (do NOT commit)
+/src/styled-system/
 
 # OS / editor
 Thumbs.db

@@ -4,12 +4,27 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-06
+
+foundational sprint。Discord コミュニティ「ido-bata（いど端）」の公式 portal としての基盤を整備する。
+
 ### Added
 
-- GitHub Pages への自動配信 (`.github/workflows/deploy.yml`)
-- CI (`.github/workflows/ci.yml`) で lint / typecheck / build を必須チェックに
-- 静的書き出し設定 (`next.config.ts`: `output: "export"`)
-- 日本語ドキュメント (`README.md`, `CONTRIBUTING.md`, `docs/*`)
+- Panda CSS をデザインシステムとして全面採用 (#40)
+- Discord 招待 CTA と Header / Footer コンポーネント (#15)
+- Vitest + Playwright の足場とサンプルテスト (#7)
+- ADR-0001: GitHub Pages + `output: "export"` を採用した理由の記録 (#9)
+- Code of Conduct とプライバシーポリシー (#16, #17)
+- リリース計画フレーム（planned release / freeze 期間）(#15 を拡張)
+
+### Follow-up (v0.3.0 以降に送る候補)
+
+- デフォルトページを ido-bata 用に置き換え (#8)
+- About ページ / FAQ / サーバルール (#14, #18, #19)
+- i18n / RSS / sitemap / OG 画像 / favicon set (#23, #25, #26, #24, #28)
+
+[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.1.0...v0.2.0
 
 ## [0.1.0] - 2026-09-06
 
@@ -19,5 +34,4 @@
 - ESLint (`eslint-config-next` の core-web-vitals + typescript プリセット)
 - TypeScript strict 設定
 
-[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/ido-bata/ido-bata.github.io/releases/tag/v0.1.0
