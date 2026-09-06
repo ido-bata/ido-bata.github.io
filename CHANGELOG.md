@@ -4,11 +4,9 @@
 
 ## [Unreleased]
 
-## [0.2.0] - Unreleased (planned)
+## [0.2.0] - 2026-09-06
 
 foundational sprint。Discord コミュニティ「ido-bata（いど端）」の公式 portal としての基盤を整備する。
-
-**Release date: TBD**（予定リリース日を Issue と PR で確定する。ad-hoc merge は行わない）。
 
 ### Added
 
