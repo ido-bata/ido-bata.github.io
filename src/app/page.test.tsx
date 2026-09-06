@@ -3,20 +3,53 @@ import { render, screen } from "@testing-library/react";
 import Home from "./page";
 
 describe("Home page", () => {
-  it("renders the landing page with the starter H1 and CTAs", () => {
+  it("renders the ido-bata portal landing with org name, intro, and key links", () => {
     render(<Home />);
 
-    // Smoke test: the landing page renders without throwing and exposes the
-    // starter template's heading + CTA links. Once Issue #8 swaps the
-    // placeholder copy for the real ido-bata landing, update the selectors
-    // here in the same PR.
+    // Org name + value proposition appear in the hero.
     const heading = screen.getByRole("heading", {
       level: 1,
-      name: /to get started, edit the/i,
+      name: /ido-bata（いど端）/,
     });
     expect(heading).toBeTruthy();
 
-    expect(screen.getByRole("link", { name: /deploy now/i })).toBeTruthy();
-    expect(screen.getByRole("link", { name: /documentation/i })).toBeTruthy();
+    // Section anchors are exposed as headings for assistive tech.
+    expect(
+      screen.getByRole("heading", { level: 2, name: /ido-bata について/ }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { level: 2, name: /関連リンク/ }),
+    ).toBeTruthy();
+
+    // Highlight cards cover the four key points.
+    expect(screen.getByRole("heading", { name: /実利重視/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /居場所としての安心/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /オープンな運営/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /穏やかな開発時間/ })).toBeTruthy();
+
+    // Related links must cover the routes owned by #14/#18/#19/#20/#21
+    // (and the docs pages owned by other issues).
+    const links = [
+      "About",
+      "FAQ",
+      "Rules",
+      "Channels",
+      "News",
+      "Code of Conduct",
+      "Privacy",
+    ];
+    for (const label of links) {
+      expect(screen.getByRole("link", { name: new RegExp(label) })).toBeTruthy();
+    }
+  });
+
+  it("hides the Discord CTA when NEXT_PUBLIC_DISCORD_INVITE is unset", () => {
+    render(<Home />);
+    // env is not set in the unit-test environment, so no Discord CTA button
+    // pointing at an external invite URL should appear.
+    const ctaButtons = screen.queryAllByRole("link", {
+      name: /ido-bata Discord に参加する/,
+    });
+    expect(ctaButtons).toHaveLength(0);
   });
 });
