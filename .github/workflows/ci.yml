@@ -32,6 +32,11 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # LayoutProps などの typed routes 用型は next build / dev 時に .next/types へ出力される。
+      # typecheck を build より先に走らせるため、先に typegen だけ走らせて型生成だけ行う。
+      - name: Generate Next.js types
+        run: bunx next typegen
+
       - name: Lint
         run: bun run lint
 
