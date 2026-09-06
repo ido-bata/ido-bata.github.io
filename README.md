@@ -34,6 +34,10 @@ bun run start    # ※ output: "export" では next start は使えない（page
 
 Issue 駆動で進める。フローの詳細は [`CONTRIBUTING.md`](./CONTRIBUTING.md) を参照。
 
+## 行動規範・プライバシーポリシー
+
+行動規範は [docs/code-of-conduct.md](./docs/code-of-conduct.md)、プライバシーポリシーは [docs/privacy.md](./docs/privacy.md) を参照。
+
 ## ライセンス
 
 Private リポジトリ。組織内での利用に限る。
