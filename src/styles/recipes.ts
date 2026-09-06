@@ -34,19 +34,19 @@ export const button = cva({
   variants: {
     variant: {
       solid: {
-        bg: "bg.fg",
-        color: "bg.canvas",
+        bg: "accent.DEFAULT",
+        color: "accent.fg",
         _hover: { bg: "bg.muted" },
       },
       outline: {
         bg: "bg.canvas",
-        color: "fg",
+        color: "fg.DEFAULT",
         borderColor: "border",
         _hover: { bg: "bg.subtle" },
       },
       ghost: {
         bg: "transparent",
-        color: "fg",
+        color: "fg.DEFAULT",
         _hover: { bg: "bg.subtle" },
       },
     },
@@ -69,7 +69,7 @@ export const button = cva({
 export const surface = cva({
   base: {
     bg: "bg.canvas",
-    color: "fg",
+    color: "fg.DEFAULT",
     borderRadius: "lg",
     border: "1px solid",
     borderColor: "border",
