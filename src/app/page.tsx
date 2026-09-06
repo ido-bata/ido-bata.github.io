@@ -177,12 +177,12 @@ const title = css({
   fontSize: { base: "4xl", md: "5xl" },
   fontWeight: "bold",
   lineHeight: "tight",
-  color: "fg",
+  color: "fg.DEFAULT",
 });
 
 const subtitle = css({
   fontSize: { base: "md", md: "lg" },
-  color: "fg",
+  color: "fg.DEFAULT",
   lineHeight: "relaxed",
 });
 
@@ -203,7 +203,7 @@ const sectionTitle = css({
   fontSize: { base: "2xl", md: "3xl" },
   fontWeight: "semibold",
   lineHeight: "tight",
-  color: "fg",
+  color: "fg.DEFAULT",
 });
 
 const cardGrid = css({
@@ -230,7 +230,7 @@ const card = css({
 const cardTitle = css({
   fontSize: "lg",
   fontWeight: "semibold",
-  color: "fg",
+  color: "fg.DEFAULT",
 });
 
 const cardBody = css({
@@ -260,7 +260,11 @@ const ctaBody = css({
 
 const ctaIcon = css({
   display: "inline-block",
-  filter: "invert(1)",
+  // `/discord.svg` is dark-on-transparent, so invert in light mode (where
+  // the surrounding panel is light) and keep it natural in dark mode
+  // (where the panel is dark). `filter: none` in dark mode lets the
+  // original dark icon remain visible against the dark panel.
+  filter: { base: "invert(1)", _darkTheme: "none" },
 });
 
 const linkGrid = css({
@@ -286,12 +290,16 @@ const linkCard = css({
   borderStyle: "solid",
   borderColor: "border",
   bg: "bg.canvas",
-  color: "fg",
+  color: "fg.DEFAULT",
   fontSize: "sm",
   fontWeight: "medium",
   textDecoration: "none",
-  transitionProperty: "background-color, border-color",
-  transitionDuration: "150ms",
+  // Respect WCAG 2.3.3 (Animation from Interactions): only animate
+  // when the user has NOT requested reduced motion.
+  _motionSafe: {
+    transitionProperty: "background-color, border-color",
+    transitionDuration: "150ms",
+  },
   _hover: {
     bg: "bg.subtle",
     borderColor: "border.strong",
