@@ -20,17 +20,17 @@ bun install
 
 ## よく使うコマンド
 
-| コマンド               | 用途                                         |
-| ---------------------- | -------------------------------------------- |
-| `bun run dev`          | ローカル開発 (http://localhost:3000)         |
-| `bun run build`        | 本番ビルド (`./out` に静的書き出し)          |
-| `bun run lint`         | ESLint                                       |
-| `bun run typecheck`    | TypeScript 型チェック                        |
-| `bun run format`       | Prettier で一括整形                          |
-| `bun run format:check` | CI 用: 整形済みかを検査                      |
-| `bun run test`         | テスト実行（`test:unit` + `test:e2e`）        |
-| `bun run test:unit`    | Vitest（happy-dom, React Testing Library）    |
-| `bun run test:e2e`     | Playwright（Chromium, `tests/e2e/**`）        |
+| コマンド                   | 用途                                         |
+| -------------------------- | -------------------------------------------- |
+| `bun run dev`              | ローカル開発 (http://localhost:3000)         |
+| `bun run build`            | 本番ビルド (`./out` に静的書き出し)          |
+| `bun run lint`             | ESLint                                       |
+| `bun run typecheck`        | TypeScript 型チェック                        |
+| `bun run format`           | Prettier で一括整形                          |
+| `bun run format:check`     | CI 用: 整形済みかを検査                      |
+| `bun run test`             | テスト実行（`test:unit` + `test:e2e`）       |
+| `bun run test:unit`        | Vitest（happy-dom, React Testing Library）   |
+| `bun run test:e2e`         | Playwright（Chromium, `tests/e2e/**`）       |
 | `bun run test:e2e:install` | Playwright ブラウザ初期化（Chromium + 依存） |
 
 ## 開発フロー
@@ -109,4 +109,4 @@ bun run dev   # 数秒起動して停止
 1. 必要性・最終更新・メンテナ・ライセンス・脆弱性を確認
 2. `bun add <pkg>` (dev に限る) または `bun add <pkg>` (runtime)
 3. `bun.lock` をコミット
-5. `package.json` の変更と理由を PR description に書く
+4. `package.json` の変更と理由を PR description に書く

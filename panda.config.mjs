@@ -8,6 +8,7 @@ import { defineConfig } from "@pandacss/dev";
  *
  * Refs:
  *   - docs/architecture.md#デザインシステム
+ *   - Issue #22 (theme switching)
  *   - Issue #40
  */
 export default defineConfig({
@@ -19,12 +20,25 @@ export default defineConfig({
 
   // Files to exclude (use glob patterns; regex is not JSON-serializable in
   // panda's config serializer and triggers "Expected a string" on Node 24)
-  exclude: [
-    "**/styled-system/**",
-    "**/next-env.d.ts",
-    "**/.tmp/**",
-    "**/node_modules/**",
-  ],
+  exclude: ["**/styled-system/**", "**/next-env.d.ts", "**/.tmp/**", "**/node_modules/**"],
+
+  // Custom selectors that drive conditional CSS.
+  // Issue #22: dark theme is toggled by setting `data-theme="dark"` on
+  // `<html>` (so a single attribute flip switches the entire page, and
+  // the FOUC-prevention script can apply it before paint without needing
+  // to manage a separate class). The `_darkTheme` / `_lightTheme`
+  // condition keys then resolve to `[data-theme="dark"] &` and
+  // `[data-theme="light"] &` respectively inside semantic tokens.
+  // `motionSafe` / `motionReduce` wrap `prefers-reduced-motion` so
+  // animations / transitions can be gated to honour WCAG 2.3.3.
+  conditions: {
+    extend: {
+      darkTheme: '[data-theme="dark"] &',
+      lightTheme: '[data-theme="light"] &',
+      motionSafe: "@media (prefers-reduced-motion: no-preference)",
+      motionReduce: "@media (prefers-reduced-motion: reduce)",
+    },
+  },
 
   // Useful for theme customization
   theme: {
@@ -53,20 +67,20 @@ export default defineConfig({
           },
         },
         spacing: {
-          "0": { value: "0" },
-          "1": { value: "0.25rem" },
-          "2": { value: "0.5rem" },
-          "3": { value: "0.75rem" },
-          "4": { value: "1rem" },
-          "5": { value: "1.25rem" },
-          "6": { value: "1.5rem" },
-          "8": { value: "2rem" },
-          "10": { value: "2.5rem" },
-          "12": { value: "3rem" },
-          "16": { value: "4rem" },
-          "20": { value: "5rem" },
-          "24": { value: "6rem" },
-          "32": { value: "8rem" },
+          0: { value: "0" },
+          1: { value: "0.25rem" },
+          2: { value: "0.5rem" },
+          3: { value: "0.75rem" },
+          4: { value: "1rem" },
+          5: { value: "1.25rem" },
+          6: { value: "1.5rem" },
+          8: { value: "2rem" },
+          10: { value: "2.5rem" },
+          12: { value: "3rem" },
+          16: { value: "4rem" },
+          20: { value: "5rem" },
+          24: { value: "6rem" },
+          32: { value: "8rem" },
         },
         radii: {
           none: { value: "0" },
@@ -106,12 +120,10 @@ export default defineConfig({
         shadows: {
           sm: { value: "0 1px 2px 0 rgb(0 0 0 / 0.05)" },
           md: {
-            value:
-              "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+            value: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
           },
           lg: {
-            value:
-              "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+            value: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
           },
         },
       },
@@ -119,43 +131,87 @@ export default defineConfig({
         colors: {
           bg: {
             canvas: {
-              value: { base: "white", _dark: "{colors.neutral.950}" },
+              value: {
+                base: "white",
+                _darkTheme: "{colors.neutral.950}",
+                _lightTheme: "white",
+              },
             },
             subtle: {
-              value: { base: "{colors.neutral.50}", _dark: "{colors.neutral.900}" },
+              value: {
+                base: "{colors.neutral.50}",
+                _darkTheme: "{colors.neutral.900}",
+                _lightTheme: "{colors.neutral.50}",
+              },
             },
             muted: {
-              value: { base: "{colors.neutral.100}", _dark: "{colors.neutral.800}" },
+              value: {
+                base: "{colors.neutral.100}",
+                _darkTheme: "{colors.neutral.800}",
+                _lightTheme: "{colors.neutral.100}",
+              },
             },
           },
           fg: {
             DEFAULT: {
-              value: { base: "{colors.neutral.900}", _dark: "{colors.neutral.50}" },
+              value: {
+                base: "{colors.neutral.900}",
+                _darkTheme: "{colors.neutral.50}",
+                _lightTheme: "{colors.neutral.900}",
+              },
             },
             muted: {
-              value: { base: "{colors.neutral.600}", _dark: "{colors.neutral.400}" },
+              value: {
+                base: "{colors.neutral.600}",
+                _darkTheme: "{colors.neutral.400}",
+                _lightTheme: "{colors.neutral.600}",
+              },
             },
             subtle: {
-              value: { base: "{colors.neutral.500}", _dark: "{colors.neutral.500}" },
+              value: {
+                base: "{colors.neutral.500}",
+                _darkTheme: "{colors.neutral.500}",
+                _lightTheme: "{colors.neutral.500}",
+              },
             },
             onAccent: {
-              value: { base: "white", _dark: "white" },
+              value: {
+                base: "white",
+                _darkTheme: "white",
+                _lightTheme: "white",
+              },
             },
           },
           border: {
             DEFAULT: {
-              value: { base: "{colors.neutral.200}", _dark: "{colors.neutral.800}" },
+              value: {
+                base: "{colors.neutral.200}",
+                _darkTheme: "{colors.neutral.800}",
+                _lightTheme: "{colors.neutral.200}",
+              },
             },
             strong: {
-              value: { base: "{colors.neutral.300}", _dark: "{colors.neutral.700}" },
+              value: {
+                base: "{colors.neutral.300}",
+                _darkTheme: "{colors.neutral.700}",
+                _lightTheme: "{colors.neutral.300}",
+              },
             },
           },
           accent: {
             DEFAULT: {
-              value: { base: "{colors.accent.600}", _dark: "{colors.accent.500}" },
+              value: {
+                base: "{colors.accent.600}",
+                _darkTheme: "{colors.accent.500}",
+                _lightTheme: "{colors.accent.600}",
+              },
             },
             fg: {
-              value: { base: "white", _dark: "white" },
+              value: {
+                base: "white",
+                _darkTheme: "white",
+                _lightTheme: "white",
+              },
             },
           },
         },
@@ -168,6 +224,12 @@ export default defineConfig({
       height: "100%",
       margin: "0",
       padding: "0",
+    },
+    // Tell the browser the page supports both color schemes so native
+    // chrome (form controls, scrollbars, default link colors) follows
+    // the active theme. Issue #22.
+    html: {
+      colorScheme: "light dark",
     },
     body: {
       bg: "bg.canvas",

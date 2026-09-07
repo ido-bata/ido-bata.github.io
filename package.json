@@ -26,6 +26,7 @@
   "devDependencies": {
     "@pandacss/dev": "^1.12.1",
     "@playwright/test": "^1.49.1",
+    "@resvg/resvg-js": "^2.6.2",
     "@testing-library/react": "^16.1.0",
     "@types/node": "^20",
     "@types/react": "^19",
