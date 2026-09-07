@@ -12,7 +12,7 @@ body:
     id: target-version
     attributes:
       label: 想定 target version
-      description: 例: 0.2.0
+      description: "例: 0.2.0"
       placeholder: 0.x.y
     validations:
       required: false

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { DISCORD_INVITE } from "@/lib/env";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import styles from "./Header.module.css";
 
 export function Header() {
@@ -13,6 +14,7 @@ export function Header() {
           <span className={styles.brandMark}>ido-bata</span>
         </Link>
         <nav className={styles.nav} aria-label="Primary">
+          <ThemeToggle />
           {invite ? (
             <a className={styles.cta} href={invite} target="_blank" rel="noopener noreferrer">
               <Image
