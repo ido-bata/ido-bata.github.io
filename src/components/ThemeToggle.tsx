@@ -51,11 +51,11 @@ const buttonRecipe = cva({
     border: "1px solid",
     borderColor: "border",
     bg: "bg.subtle",
-    color: "fg",
+    color: "fg.DEFAULT",
     cursor: "pointer",
-    transition: "colors",
     fontSize: "sm",
     fontWeight: "medium",
+    _motionSafe: { transition: "colors" },
     _hover: { bg: "bg.muted" },
     _focusVisible: {
       outline: "2px solid",

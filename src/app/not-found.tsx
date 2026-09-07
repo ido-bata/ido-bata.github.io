@@ -48,7 +48,7 @@ export default function NotFound() {
         <p
           aria-hidden="true"
           className={css({
-            fontSize: { base: "5xl", md: "5xl" },
+            fontSize: "5xl",
             fontWeight: "bold",
             lineHeight: "tight",
             letterSpacing: "-0.04em",
@@ -64,7 +64,7 @@ export default function NotFound() {
             fontSize: { base: "2xl", md: "3xl" },
             fontWeight: "semibold",
             lineHeight: "tight",
-            color: "fg",
+            color: "fg.DEFAULT",
           })}
         >
           ページが見つかりません
@@ -101,7 +101,7 @@ export default function NotFound() {
               borderRadius: "full",
               textDecoration: "none",
               transition: "colors",
-              _hover: { bg: "accent.fg", opacity: 0.9 },
+              _hover: { bg: "bg.muted" },
             })}
           >
             <Image
@@ -140,7 +140,7 @@ export default function NotFound() {
                 px: "4",
                 fontSize: "sm",
                 fontWeight: "medium",
-                color: "fg",
+                color: "fg.DEFAULT",
                 bg: "bg.canvas",
                 borderWidth: "1px",
                 borderStyle: "solid",
