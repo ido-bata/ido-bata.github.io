@@ -103,12 +103,12 @@ public/**
 
 ### 構成
 
-| 役割                       | 場所                                                                 |
-| -------------------------- | -------------------------------------------------------------------- |
-| 設定エントリポイント       | `panda.config.ts`                                                    |
-| PostCSS プラグイン設定     | `postcss.config.cjs`                                                 |
-| トークン / recipes 一覧    | `src/styles/`（`recipes.ts` ほか）                                  |
-| 生成された runtime ヘルパー | `src/styled-system/`（**`.gitignore` 済み / コミットしない**）      |
+| 役割                        | 場所                                                           |
+| --------------------------- | -------------------------------------------------------------- |
+| 設定エントリポイント        | `panda.config.ts`                                              |
+| PostCSS プラグイン設定      | `postcss.config.cjs`                                           |
+| トークン / recipes 一覧     | `src/styles/`（`recipes.ts` ほか）                             |
+| 生成された runtime ヘルパー | `src/styled-system/`（**`.gitignore` 済み / コミットしない**） |
 
 ### ライフサイクル
 

@@ -1,5 +1,5 @@
 ---
-title: "GitHub Pages (organization page) + Next.js output: \"export\" で配信する"
+title: 'GitHub Pages (organization page) + Next.js output: "export" で配信する'
 adr_id: "0001"
 status: "Accepted"
 date: "2026-09-06"
@@ -30,11 +30,13 @@ Next.js の `output: "export"` で生成した静的ファイルを配信する�
 # Consequences
 
 Positive:
+
 - GitHub Organization の認証で完結
 - Actions 経由で main push → 自動デプロイ
 - `bun install` だけで build 環境を再現できる
 
 Negative:
+
 - Server-only 機能（cookies / ISR / API Route / Image Optimization）が使えない
 - 1 リポジトリあたりの公開ファイルサイズに注意（1 GB 上限）
 - 商用 SLA は無い

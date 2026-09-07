@@ -1,14 +1,16 @@
 /*
  * Global stylesheet entry point.
  *
- * Most resets and tokens are owned by Panda CSS (`panda.config.ts` -> globalCss).
+ * Most resets and tokens are owned by Panda CSS (`panda.config.mjs` -> globalCss).
  * This file only carries rules that must live in plain CSS:
- *   - the `@layer` reset is consumed via Panda's PostCSS plugin
+ *   - the `@layer` declaration below is the trigger Panda's PostCSS plugin
+ *     looks for before extracting atomic styles and the semantic-token CSS
+ *     variables (including the dark/light theme ones from Issue #22)
  *   - third-party font face declarations (added here when needed)
  *
  * Refs:
- *   - panda.config.ts
+ *   - panda.config.mjs
  *   - docs/architecture.md#デザインシステム
  */
 
-/* Panda CSS layers are emitted by the PostCSS plugin during build. */
+@layer reset, base, tokens, recipes, utilities;
