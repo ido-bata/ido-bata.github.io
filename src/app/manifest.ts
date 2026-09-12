@@ -39,7 +39,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "ido-bata",
     short_name: "ido-bata",
-    description: "ido-bata organization 公式 Discord コミュニティのポータル",
+    description:
+      "いど端（管理人 samuido）は、クリエイター・エンジニアのための実利サーバー。ルールは特にありません。ご自由にどうぞ。",
     start_url: "/",
     scope: "/",
     display: "standalone",

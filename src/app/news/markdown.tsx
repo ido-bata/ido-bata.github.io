@@ -47,7 +47,7 @@ const listStyle = css({
 });
 
 const linkStyle = css({
-  color: "accent",
+  color: "accent.DEFAULT",
   textDecoration: "underline",
   textUnderlineOffset: "2px",
   _hover: { textDecoration: "none" },

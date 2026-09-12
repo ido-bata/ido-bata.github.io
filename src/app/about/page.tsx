@@ -28,7 +28,7 @@ export default function AboutPage() {
     <main
       className={css({
         mx: "auto",
-        maxWidth: "1100px",
+        maxW: "1100px",
         px: "6",
         py: "12",
         display: "flex",
@@ -72,7 +72,7 @@ export default function AboutPage() {
             color: "fg.muted",
             fontSize: { base: "md", md: "lg" },
             lineHeight: "relaxed",
-            maxWidth: "640px",
+            maxW: "640px",
           })}
         >
           クリエイター・エンジニア向けの情報交換主体の Discord コミュニティ。
@@ -88,8 +88,8 @@ export default function AboutPage() {
         </h2>
         <p className={bodyStyle}>
           自分の領域（いど）と、隣の領域（端）を行き来しながら知見を交換する—— そんな意図で名付けた
-          Discord サーバーです。話題は Web / アプリ開発、 デザイン、生成
-          AI、ゲーム、ガジェットなど、エンジニアリングと創作の 接点付近に寄っています。
+          Discord サーバーです。話題は Web / アプリ開発、デザイン、生成
+          AI、ゲーム、ガジェットなど、エンジニアリングと創作の接点付近に寄っています。
         </p>
         <p className={bodyStyle}>
           堅いルールやレベル制限はありません。ROM 専も歓迎、質問の作法に
@@ -155,15 +155,12 @@ export default function AboutPage() {
           運営者
         </h2>
         <p className={bodyStyle}>
-          <strong className={css({ fontWeight: "semibold", color: "fg" })}>
+          <strong className={css({ fontWeight: "semibold", color: "fg.DEFAULT" })}>
             さむいど（samuido）
           </strong>
           が個人で運営しており、企業・団体のステークホルダーは存在しません。
-          入会審査はなく、参加・退出・沈黙はすべて自由です。 意思決定に困ったときは{" "}
-          <Link href="/about" className={inlineLinkStyle}>
-            About
-          </Link>{" "}
-          の理念に立ち返ることを原則とします。
+          入会審査はなく、参加・退出・沈黙はすべて自由です。意思決定に困ったときは About
+          ページの理念に立ち返ることを原則とします。
         </p>
       </section>
 
@@ -251,7 +248,7 @@ const bodyStyle = css({
   color: "fg.muted",
   fontSize: "md",
   lineHeight: "relaxed",
-  maxWidth: "720px",
+  maxW: "720px",
 });
 
 const inlineLinkStyle = css({

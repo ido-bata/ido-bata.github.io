@@ -17,11 +17,12 @@ describe("Home page", () => {
     expect(screen.getByRole("heading", { level: 2, name: /ido-bata について/ })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: /関連リンク/ })).toBeTruthy();
 
-    // Highlight cards cover the four key points.
+    // Highlight cards cover the four key points (titles reflect the
+    // samuido 2025-03-24 community description).
     expect(screen.getByRole("heading", { name: /実利重視/ })).toBeTruthy();
-    expect(screen.getByRole("heading", { name: /居場所としての安心/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /ご自由にどうぞ/ })).toBeTruthy();
     expect(screen.getByRole("heading", { name: /オープンな運営/ })).toBeTruthy();
-    expect(screen.getByRole("heading", { name: /穏やかな開発時間/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /いど端底力タイム/ })).toBeTruthy();
 
     // Related links must cover the routes owned by #14/#18/#19/#20/#21
     // (and the docs pages owned by other issues).
