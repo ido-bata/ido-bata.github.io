@@ -11,20 +11,17 @@ import { test, expect } from "@playwright/test";
  * Or, if you have a deployed preview URL:
  *   PLAYWRIGHT_BASE_URL=https://ido-bata.github.io bun run test:e2e
  *
- * The current landing copy is still the create-next-app starter (Issue #8
- * will replace it with the real ido-bata copy). Update the assertions below
- * alongside that change.
+ * The home page (`src/app/page.tsx`) was replaced as part of Issue #8;
+ * these assertions reflect the ido-bata portal content (Issue #8 / Issue #15).
  */
 test.describe("Home page (static export)", () => {
-  test("renders the starter landing page", async ({ page }) => {
+  test("renders the ido-bata portal landing page", async ({ page }) => {
     const response = await page.goto("/");
     expect(response, "expected a navigation response").not.toBeNull();
     expect(response?.status() ?? 0).toBeLessThan(400);
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: /to get started, edit the/i }),
-    ).toBeVisible();
-    await expect(page.getByRole("link", { name: /deploy now/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /documentation/i })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /ido-bata（いど端）/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^About/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^FAQ/ })).toBeVisible();
   });
 });
