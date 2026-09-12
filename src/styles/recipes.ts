@@ -46,7 +46,12 @@ export const button = cva({
       solid: {
         bg: "accent.DEFAULT",
         color: "accent.fg",
-        _hover: { bg: "bg.muted" },
+        // solid CTA の hover は accent の暗い側 (`accent.700`) に落とす。
+        // `bg.muted` を使うと light theme で薄 neutral 上に白文字となり
+        // contrast が破綻する (Home / Footer / 404 の主要 CTA が
+        // hover 時にほぼ読めなくなる)。accent スケール内なので
+        // light / dark どちらでも白文字との WCAG AA を維持できる。
+        _hover: { bg: "accent.700" },
       },
       outline: {
         bg: "bg.canvas",

@@ -73,9 +73,20 @@ function subscribe(notify: () => void): () => void {
     typeof window.matchMedia === "function"
       ? window.matchMedia("(prefers-color-scheme: dark)")
       : null;
-  const onMqChange = () => notify();
+  // OS 連動テーマ選択中 (`preference === "system"`) に OS の light / dark を
+  // 切り替えると、保存された preference は変わらないが解決される `resolved`
+  // theme が変わる。`notify()` だけだとラベルは更新されるが `<html data-theme>`
+  // 属性は前の値のままなので、Panda の `_darkTheme` / `_lightTheme` 条件が
+  // 新しい配色に切り替わらない。`applyTheme()` を先に走らせてから `notify()`
+  // することで DOM 状態と React state を整合させる。
+  const reapplyAndNotify = () => {
+    const preference = readStoredPreference(window.localStorage);
+    applyTheme(document, resolveTheme(preference, readSystemTheme()));
+    notify();
+  };
+  const onMqChange = () => reapplyAndNotify();
   const onStorage = (event: StorageEvent) => {
-    if (event.key === null || event.key === THEME_STORAGE_KEY) notify();
+    if (event.key === null || event.key === THEME_STORAGE_KEY) reapplyAndNotify();
   };
   mq?.addEventListener("change", onMqChange);
   window.addEventListener("storage", onStorage);

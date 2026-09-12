@@ -54,3 +54,40 @@ jobs:
       - name: Verify static export artifact
         run: |
           test -f out/index.html || (echo "out/index.html が生成されていません" && exit 1)
+
+  e2e:
+    name: E2E gate (Playwright)
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # E2E は quality gate (build を含む) の後に走らせたいので
+    # build 成果物 (`./out`) を再利用せずジョブを分離し、
+    # このジョブ側で build + Playwright を完結させる。
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate Next.js types
+        run: bunx next typegen
+
+      - name: Build static export
+        run: bun run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Install Playwright browsers
+        run: bun run test:e2e:install
+
+      - name: Run E2E
+        # `bun run test` (= unit + E2E) と挙動を揃えるため、明示的に
+        # `test:e2e` を起動する。Playwright 設定は `python3 -m http.server`
+        # で `./out` を serve する。
+        run: bun run test:e2e
