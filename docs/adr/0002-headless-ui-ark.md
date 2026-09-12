@@ -60,11 +60,11 @@ import { sva } from "@/styled-system/css";
 export const dialog = sva({
   slots: ["root", "trigger", "content", "title", "description"],
   base: {
-    root: { /* ... */ },
-    trigger: { /* ... */ },
-    content: { /* ... */ },
-    title: { /* ... */ },
-    description: { /* ... */ },
+    root: {/* ... */},
+    trigger: {/* ... */},
+    content: {/* ... */},
+    title: {/* ... */},
+    description: {/* ... */},
   },
   variants: {
     size: {
