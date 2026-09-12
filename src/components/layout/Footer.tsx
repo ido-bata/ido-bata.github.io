@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { DISCORD_INVITE } from "@/lib/env";
+import { Button } from "@/components/ui/button";
 import { css } from "@/styled-system/css";
 
 /**
@@ -11,7 +12,13 @@ import { css } from "@/styled-system/css";
  * `var(--background, #ffffff)` and a hardcoded mid-grey border that
  * left the footer looking like a floating white block in dark mode.
  *
- * See Issue #22.
+ * The Discord invite link is rendered through the project-wide
+ * `Button` primitive with `asChild` so the underlying `<a>` keeps the
+ * primitive's focus ring, sizing and a11y attributes while the
+ * ghost-like recipe variant keeps the surface visually a link rather
+ * than a CTA button.
+ *
+ * See Issue #22 (theme) and Issue #90 (Ark UI adoption).
  */
 export function Footer() {
   const invite = DISCORD_INVITE;
@@ -40,31 +47,31 @@ export function Footer() {
         })}
       >
         {invite ? (
-          <a
-            href={invite}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
             className={css({
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "2",
-              color: "fg",
-              textDecoration: "none",
-              fontSize: "sm",
-              transition: "colors",
-              _hover: { textDecoration: "underline" },
+              // Override the recipe's fixed height so the inline link
+              // sits on the text baseline instead of being forced into
+              // a pill shape — keeps the visual rhythm with the © note.
+              height: "auto",
+              padding: "0",
+              _hover: { textDecoration: "underline", bg: "transparent" },
             })}
           >
-            <Image
-              src="/discord.svg"
-              alt=""
-              width={18}
-              height={18}
-              className={css({ width: "4.5", height: "4.5" })}
-              aria-hidden="true"
-            />
-            <span>Discord サーバーはこちら</span>
-          </a>
+            <a href={invite} target="_blank" rel="noopener noreferrer">
+              <Image
+                src="/discord.svg"
+                alt=""
+                width={18}
+                height={18}
+                className={css({ width: "4.5", height: "4.5" })}
+                aria-hidden="true"
+              />
+              <span>Discord サーバーはこちら</span>
+            </a>
+          </Button>
         ) : (
           <span
             className={css({
