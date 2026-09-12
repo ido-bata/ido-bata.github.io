@@ -53,7 +53,13 @@ jobs:
 
       - name: Verify static export artifact
         run: |
+          # index.html と Pages 用のカスタム 404 (out/404.html) の両方が
+          # 存在することを確認する。out/404.html は scripts/ensure-pages-404.ts
+          # (postbuild) が out/404/index.html からコピーして生成する —
+          # GitHub Pages は root の 404.html のみを custom 404 として
+          # 扱うため。
           test -f out/index.html || (echo "out/index.html が生成されていません" && exit 1)
+          test -f out/404.html || (echo "out/404.html が生成されていません (Pages custom-404)" && exit 1)
 
   e2e:
     name: E2E gate (Playwright)

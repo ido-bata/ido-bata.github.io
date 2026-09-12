@@ -7,6 +7,7 @@
     "prepare": "panda codegen",
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "bun scripts/ensure-pages-404.ts",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",

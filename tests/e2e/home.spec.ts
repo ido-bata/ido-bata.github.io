@@ -23,7 +23,9 @@ test.describe("Home page (static export)", () => {
     expect(response, "expected a navigation response").not.toBeNull();
     expect(response?.status() ?? 0).toBeLessThan(400);
 
-    await expect(page.getByRole("heading", { level: 1, name: /ido-bata（いど端）/ })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: /井戸端会議のための、居場所。/ }),
+    ).toBeVisible();
     await expect(page.getByRole("link", { name: /^About/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /^FAQ/ })).toBeVisible();
   });
