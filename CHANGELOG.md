@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+### Added
+
+- Ark UI (`@ark-ui/react`) をヘッドレス UI プリミティブ層として導入 (#90)
+- ADR-0002: Ark UI 採用と Panda CSS との手動統合パターン (slot recipe による multi-part primitive 連携) を記録
+- `src/components/ui/button.tsx` を追加。`ark.button` ファクトリ + Panda `button` recipe で wrap し、`variant: solid | outline | ghost` / `size: sm | md | lg` / `asChild` 対応の Button primitive を提供
+
+### Changed
+
+- `ThemeToggle` を Button primitive 経由の render に移行 (local recipe を撤去、Ark UI の focus / ref 動作は primitive 側で確保)
+- Header の Discord CTA / Footer の Discord 招待リンクを Button primitive (`asChild` で `<a>` wrap) に移行 (#90)
+- `docs/architecture.md` に Ark UI 統合パターン (単一要素 primitive / multi-part primitive / slot recipe) を追記し、ディレクトリ構成を最新の tree に更新
+
 ## [0.2.0] - 2026-09-06
 
 foundational sprint。Discord コミュニティ「ido-bata（いど端）」の公式 portal としての基盤を整備する。
