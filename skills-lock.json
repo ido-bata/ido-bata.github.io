@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "layout-system": {
+      "source": "rebuildup/design-skills",
+      "sourceType": "github",
+      "skillPath": "skills/layout-system/SKILL.md",
+      "computedHash": "264bbddcc7c18dfc2be51de0ac62c11470b2633fc3c98f5120591b8a693a0c8a"
+    }
+  }
+}
