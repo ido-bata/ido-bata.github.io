@@ -24,6 +24,14 @@
   font-weight: 600;
 }
 
+.brandIcon {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
 .brandMark {
   font-size: 1.125rem;
   letter-spacing: -0.01em;

@@ -7,7 +7,7 @@ import { css } from "@/styled-system/css";
 export const metadata: Metadata = {
   title: "404 — ページが見つかりません",
   description:
-    "お探しのページは見つかりませんでした。ido-bata Discord コミュニティの他のページへのリンクをご利用ください。",
+    "お探しのページは見つかりませんでした。いど端（実利サーバー）の他のページへのリンクをご利用ください。",
   robots: { index: false, follow: false },
 };
 

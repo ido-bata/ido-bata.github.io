@@ -8,21 +8,27 @@
  *   src/app/icon.png      32x32 primary <link rel="icon">
  *   src/app/apple-icon.png 180x180 apple-touch-icon
  *
- * The SVG design is a single source of truth — pure SVG, no raster assets
- * checked in. Re-run with `bun scripts/gen-icons.ts` whenever the brand mark
- * or palette changes.
+ * The single source of truth is `public/ido-bata-icon.jpg` — a 640x640
+ * JPEG provided by the project owner. We resize it to each target edge
+ * length with `sharp` (libvips-backed), preferring JPEG-source fidelity
+ * over the previous SVG-wordmark pipeline (`@resvg/resvg-js`) so the
+ * brand mark stays consistent across web tab favicon, app shortcut,
+ * and apple-touch-icon slots.
  *
- * Design notes:
- *   - Background: Discord blurple (#5865F2) rounded square.
- *   - Foreground: "ido" wordmark in DejaVu Sans Bold, white.
- *   - 16x16 is rendered from a simplified "i"-only SVG so the glyph
- *     stays legible at favicon-tab dimensions; 32x32 and above use the
- *     full "ido" wordmark; 180x180 adds a Discord-style accent dot.
+ * Re-run with `bun scripts/gen-icons.ts` whenever the brand mark changes.
  *
- * Requires the `@resvg/resvg-js` devDependency (pure-JS SVG → PNG via a
- * bundled Rust/napi binary; no system libraries).
+ * Why sharp (vs. the previous SVG pipeline):
+ *   - The provided brand mark is a raster (JPEG), so resvg can no longer
+ *     be the source of truth. Resvg is for SVG → PNG/ICO.
+ *   - Sharp is already a transitive dependency of `next` (used for the
+ *     image optimization runtime), and it is the canonical Node.js
+ *     image processing library. Declaring it explicitly in
+ *     `devDependencies` keeps the script reproducible on fresh installs
+ *     and decouples it from Next's internal version bumps.
+ *   - ICO frames are embedded as PNG (modern browsers accept PNG-encoded
+ *     ICO since Chrome 80 / Firefox 55 / Safari 14). See `encodeIco`.
  */
-import { Resvg } from "@resvg/resvg-js";
+import sharp from "sharp";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -32,13 +38,10 @@ import { fileURLToPath } from "node:url";
 // ---------------------------------------------------------------------------
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-// scripts/ lives at <repo>/scripts, output assets at <repo>/src/app.
+// scripts/ lives at <repo>/scripts, source asset at <repo>/public, output at <repo>/src/app.
 const REPO_ROOT = resolve(HERE, "..");
+const SOURCE = resolve(REPO_ROOT, "public/ido-bata-icon.jpg");
 const APP_DIR = resolve(REPO_ROOT, "src/app");
-
-// Brand colors (Discord blurple).
-const BRAND_BG = "#5865F2";
-const BRAND_FG = "#FFFFFF";
 
 /**
  * Output sizes (square edge in pixels).
@@ -48,112 +51,38 @@ const BRAND_FG = "#FFFFFF";
  *  - 180     → Next.js `src/app/apple-icon.png` (apple-touch-icon).
  */
 const ICON_SIZES = [16, 32, 48] as const;
+const ICON_PNG_SIZE = 32;
 const APPLE_TOUCH_SIZE = 180;
 
-// SVG master canvas. Rendered at every output size via resvg's fitTo.
-// Using a high viewBox gives the rasterizer more precision when downscaling
-// to small favicon dimensions.
-const MASTER = 256;
-
 // ---------------------------------------------------------------------------
-// SVG sources
+// Source validation
 // ---------------------------------------------------------------------------
 
-/**
- * Compact master for favicon sizes ≥ 32px.
- * "ido" wordmark, centered horizontally, baseline tuned to optical center.
- */
-function masterSvg(): string {
-  const textY = Math.round(MASTER * 0.72);
-  return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${MASTER} ${MASTER}">`,
-    `  <rect width="${MASTER}" height="${MASTER}" rx="${Math.round(
-      MASTER * 0.22,
-    )}" fill="${BRAND_BG}"/>`,
-    `  <text x="${MASTER / 2}" y="${textY}" font-family="DejaVu Sans" `,
-    `        font-size="160" font-weight="bold" text-anchor="middle" `,
-    `        fill="${BRAND_FG}">ido</text>`,
-    `</svg>`,
-  ].join("\n");
-}
-
-/**
- * Simplified master for 16x16 favicon. The full "ido" wordmark becomes
- * illegible at this size; drop to a single bold "i" so the dot + stem
- * remain readable when the browser shrinks the tab favicon.
- */
-function smallFaviconSvg(): string {
-  const textY = Math.round(MASTER / 2 + MASTER * 0.18);
-  return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${MASTER} ${MASTER}">`,
-    `  <rect width="${MASTER}" height="${MASTER}" rx="${Math.round(
-      MASTER * 0.22,
-    )}" fill="${BRAND_BG}"/>`,
-    `  <text x="${MASTER / 2}" y="${textY}" font-family="DejaVu Sans" `,
-    `        font-size="220" font-weight="bold" text-anchor="middle" `,
-    `        fill="${BRAND_FG}">i</text>`,
-    `</svg>`,
-  ].join("\n");
-}
-
-/**
- * Apple-touch-icon master (180x180). Adds a small Discord-style accent dot
- * in the top-right corner — a subtle nod to the community/chat nature of
- * the project without competing with the wordmark.
- */
-function appleTouchSvg(): string {
-  const textY = Math.round(MASTER * 0.72);
-  return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${MASTER} ${MASTER}">`,
-    `  <rect width="${MASTER}" height="${MASTER}" rx="${Math.round(
-      MASTER * 0.22,
-    )}" fill="${BRAND_BG}"/>`,
-    `  <text x="${MASTER / 2}" y="${textY}" font-family="DejaVu Sans" `,
-    `        font-size="160" font-weight="bold" text-anchor="middle" `,
-    `        fill="${BRAND_FG}">ido</text>`,
-    `  <circle cx="200" cy="56" r="20" fill="${BRAND_FG}" opacity="0.95"/>`,
-    `</svg>`,
-  ].join("\n");
+function assertSource(): void {
+  if (!existsSync(SOURCE)) {
+    throw new Error(
+      `Source icon not found: ${SOURCE}\n` +
+        `Drop the brand JPEG at public/ido-bata-icon.jpg (square, ≥ 512px).`,
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
 // Rendering
 // ---------------------------------------------------------------------------
 
-interface RasterOptions {
-  fontDirs: string[];
-  defaultFontFamily: string;
-}
-
 /**
- * Resolve font directories, preferring known DejaVu locations that exist on
- * Linux CI runners (GitHub Actions `ubuntu-latest` ships fonts-dejavu).
- * If neither directory exists we fall back to resvg's default font loading,
- * which still produces a usable (serif fallback) raster — slightly less
- * brand-consistent but never blocks the build.
+ * Resize the JPEG source to `size x size` PNG. `fit: "cover"` keeps the
+ * square aspect without distortion; the source is already square so the
+ * cover strategy is purely defensive.
+ *
+ * `ensureAlpha()` forces a full alpha channel into the output even when
+ * the source is opaque RGB. PNG-encoded ICO frames require RGBA — the
+ * browser-side ICO decoder rejects RGB-only frames with "The PNG is not
+ * in RGBA format!" (caught once during v0.3.0 build verification).
  */
-function rasterOptions(): RasterOptions {
-  const candidates = [
-    "/usr/share/fonts/truetype/dejavu",
-    "/usr/share/fonts/truetype/ubuntu",
-    "/usr/share/fonts/truetype/liberation",
-    "/usr/share/fonts/TTF",
-  ];
-  const fontDirs = candidates.filter((dir) => existsSync(dir));
-  return { fontDirs, defaultFontFamily: "DejaVu Sans" };
-}
-
-function renderPng(svg: string, size: number, opts: RasterOptions): Buffer {
-  const resvg = new Resvg(svg, {
-    fitTo: { mode: "width", value: size },
-    font: {
-      loadSystemFonts: true,
-      fontDirs: opts.fontDirs,
-      defaultFontFamily: opts.defaultFontFamily,
-      sansSerifFamily: opts.defaultFontFamily,
-    },
-  });
-  return Buffer.from(resvg.render().asPng());
+async function renderPng(size: number): Promise<Buffer> {
+  return sharp(SOURCE).resize(size, size, { fit: "cover" }).ensureAlpha().png().toBuffer();
 }
 
 // ---------------------------------------------------------------------------
@@ -226,29 +155,28 @@ function writeAsset(relativePath: string, data: Buffer): void {
   console.log(`  wrote ${relativePath}  (${data.length} bytes)`);
 }
 
-function main(): void {
-  const opts = rasterOptions();
+async function main(): Promise<void> {
+  assertSource();
 
-  console.log("Generating ido-bata icon set…");
+  console.log("Generating ido-bata icon set from public/ido-bata-icon.jpg…");
 
-  // --- favicon.ico: 16 (simplified "i") + 32 + 48 (full "ido") -----------
-  const icoFrames: IcoFrame[] = ICON_SIZES.map((size) => {
-    const source = size <= 16 ? smallFaviconSvg() : masterSvg();
-    return {
+  // --- favicon.ico: 16 + 32 + 48 frames ----------------------------------
+  const icoFrames: IcoFrame[] = await Promise.all(
+    ICON_SIZES.map(async (size) => ({
       width: size,
       height: size,
-      data: renderPng(source, size, opts),
-    };
-  });
+      data: await renderPng(size),
+    })),
+  );
   writeAsset("favicon.ico", encodeIco(icoFrames));
 
   // --- src/app/icon.png: 32x32 primary icon ------------------------------
-  writeAsset("icon.png", renderPng(masterSvg(), 32, opts));
+  writeAsset("icon.png", await renderPng(ICON_PNG_SIZE));
 
   // --- src/app/apple-icon.png: 180x180 -----------------------------------
-  writeAsset("apple-icon.png", renderPng(appleTouchSvg(), APPLE_TOUCH_SIZE, opts));
+  writeAsset("apple-icon.png", await renderPng(APPLE_TOUCH_SIZE));
 
   console.log("Done.");
 }
 
-main();
+await main();
