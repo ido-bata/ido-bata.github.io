@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -53,4 +53,47 @@ jobs:
 
       - name: Verify static export artifact
         run: |
+          # index.html と Pages 用のカスタム 404 (out/404.html) の両方が
+          # 存在することを確認する。out/404.html は scripts/ensure-pages-404.ts
+          # (postbuild) が out/404/index.html からコピーして生成する —
+          # GitHub Pages は root の 404.html のみを custom 404 として
+          # 扱うため。
           test -f out/index.html || (echo "out/index.html が生成されていません" && exit 1)
+          test -f out/404.html || (echo "out/404.html が生成されていません (Pages custom-404)" && exit 1)
+
+  e2e:
+    name: E2E gate (Playwright)
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # E2E は quality gate (build を含む) の後に走らせたいので
+    # build 成果物 (`./out`) を再利用せずジョブを分離し、
+    # このジョブ側で build + Playwright を完結させる。
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate Next.js types
+        run: bunx next typegen
+
+      - name: Build static export
+        run: bun run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Install Playwright browsers
+        run: bun run test:e2e:install
+
+      - name: Run E2E
+        # `bun run test` (= unit + E2E) と挙動を揃えるため、明示的に
+        # `test:e2e` を起動する。Playwright 設定は `python3 -m http.server`
+        # で `./out` を serve する。
+        run: bun run test:e2e

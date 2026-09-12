@@ -1,12 +1,13 @@
 {
   "name": "ido-bata-website",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "packageManager": "bun@1.4.2",
   "scripts": {
     "prepare": "panda codegen",
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "bun scripts/ensure-pages-404.ts",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
@@ -19,6 +20,7 @@
     "test:e2e:install": "playwright install --with-deps chromium"
   },
   "dependencies": {
+    "@ark-ui/react": "^5.39.1",
     "next": "16.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"
@@ -26,6 +28,7 @@
   "devDependencies": {
     "@pandacss/dev": "^1.12.1",
     "@playwright/test": "^1.49.1",
+    "@resvg/resvg-js": "^2.6.2",
     "@testing-library/react": "^16.1.0",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -35,7 +38,11 @@
     "eslint-config-next": "16.3.4",
     "happy-dom": "^15.11.7",
     "prettier": "^3.3.3",
+    "sharp": "^0.35.4",
     "typescript": "^5",
     "vitest": "^2.1.8"
-  }
+  },
+  "trustedDependencies": [
+    "unrs-resolver"
+  ]
 }

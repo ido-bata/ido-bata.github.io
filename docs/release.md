@@ -12,11 +12,11 @@ main                  released source
    └─ 125
 ```
 
-| ref                    | 役割                                              |
-| ---------------------- | ------------------------------------------------- |
-| `main`                 | released / integrated source state                |
-| `release-x-y-z`        | アクティブ sprint の統合先                        |
-| `<issue-number>`       | 1 Issue に対応する ticket branch (1 Issue = 1 branch) |
+| ref              | 役割                                                  |
+| ---------------- | ----------------------------------------------------- |
+| `main`           | released / integrated source state                    |
+| `release-x-y-z`  | アクティブ sprint の統合先                            |
+| `<issue-number>` | 1 Issue に対応する ticket branch (1 Issue = 1 branch) |
 
 - `x.y.z` は sprint が目指す target version (Semantic Versioning)
 - `release-x-y-z` は `main` から派生する
@@ -35,21 +35,21 @@ main                  released source
 
 ### Cadence
 
-| 種別           | 周期                  | 補足                                       |
-| -------------- | --------------------- | ------------------------------------------ |
-| minor (`x.y`)  | 2 週間に 1 回を目安   | 新機能・破壊的変更を含む                   |
-| patch (`x.y.z`)| 随時                  | バグ修正のみ。`release-x-y-z` から派生     |
-| hotfix         | 即時                  | `release-x-y-z-patch` を `main` から派生   |
+| 種別            | 周期                | 補足                                     |
+| --------------- | ------------------- | ---------------------------------------- |
+| minor (`x.y`)   | 2 週間に 1 回を目安 | 新機能・破壊的変更を含む                 |
+| patch (`x.y.z`) | 随時                | バグ修正のみ。`release-x-y-z` から派生   |
+| hotfix          | 即時                | `release-x-y-z-patch` を `main` から派生 |
 
 実際の sprint 計画は GitHub Project の **Target Version** で管理する。Project の Milestone view / Roadmap view で全 sprint の予定日を一覧化する。
 
 ### Freeze 期間の運用
 
-| 状態                | branch 派生 | merge | commit    |
-| ------------------- | ----------- | ----- | --------- |
-| 通常期間            | 可          | 可    | 可        |
-| **freeze 期間**     | **禁止**    | 可    | bug fix のみ |
-| release 実行中      | 禁止        | 禁止  | 禁止      |
+| 状態            | branch 派生 | merge | commit       |
+| --------------- | ----------- | ----- | ------------ |
+| 通常期間        | 可          | 可    | 可           |
+| **freeze 期間** | **禁止**    | 可    | bug fix のみ |
+| release 実行中  | 禁止        | 禁止  | 禁止         |
 
 freeze は `release-x-y-z` にラベル `release-freeze` を貼って可視化する。GitHub Projects の Status `Freeze` カラムで board 上も識別可能にする。
 

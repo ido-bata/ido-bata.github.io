@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -50,12 +50,19 @@ jobs:
         env:
           # CI 用に固定値（GitHub Actions から渡ってくる値があれば優先）
           NEXT_TELEMETRY_DISABLED: "1"
+          # Pages deploy で Discord 招待 URL をバンドルへ焼き込む。
+          # `output: "export"` 環境では runtime 差し替え不可なので、build 時に必ず渡す。
+          # repo-level variables (Settings → Secrets and variables → Variables) で
+          # `NEXT_PUBLIC_DISCORD_INVITE` を設定する。未設定なら `src/lib/env.ts` が
+          # undefined として扱い、Header / Footer / Home / 404 の CTA は
+          # プレースホルダ表示に退避するので build は壊れない。
+          NEXT_PUBLIC_DISCORD_INVITE: ${{ vars.NEXT_PUBLIC_DISCORD_INVITE }}
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./out
 

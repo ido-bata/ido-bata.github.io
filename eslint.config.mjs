@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     ".reference/**",
     // Claude Code / multi-agent worktree 内のビルド成果物は lint 対象外
     ".claude/**",
+    // multi-agent skill install 領域 (vendor 同等) は lint 対象外
+    ".agents/**",
     // 依存解決 / ビルド成果物
     "node_modules/**",
     // Panda CSS の codegen 成果物。generated code は lint 対象外。
