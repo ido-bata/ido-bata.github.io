@@ -10,9 +10,13 @@
  * attribute before paint, so the toggle's job is just to keep state in
  * sync after hydration.
  *
- * The button itself is styled with Panda so the dark-mode semantic
- * tokens defined in `panda.config.mjs` actually get compiled into the
- * stylesheet — without a runtime consumer Panda tree-shakes them out.
+ * The button itself is rendered through the project-wide `Button`
+ * primitive (`src/components/ui/button.tsx`), which wraps Ark UI's
+ * `ark.button` factory with the Panda `button` recipe. Going through
+ * the primitive keeps a single a11y / focus / keyboard story across
+ * the site and means the Panda recipe is consumed by a real component
+ * so the dark-mode semantic tokens get compiled into the stylesheet —
+ * without a runtime consumer Panda tree-shakes them out.
  *
  * Theme state is read with `useSyncExternalStore` against
  * `localStorage`, the OS `prefers-color-scheme` media query, and a
@@ -20,11 +24,10 @@
  * mutable state and avoids `setState` inside `useEffect` (which the
  * React Compiler's static analysis flags as a cascading-render risk).
  *
- * See Issue #22.
+ * See Issue #22 (theme switching) and Issue #90 (Ark UI adoption).
  */
 
 import { useCallback, useSyncExternalStore } from "react";
-import { cva } from "@/styled-system/css";
 import {
   nextPreference,
   PREFERENCE_LABEL,
@@ -37,33 +40,8 @@ import {
   applyTheme,
 } from "@/lib/theme";
 import type { ResolvedTheme, ThemePreference } from "@/lib/theme.types";
-
-const buttonRecipe = cva({
-  base: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "2",
-    height: "10",
-    minWidth: "10",
-    px: "3",
-    borderRadius: "full",
-    border: "1px solid",
-    borderColor: "border",
-    bg: "bg.subtle",
-    color: "fg.DEFAULT",
-    cursor: "pointer",
-    fontSize: "sm",
-    fontWeight: "medium",
-    _motionSafe: { transition: "colors" },
-    _hover: { bg: "bg.muted" },
-    _focusVisible: {
-      outline: "2px solid",
-      outlineColor: "accent",
-      outlineOffset: "2px",
-    },
-  },
-});
+import { Button } from "@/components/ui/button";
+import { css } from "@/styled-system/css";
 
 interface ThemeSnapshot {
   preference: ThemePreference;
@@ -74,6 +52,19 @@ const SERVER_SNAPSHOT: ThemeSnapshot = Object.freeze({
   preference: "system",
   resolved: "light",
 }) as ThemeSnapshot;
+
+/**
+ * Cache the last client snapshot so `useSyncExternalStore` sees a stable
+ * reference until the underlying preference or resolved theme actually
+ * changes. Without this, `readSnapshot` would mint a new object on every
+ * call and React 19 would throw "The result of getSnapshot should be
+ * cached to avoid an infinite loop".
+ *
+ * Module-scoped state is safe here: this module is loaded once per
+ * browser tab and the cache is invalidated by the value identity check
+ * below, not by reference equality.
+ */
+let cachedSnapshot: ThemeSnapshot | null = null;
 
 function subscribe(notify: () => void): () => void {
   if (typeof window === "undefined") return () => undefined;
@@ -96,10 +87,16 @@ function subscribe(notify: () => void): () => void {
 function readSnapshot(): ThemeSnapshot {
   if (typeof window === "undefined") return SERVER_SNAPSHOT;
   const preference = readStoredPreference(window.localStorage);
-  return {
-    preference,
-    resolved: resolveTheme(preference, readSystemTheme()),
-  };
+  const resolved = resolveTheme(preference, readSystemTheme());
+  if (
+    cachedSnapshot !== null &&
+    cachedSnapshot.preference === preference &&
+    cachedSnapshot.resolved === resolved
+  ) {
+    return cachedSnapshot;
+  }
+  cachedSnapshot = Object.freeze({ preference, resolved }) as ThemeSnapshot;
+  return cachedSnapshot;
 }
 
 /** Inline sun/moon/glyph — no extra asset, no flash, no extra request. */
@@ -178,18 +175,27 @@ export function ThemeToggle() {
   const nextLabel = PREFERENCE_LABEL[nextPreference(preference)];
 
   return (
-    <button
+    <Button
       type="button"
-      className={buttonRecipe()}
+      variant="outline"
+      size="md"
       onClick={onClick}
       aria-label={label}
       title={`Switch theme (next: ${nextLabel})`}
       data-theme-preference={preference}
       data-theme-resolved={resolved}
       data-theme-attr={THEME_ATTRIBUTE}
+      // ThemeToggle's chip has a fixed square footprint for the icon;
+      // override the recipe's px="4" with px="3" and the auto-width
+      // with minWidth so the button stays the same shape regardless of
+      // the active preference label.
+      className={css({
+        minWidth: "10",
+        px: "3",
+      })}
     >
       <Glyph theme={preference} />
       <span aria-hidden="true">{PREFERENCE_LABEL[preference]}</span>
-    </button>
+    </Button>
   );
 }
