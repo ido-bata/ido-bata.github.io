@@ -75,6 +75,19 @@ const SERVER_SNAPSHOT: ThemeSnapshot = Object.freeze({
   resolved: "light",
 }) as ThemeSnapshot;
 
+/**
+ * Cache the last client snapshot so `useSyncExternalStore` sees a stable
+ * reference until the underlying preference or resolved theme actually
+ * changes. Without this, `readSnapshot` would mint a new object on every
+ * call and React 19 would throw "The result of getSnapshot should be
+ * cached to avoid an infinite loop".
+ *
+ * Module-scoped state is safe here: this module is loaded once per
+ * browser tab and the cache is invalidated by the value identity check
+ * below, not by reference equality.
+ */
+let cachedSnapshot: ThemeSnapshot | null = null;
+
 function subscribe(notify: () => void): () => void {
   if (typeof window === "undefined") return () => undefined;
   const mq =
@@ -96,10 +109,16 @@ function subscribe(notify: () => void): () => void {
 function readSnapshot(): ThemeSnapshot {
   if (typeof window === "undefined") return SERVER_SNAPSHOT;
   const preference = readStoredPreference(window.localStorage);
-  return {
-    preference,
-    resolved: resolveTheme(preference, readSystemTheme()),
-  };
+  const resolved = resolveTheme(preference, readSystemTheme());
+  if (
+    cachedSnapshot !== null &&
+    cachedSnapshot.preference === preference &&
+    cachedSnapshot.resolved === resolved
+  ) {
+    return cachedSnapshot;
+  }
+  cachedSnapshot = Object.freeze({ preference, resolved }) as ThemeSnapshot;
+  return cachedSnapshot;
 }
 
 /** Inline sun/moon/glyph — no extra asset, no flash, no extra request. */
