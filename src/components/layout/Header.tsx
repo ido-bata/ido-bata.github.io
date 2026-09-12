@@ -11,6 +11,14 @@ export function Header() {
     <header className={styles.header}>
       <div className={styles.inner}>
         <Link href="/" className={styles.brand}>
+          <Image
+            src="/ido-bata-icon.jpg"
+            alt=""
+            width={36}
+            height={36}
+            priority
+            className={styles.brandIcon}
+          />
           <span className={styles.brandMark}>ido-bata</span>
         </Link>
         <nav className={styles.nav} aria-label="Primary">
