@@ -26,7 +26,13 @@ test.describe("Home page (static export)", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /井戸端会議のための、居場所。/ }),
     ).toBeVisible();
-    await expect(page.getByRole("link", { name: /^About/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: /^FAQ/ })).toBeVisible();
+    // ページ内の "About" リンクは複数ある (Hero CTA `ido-bata について` /
+    // About セクション内 `About ページを読む →` / 関連リンクカード
+    // `About コミュニティ紹介` / Footer site nav `About`) ため、
+    // `exact: true` で Footer の `About` / `FAQ` リンクのみに絞り込む。
+    // Footer nav は全ページで常に render されるため、smoke test として
+    // navigation surface が存在することを確認するのに十分な target。
+    await expect(page.getByRole("link", { name: "About", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "FAQ", exact: true })).toBeVisible();
   });
 });
