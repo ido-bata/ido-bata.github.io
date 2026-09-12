@@ -29,10 +29,14 @@ export default defineConfig({
   // to manage a separate class). The `_darkTheme` / `_lightTheme`
   // condition keys then resolve to `[data-theme="dark"] &` and
   // `[data-theme="light"] &` respectively inside semantic tokens.
+  // `motionSafe` / `motionReduce` wrap `prefers-reduced-motion` so
+  // animations / transitions can be gated to honour WCAG 2.3.3.
   conditions: {
     extend: {
       darkTheme: '[data-theme="dark"] &',
       lightTheme: '[data-theme="light"] &',
+      motionSafe: "@media (prefers-reduced-motion: no-preference)",
+      motionReduce: "@media (prefers-reduced-motion: reduce)",
     },
   },
 

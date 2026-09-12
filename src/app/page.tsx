@@ -28,10 +28,11 @@ export default function Home() {
         <h1 id="hero-heading" className={title}>
           ido-bata（いど端）
         </h1>
-        <p className={subtitle}>クリエイター・エンジニアのための実利 Discord コミュニティ。</p>
+        <p className={subtitle}>クリエイター・エンジニアのための実利サーバー。</p>
         <p className={lede}>
-          作り、学び、共有する循環を大切にしながら、静かに・誠実に長く続く居場所を育てます。
+          私達はメリットがあるから対話する。最大の効率を求めて。それが実利です。
         </p>
+        <p className={lede}>いつかやりたいことを今から始めましょう。</p>
       </section>
 
       <section aria-labelledby="about-heading" className={section}>
@@ -42,27 +43,27 @@ export default function Home() {
           <li className={card}>
             <h3 className={cardTitle}>実利重視</h3>
             <p className={cardBody}>
-              アウトプットと学びが循環する場。制作物の共有・コードレビュー・実験の記録を歓迎します。
+              実利があるかどうかで対話を選ぶ。制作物の共有・コードレビュー・実験の記録を歓迎します。
             </p>
           </li>
           <li className={card}>
-            <h3 className={cardTitle}>居場所としての安心</h3>
+            <h3 className={cardTitle}>ご自由にどうぞ</h3>
             <p className={cardBody}>
-              Code of
-              Conductに基づく運用とモデレーション。新参・久しぶりの参加でも参加しやすい空気をつくります。
+              ルールは特にありません。雑カテゴリーは荒れてもよし。思いついたことをそのまま書き込んでください。
             </p>
           </li>
           <li className={card}>
             <h3 className={cardTitle}>オープンな運営</h3>
             <p className={cardBody}>
-              ルール・FAQ・サーバー設定は GitHub
-              で公開。意思決定の背景が追える透明なコミュニティ運営を目指します。
+              FAQ・サーバー設定・意思決定の背景は GitHub
+              で公開。コミュニティ運営の文脈が追える透明さを大事にします。
             </p>
           </li>
           <li className={card}>
-            <h3 className={cardTitle}>穏やかな開発時間</h3>
+            <h3 className={cardTitle}>いど端底力タイム</h3>
             <p className={cardBody}>
-              雑談・相談・集中時間が同居するチャンネル構成。昼夜逆転や休憩も自然に受け入れます。
+              毎日 21:00〜22:40、仕事以外の何かしら有意義なことに集中する時間。samuido
+              がステージを開いて区切りを入れながら淡々と作業を進めます。
             </p>
           </li>
         </ul>
@@ -177,12 +178,12 @@ const title = css({
   fontSize: { base: "4xl", md: "5xl" },
   fontWeight: "bold",
   lineHeight: "tight",
-  color: "fg",
+  color: "fg.DEFAULT",
 });
 
 const subtitle = css({
   fontSize: { base: "md", md: "lg" },
-  color: "fg",
+  color: "fg.DEFAULT",
   lineHeight: "relaxed",
 });
 
@@ -203,7 +204,7 @@ const sectionTitle = css({
   fontSize: { base: "2xl", md: "3xl" },
   fontWeight: "semibold",
   lineHeight: "tight",
-  color: "fg",
+  color: "fg.DEFAULT",
 });
 
 const cardGrid = css({
@@ -230,7 +231,7 @@ const card = css({
 const cardTitle = css({
   fontSize: "lg",
   fontWeight: "semibold",
-  color: "fg",
+  color: "fg.DEFAULT",
 });
 
 const cardBody = css({
@@ -260,7 +261,11 @@ const ctaBody = css({
 
 const ctaIcon = css({
   display: "inline-block",
-  filter: "invert(1)",
+  // `/discord.svg` is dark-on-transparent, so invert in light mode (where
+  // the surrounding panel is light) and keep it natural in dark mode
+  // (where the panel is dark). `filter: none` in dark mode lets the
+  // original dark icon remain visible against the dark panel.
+  filter: { base: "invert(1)", _darkTheme: "none" },
 });
 
 const linkGrid = css({
@@ -286,12 +291,16 @@ const linkCard = css({
   borderStyle: "solid",
   borderColor: "border",
   bg: "bg.canvas",
-  color: "fg",
+  color: "fg.DEFAULT",
   fontSize: "sm",
   fontWeight: "medium",
   textDecoration: "none",
-  transitionProperty: "background-color, border-color",
-  transitionDuration: "150ms",
+  // Respect WCAG 2.3.3 (Animation from Interactions): only animate
+  // when the user has NOT requested reduced motion.
+  _motionSafe: {
+    transitionProperty: "background-color, border-color",
+    transitionDuration: "150ms",
+  },
   _hover: {
     bg: "bg.subtle",
     borderColor: "border.strong",

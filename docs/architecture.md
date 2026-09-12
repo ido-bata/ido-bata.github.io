@@ -38,9 +38,14 @@
 │   ├── development.md
 │   ├── release.md
 │   ├── security.md
-│   └── troubleshooting.md
+│   ├── troubleshooting.md
+│   └── adr/                # Architecture Decision Records
 ├── src/
-│   └── app/                # Next.js App Router
+│   ├── app/                # Next.js App Router
+│   ├── components/
+│   │   └── ui/             # Ark UI ベースの headless primitive wrapper
+│   ├── lib/                # ドメインロジック / ヘルパー
+│   └── styles/             # Panda recipes (button / surface / slot recipes)
 ├── public/                 # 静的アセット
 ├── next.config.ts          # output: "export" 静的書き出し設定
 ├── package.json            # 依存・スクリプト
@@ -137,6 +142,70 @@ bun run build      # next build が静的書き出し時に Panda CSS もバン�
 - 共通スタイルは `src/styles/recipes.ts` の `cva()` に切り出す
 - 命名衝突を避けるため、CSS Modules（`page.module.css` 等）と併用しない
 
+### Ark UI との統合（v0.3.0 以降）
+
+[Ark UI](https://ark-ui.com/)（`@ark-ui/react`）をヘッドレス UI プリミティブ層として採用する。
+Panda CSS 公式 preset（`@pandacss/preset-ark` 等）は **存在しない** ため、Ark UI + Panda の
+統合は手動で行う。詳細は [ADR-0002](./adr/0002-headless-ui-ark.md) を参照。
+
+#### 単一要素 primitive（`Button` 等）
+
+`@ark-ui/react` の `ark` factory + `asChild` で `<button>` / `<a>` / `<Link>` を polymorphic に
+wrap し、Panda の `cva()` recipe で styling する。`src/components/ui/button.tsx` がその典型例。
+
+```tsx
+import { ark } from "@ark-ui/react";
+import { button } from "@/styles/recipes";
+
+export const Button = ({ asChild, ...props }) => (
+  <ark.button {...props} asChild={asChild} className={button({ ...props })} />
+);
+```
+
+#### multi-part primitive（`Dialog` / `Menu` / `Tabs` 等）
+
+Ark UI の compound component（`<Dialog.Root>` `.Trigger` `.Content` …）を使い、Panda の
+`sva()`（slot variant）で Ark UI の `data-scope` / `data-part` anatomy をターゲットする slot
+recipe を `src/styles/recipes.ts` に定義する。
+
+```ts
+// 例: src/styles/recipes.ts に Dialog slot recipe を追加
+import { sva } from "@/styled-system/css";
+
+export const dialog = sva({
+  slots: ["root", "trigger", "content", "title", "description"],
+  base: {
+    root: { /* ... */ },
+    trigger: { /* ... */ },
+    content: { /* ... */ },
+    title: { /* ... */ },
+    description: { /* ... */ },
+  },
+  variants: {
+    size: {
+      md: { content: { maxWidth: "32rem" } },
+    },
+  },
+});
+
+// 利用例
+import { Dialog } from "@ark-ui/react";
+import { dialog } from "@/styles/recipes";
+
+const slots = dialog({ size: "md" });
+<Dialog.Root>
+  <Dialog.Trigger className={slots.trigger}>Open</Dialog.Trigger>
+  <Dialog.Content className={slots.content}>
+    <Dialog.Title className={slots.title}>Title</Dialog.Title>
+    <Dialog.Description className={slots.description}>Desc</Dialog.Description>
+  </Dialog.Content>
+</Dialog.Root>;
+```
+
+Ark UI の anatomy は zag-js の `createAnatomy()` が `data-scope="<kebab-name>"` /
+`data-part="<kebab-name>"` 属性を付与し、Panda の slot recipe も kebab-case className を生成するため、
+両者は 1:1 で対応する。新 primitive を追加する contributor はこのパターンに従うこと。
+
 ### 注意点
 
 - `panda.config.ts` の `exclude` には glob pattern（`"**/styled-system/**"` 等）を
@@ -155,6 +224,7 @@ bun run build      # next build が静的書き出し時に Panda CSS もバン�
 設計上の重要な決定は `docs/adr/` 配下の ADR として記録する。
 
 - [ADR-0001: GitHub Pages (organization page) + Next.js output: "export" で配信する](./adr/0001-static-export-github-pages.md)
+- [ADR-0002: Ark UI をヘッドレス UI プリミティブ層として採用する](./adr/0002-headless-ui-ark.md)
 
 ## アーキテクチャ変更時の手順
 

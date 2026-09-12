@@ -18,6 +18,10 @@ CLAUDE.md
 # Next.js の自動生成ファイルを編集対象外にする
 next-env.d.ts
 
+# Claude Code / multi-agent worktree 内の生成物は整形対象外（lint 側も同様）
+.claude/**
+.agents/**
+
 # lockfile は Prettier の対象としない（依存解決の再現性を担保）
 package-lock.json
 bun.lock
