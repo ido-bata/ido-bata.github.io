@@ -21,8 +21,7 @@ import { rules, type ChannelRule, type RuleSection } from "@/content/rules";
 
 export const metadata: Metadata = {
   title: "サーバルール / ガイドライン | ido-bata",
-  description:
-    "ido-bata Discord コミュニティのサーバルール・運用ガイドライン。実利重視・情報共有主体の理念、各チャネルの運用方針、違反時の対応について記載する。",
+  description: "ido-bata コミュニティのサーバルール・ガイドライン。",
 };
 
 const styles = {
@@ -193,10 +192,8 @@ export default function CommunityRulesPage() {
         <p className={styles.eyebrow}>Community</p>
         <h1 className={styles.title}>サーバルール / ガイドライン</h1>
         <p className={styles.lede}>
-          ido-bata の Discord
-          コミュニティに参加する前に、サーバの理念・運営方針・禁止行為を確認してください。本ページは行動規範
-          ( コード・オブ・コンダクト / `docs/code-of-conduct.md`)
-          と整合する形で運用されており、変更は本リポジトリの Pull Request で行います。
+          本ページは行動規範 (Code of Conduct)
+          と整合する形で段階的に整えていきます。具体的な理念・推奨・禁止行為・チャネル別運用は、オーナーの正本化後に掲載します。
         </p>
         <p className={styles.meta}>最終更新日: {rules.lastUpdated}</p>
       </header>

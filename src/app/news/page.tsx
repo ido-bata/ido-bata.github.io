@@ -6,7 +6,7 @@ import { MarkdownBody } from "./markdown";
 
 export const metadata: Metadata = {
   title: "お知らせ | ido-bata",
-  description: "ido-bata コミュニティからの告知・アナウンスを新しい順に掲載しています。",
+  description: "ido-bata コミュニティのお知らせ。",
 };
 
 const pageStyle = css({
@@ -129,7 +129,7 @@ export default function NewsPage() {
       <div className={introStyle}>
         <h1 className={titleStyle}>お知らせ</h1>
         <p className={leadStyle}>
-          ido-bata コミュニティからの告知やイベント情報を、新しいものから順に掲載しています。
+          コミュニティからの告知や更新情報を掲載します。具体的な告知はオーナーの正本化後に追加されます。
         </p>
       </div>
 

@@ -4,44 +4,40 @@
 
 ## [Unreleased]
 
-### Added
-
-- Ark UI (`@ark-ui/react`) をヘッドレス UI プリミティブ層として導入 (#90)
-- ADR-0002: Ark UI 採用と Panda CSS との手動統合パターン (slot recipe による multi-part primitive 連携) を記録
-- `src/components/ui/button.tsx` を追加。`ark.button` ファクトリ + Panda `button` recipe で wrap し、`variant: solid | outline | ghost` / `size: sm | md | lg` / `asChild` 対応の Button primitive を提供
-
-### Changed
-
-- `ThemeToggle` を Button primitive 経由の render に移行 (local recipe を撤去、Ark UI の focus / ref 動作は primitive 側で確保)
-- Header の Discord CTA / Footer の Discord 招待リンクを Button primitive (`asChild` で `<a>` wrap) に移行 (#90)
-- `docs/architecture.md` に Ark UI 統合パターン (単一要素 primitive / multi-part primitive / slot recipe) を追記し、ディレクトリ構成を最新の tree に更新
-
 ## [0.3.0] - 2026-09-13
 
-content + 見た目 sprint。Discord コミュニティ「ido-bata（いど端）」の公式 portal として、公開ページ一式とダークモード対応、デザイントークン統一を整備する。
+見た目 + 配信基盤 sprint。Discord コミュニティの公式 portal として、ページ骨格・テーマ・配信パイプライン・デザインシステムを整備する。ページ文言・告知・FAQ などの具体コンテンツは次 sprint 以降でオーナー正本化後に投入する。
 
 ### Added
 
-- Issue #8: デフォルトの create-next-app ホームを ido-bata 用コンテンツ（hero / about / Discord CTA / 関連リンク）に置き換え
-- Issue #14: About ページ（コミュニティ紹介・理念）
-- Issue #18: FAQ ページ
-- Issue #19: サーバルール / ガイドライン
-- Issue #20: チャネル一覧ページ
-- Issue #21: News / 告知セクション
+- Issue #8: デフォルトの create-next-app ホームを portal 骨格（hero / about / Discord CTA / 関連リンク）に置き換え。文言は minimal placeholder。
+- Issue #14: About ページ（コミュニティ紹介の minimal placeholder）
+- Issue #18: FAQ ページ（質問項目なしの minimal placeholder）
+- Issue #19: サーバルール / ガイドライン（理念 / 推奨 / 禁止 / チャネル別 / 違反時対応の minimal placeholder）
+- Issue #20: チャネル一覧ページ（カテゴリ・チャネルなしの minimal placeholder）
+- Issue #21: News / 告知セクション（告知なしの minimal placeholder）
 - Issue #22: ダークモード対応（OS 連動 + 手動切替）。ThemeToggle の useSyncExternalStore 無限ループ対策を含む
 - Issue #28: favicon / apple-touch-icon / manifest 整備
 - Issue #38: 404 ページに Discord 招待への導線
 - Issue #89: layout-system スキル（`rebuildup/design-skills`）を project-local に導入
+- Issue #90: Ark UI (`@ark-ui/react`) をヘッドレス UI プリミティブ層として導入。`src/components/ui/button.tsx`（`ark.button` + Panda `button` recipe、`variant` / `size` / `asChild` 対応）を追加。
+- ADR-0002: Ark UI 採用と Panda CSS との手動統合パターン（slot recipe による multi-part primitive 連携）を記録
 
 ### Changed
 
 - Header / Footer を CSS Modules から Panda CSS の semantic tokens に移行（dark mode で背景が白いままになる問題を解消）
+- `ThemeToggle` / Header の Discord CTA / Footer の Discord 招待リンクを Button primitive 経由の render に移行 (Issue #90)
+- `docs/architecture.md` に Ark UI 統合パターンとディレクトリ構成を反映
 - リポジトリ全体の Prettier 自動整形（PR #81）
 
 ### Fixed
 
 - ThemeToggle.getSnapshot が毎レンダー新しい object を返し "The result of getSnapshot should be cached" 警告が出ていた問題を修正
-- E2E smoke test が create-next-app starter 前提で ido-bata ポータル差し替え後に失敗していたのを修正
+- E2E smoke test が create-next-app starter 前提で portal 差し替え後に失敗していたのを修正
+
+### Note
+
+- v0.3.0 のページ文言・告知・FAQ・チャネル一覧・サーバルールはオーナーの事実確認後に別途投入する。`src/content/*` は空配列 / minimal placeholder で merge した。
 
 [Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...HEAD
 [0.3.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.2.0...v0.3.0

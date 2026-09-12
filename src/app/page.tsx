@@ -5,18 +5,20 @@ import { button } from "@/styles";
 import { DISCORD_INVITE } from "@/lib/env";
 
 /**
- * Landing page for ido-bata organization.
+ * Landing page for the ido-bata organization.
  *
- * Replaces the `create-next-app` starter with portal content:
- *   - Hero with org name + value proposition
- *   - Community highlights (key points)
+ * Structure:
+ *   - Hero (org name + tagline)
+ *   - "ido-bata について" — placeholder, populated after owner confirms copy
  *   - Discord join CTA (only when DISCORD_INVITE env is configured)
- *   - Related links to about / faq / rules / channels / news / CoC / privacy
+ *   - Related links
  *
  * Header / Footer are auto-applied via `src/app/layout.tsx` and are not
  * re-rendered here.
  *
- * Refs: Issue #8.
+ * NOTE: For v0.3.0 the highlight cards render a single "content in
+ * preparation" placeholder. Concrete copy (philosophy, schedule, role
+ * claims) is added by the community owner in a follow-up issue.
  */
 export default function Home() {
   const invite = DISCORD_INVITE;
@@ -26,47 +28,23 @@ export default function Home() {
       <section aria-labelledby="hero-heading" className={hero}>
         <p className={eyebrow}>ido-bata 公式ポータル</p>
         <h1 id="hero-heading" className={title}>
-          ido-bata（いど端）
+          ido-bata
         </h1>
-        <p className={subtitle}>クリエイター・エンジニアのための実利サーバー。</p>
+        <p className={subtitle}>コミュニティの公式ポータル</p>
         <p className={lede}>
-          私達はメリットがあるから対話する。最大の効率を求めて。それが実利です。
+          本サイトはコミュニティに関する情報公開のためのポータルです。
+          各ページの内容は段階的に整えていきます。
         </p>
-        <p className={lede}>いつかやりたいことを今から始めましょう。</p>
       </section>
 
       <section aria-labelledby="about-heading" className={section}>
         <h2 id="about-heading" className={sectionTitle}>
           ido-bata について
         </h2>
-        <ul className={cardGrid}>
-          <li className={card}>
-            <h3 className={cardTitle}>実利重視</h3>
-            <p className={cardBody}>
-              実利があるかどうかで対話を選ぶ。制作物の共有・コードレビュー・実験の記録を歓迎します。
-            </p>
-          </li>
-          <li className={card}>
-            <h3 className={cardTitle}>ご自由にどうぞ</h3>
-            <p className={cardBody}>
-              ルールは特にありません。雑カテゴリーは荒れてもよし。思いついたことをそのまま書き込んでください。
-            </p>
-          </li>
-          <li className={card}>
-            <h3 className={cardTitle}>オープンな運営</h3>
-            <p className={cardBody}>
-              FAQ・サーバー設定・意思決定の背景は GitHub
-              で公開。コミュニティ運営の文脈が追える透明さを大事にします。
-            </p>
-          </li>
-          <li className={card}>
-            <h3 className={cardTitle}>いど端底力タイム</h3>
-            <p className={cardBody}>
-              毎日 21:00〜22:40、仕事以外の何かしら有意義なことに集中する時間。samuido
-              がステージを開いて区切りを入れながら淡々と作業を進めます。
-            </p>
-          </li>
-        </ul>
+        <p className={lede}>
+          コミュニティ紹介・理念・運営体制などの詳細は準備中です。 Discord
+          サーバ側で先行して共有している内容と、本ページの公開内容は順次整合させていきます。
+        </p>
       </section>
 
       {invite ? (
@@ -75,7 +53,7 @@ export default function Home() {
             参加する
           </h2>
           <p className={ctaBody}>
-            Discord サーバーで自己紹介と最近の制作物・気になっていることを共有して始めましょう。
+            Discord サーバで活動しています。招待リンクは本ページの環境変数で設定されています。
           </p>
           <a
             className={button({ variant: "solid", size: "lg" })}
@@ -91,7 +69,7 @@ export default function Home() {
               aria-hidden="true"
               className={ctaIcon}
             />
-            ido-bata Discord に参加する
+            Discord サーバに参加する
           </a>
         </section>
       ) : null}
@@ -104,25 +82,25 @@ export default function Home() {
           <li>
             <Link className={linkCard} href="/about">
               About
-              <span className={linkHint}>コミュニティの理念と運営体制</span>
+              <span className={linkHint}>コミュニティ紹介</span>
             </Link>
           </li>
           <li>
             <Link className={linkCard} href="/faq">
               FAQ
-              <span className={linkHint}>よくある質問と回答</span>
+              <span className={linkHint}>よくある質問</span>
             </Link>
           </li>
           <li>
-            <Link className={linkCard} href="/rules">
+            <Link className={linkCard} href="/community/rules">
               Rules
-              <span className={linkHint}>サーバールールと利用ガイド</span>
+              <span className={linkHint}>サーバルールと利用ガイド</span>
             </Link>
           </li>
           <li>
             <Link className={linkCard} href="/channels">
               Channels
-              <span className={linkHint}>チャンネル構成と用途</span>
+              <span className={linkHint}>チャネル構成</span>
             </Link>
           </li>
           <li>
@@ -205,39 +183,6 @@ const sectionTitle = css({
   fontWeight: "semibold",
   lineHeight: "tight",
   color: "fg.DEFAULT",
-});
-
-const cardGrid = css({
-  display: "grid",
-  gridTemplateColumns: { base: "1", md: "repeat(2, minmax(0, 1fr))" },
-  gap: "4",
-  listStyle: "none",
-  m: 0,
-  p: 0,
-});
-
-const card = css({
-  display: "flex",
-  flexDirection: "column",
-  gap: "2",
-  p: "6",
-  borderRadius: "lg",
-  borderWidth: "1px",
-  borderStyle: "solid",
-  borderColor: "border",
-  bg: "bg.subtle",
-});
-
-const cardTitle = css({
-  fontSize: "lg",
-  fontWeight: "semibold",
-  color: "fg.DEFAULT",
-});
-
-const cardBody = css({
-  fontSize: "sm",
-  color: "fg.muted",
-  lineHeight: "relaxed",
 });
 
 const ctaSection = css({

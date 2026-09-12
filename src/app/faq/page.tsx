@@ -5,8 +5,7 @@ import { FAQ_ITEMS } from "@/content/faq";
 
 export const metadata: Metadata = {
   title: "よくある質問 | ido-bata",
-  description:
-    "ido-bata Discord コミュニティへの参加前に知っておきたいことをまとめた FAQ です。参加条件、投稿の内容、モデレーション方針などを掲載しています。",
+  description: "ido-bata コミュニティへのよくある質問。",
 };
 
 const page = css({
@@ -93,8 +92,7 @@ export default function FaqPage() {
     <main className={page}>
       <h1 className={heading}>よくある質問</h1>
       <p className={lead}>
-        ido-bata は、雑談の延長で作りかけのものや興味を持ち寄る Discord
-        コミュニティです。参加する前に気になりやすいことをまとめました。
+        コミュニティへのよくある質問を準備しています。具体的な質問と回答はオーナーの正本化後に掲載します。
       </p>
 
       <dl className={list}>
@@ -114,13 +112,13 @@ export default function FaqPage() {
         ))}
       </dl>
 
+      {FAQ_ITEMS.length === 0 ? <p className={lead}>現在、掲載中の質問はありません。</p> : null}
+
       {invite ? (
         <section className={ctaSection}>
-          <p className={ctaText}>
-            疑問が解消したら、あとは覗いてみるだけです。合わなければいつでも退出できます。
-          </p>
+          <p className={ctaText}>Discord サーバで活動しています。</p>
           <a className={ctaLink} href={invite} target="_blank" rel="noopener noreferrer">
-            ido-bata に参加する
+            Discord サーバに参加する
           </a>
         </section>
       ) : null}

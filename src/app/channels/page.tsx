@@ -6,8 +6,7 @@ import { CHANNELS, CHANNEL_CATEGORIES, type ChannelCategory } from "@/content/ch
 
 export const metadata: Metadata = {
   title: "チャネル一覧 | ido-bata",
-  description:
-    "ido-bata Discord コミュニティのチャネル構成。各カテゴリ別にどんな話題があるか確認できます。",
+  description: "ido-bata Discord サーバのチャネル構成。",
 };
 
 function groupByCategory(): ReadonlyArray<{
@@ -37,8 +36,7 @@ export default function ChannelsPage() {
         <p className={eyebrowClass}>Channels</p>
         <h1 className={titleClass}>チャネル一覧</h1>
         <p className={leadClass}>
-          ido-bata の Discord サーバにある主なチャネルをカテゴリ別に紹介します。
-          参加する前にどんな話題があるかを確認できます。
+          チャネル一覧は準備中です。実在のチャネル構成は Discord サーバ側で参照できます。
         </p>
         {invite ? (
           <a className={ctaClass} href={invite} target="_blank" rel="noopener noreferrer">
@@ -59,33 +57,37 @@ export default function ChannelsPage() {
         aria-label="カテゴリ別チャネル"
         className={css({ display: "flex", flexDirection: "column", gap: "12" })}
       >
-        {grouped.map(({ category, channels }) => (
-          <section
-            key={category}
-            aria-labelledby={`category-${category}`}
-            className={categorySectionClass}
-          >
-            <div className={categoryHeaderClass}>
-              <h2 id={`category-${category}`} className={categoryTitleClass}>
-                {category}
-              </h2>
-              <span className={categoryCountClass}>{channels.length} チャネル</span>
-            </div>
-            <ul className={channelListClass}>
-              {channels.map((channel) => (
-                <li key={channel.name} className={channelItemClass}>
-                  <div className={channelNameRowClass}>
-                    <span aria-hidden="true" className={hashMarkClass}>
-                      #
-                    </span>
-                    <span className={channelNameClass}>{channel.name}</span>
-                  </div>
-                  <p className={channelDescriptionClass}>{channel.description}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        {grouped.length === 0 ? (
+          <p className={leadClass}>現在、掲載中のチャネルはありません。</p>
+        ) : (
+          grouped.map(({ category, channels }) => (
+            <section
+              key={category}
+              aria-labelledby={`category-${category}`}
+              className={categorySectionClass}
+            >
+              <div className={categoryHeaderClass}>
+                <h2 id={`category-${category}`} className={categoryTitleClass}>
+                  {category}
+                </h2>
+                <span className={categoryCountClass}>{channels.length} チャネル</span>
+              </div>
+              <ul className={channelListClass}>
+                {channels.map((channel) => (
+                  <li key={channel.name} className={channelItemClass}>
+                    <div className={channelNameRowClass}>
+                      <span aria-hidden="true" className={hashMarkClass}>
+                        #
+                      </span>
+                      <span className={channelNameClass}>{channel.name}</span>
+                    </div>
+                    <p className={channelDescriptionClass}>{channel.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        )}
       </section>
     </main>
   );

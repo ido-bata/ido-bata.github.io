@@ -6,8 +6,7 @@ import { css } from "@/styled-system/css";
 
 export const metadata: Metadata = {
   title: "404 — ページが見つかりません",
-  description:
-    "お探しのページは見つかりませんでした。いど端（実利サーバー）の他のページへのリンクをご利用ください。",
+  description: "お探しのページは見つかりませんでした。",
   robots: { index: false, follow: false },
 };
 
@@ -15,7 +14,7 @@ const NAV_LINKS = [
   { href: "/", label: "トップへ戻る" },
   { href: "/about", label: "About を見る" },
   { href: "/faq", label: "FAQ を見る" },
-  { href: "/rules", label: "サーバルールを見る" },
+  { href: "/community/rules", label: "サーバルールを見る" },
   { href: "/channels", label: "チャネル一覧を見る" },
   { href: "/news", label: "News を見る" },
 ] as const;

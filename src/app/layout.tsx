@@ -15,9 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ido-bata（いど端）",
-  description:
-    "いど端（管理人 samuido）は、クリエイター・エンジニアのための実利サーバー。実利を重視して対話する Discord コミュニティの公式ポータルです。",
+  title: "ido-bata",
+  description: "ido-bata コミュニティの公式ポータル。",
 };
 
 /**
