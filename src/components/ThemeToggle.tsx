@@ -36,6 +36,7 @@ import {
   resolveTheme,
   THEME_ATTRIBUTE,
   THEME_STORAGE_KEY,
+  tryGetLocalStorage,
   writeStoredPreference,
   applyTheme,
 } from "@/lib/theme";
@@ -79,8 +80,12 @@ function subscribe(notify: () => void): () => void {
   // 属性は前の値のままなので、Panda の `_darkTheme` / `_lightTheme` 条件が
   // 新しい配色に切り替わらない。`applyTheme()` を先に走らせてから `notify()`
   // することで DOM 状態と React state を整合させる。
+  //
+  // `tryGetLocalStorage()` で `SecurityError` を吸収する。Safari プライベート
+  // ブラウズやサンドボックス iframe 等では `window.localStorage` アクセス自体が
+  // 投げるので、生で参照すると subscribe 関数の実行時点でクラッシュする。
   const reapplyAndNotify = () => {
-    const preference = readStoredPreference(window.localStorage);
+    const preference = readStoredPreference(tryGetLocalStorage());
     applyTheme(document, resolveTheme(preference, readSystemTheme()));
     notify();
   };
@@ -98,7 +103,7 @@ function subscribe(notify: () => void): () => void {
 
 function readSnapshot(): ThemeSnapshot {
   if (typeof window === "undefined") return SERVER_SNAPSHOT;
-  const preference = readStoredPreference(window.localStorage);
+  const preference = readStoredPreference(tryGetLocalStorage());
   const resolved = resolveTheme(preference, readSystemTheme());
   if (
     cachedSnapshot !== null &&
@@ -136,7 +141,7 @@ export function ThemeToggle() {
 
   const onClick = useCallback(() => {
     const next = nextPreference(preference);
-    writeStoredPreference(window.localStorage, next);
+    writeStoredPreference(tryGetLocalStorage(), next);
     applyTheme(document, resolveTheme(next, readSystemTheme()));
     // Notify same-window subscribers (storage event only fires cross-tab).
     window.dispatchEvent(new StorageEvent("storage", { key: THEME_STORAGE_KEY }));

@@ -3,12 +3,15 @@ import { test, expect } from "@playwright/test";
 /**
  * Smoke test for the static export of the landing page.
  *
- * Before running this locally:
+ * Locally, just run:
  *   bun run build
- *   npx http-server out -p 4173 &
  *   bun run test:e2e
  *
- * Or, if you have a deployed preview URL:
+ * Playwright's `webServer` config (see playwright.config.ts) serves
+ * `./out` on `PLAYWRIGHT_PORT` via `python3 -m http.server` for us,
+ * so no manual static-server step is needed.
+ *
+ * To point at an already-running preview / deployed build instead:
  *   PLAYWRIGHT_BASE_URL=https://ido-bata.github.io bun run test:e2e
  *
  * The home page (`src/app/page.tsx`) was replaced as part of Issue #8;

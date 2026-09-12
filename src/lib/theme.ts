@@ -59,12 +59,39 @@ export function readSystemTheme(): Theme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
+/**
+ * Safely access `window.localStorage`.
+ *
+ * In some sandboxed contexts — Safari "Block all cookies", certain
+ * cross-origin iframes, hardened enterprise policies — accessing
+ * `window.localStorage` itself throws `SecurityError` rather than
+ * returning a `null`-ish storage. `readStoredPreference` /
+ * `writeStoredPreference` only guard against a `null` storage, so the
+ * throw bubbles up through the toggle and crashes the page. Wrap the
+ * property access in a try/catch here so call sites can treat
+ * "unavailable" as a single `null` case.
+ */
+export function tryGetLocalStorage(): Storage | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 /** Read the persisted preference. Returns "system" if nothing is saved. */
 export function readStoredPreference(storage: Storage | null): ThemePreference {
   if (!storage) return "system";
-  const raw = storage.getItem(THEME_STORAGE_KEY);
-  if (raw === "light" || raw === "dark" || raw === "system") {
-    return raw;
+  try {
+    const raw = storage.getItem(THEME_STORAGE_KEY);
+    if (raw === "light" || raw === "dark" || raw === "system") {
+      return raw;
+    }
+  } catch {
+    // Storage became unavailable between the availability probe and
+    // the actual read (rare race, but treat it the same as missing).
+    return "system";
   }
   return "system";
 }
@@ -75,9 +102,9 @@ export function writeStoredPreference(storage: Storage | null, preference: Theme
   try {
     storage.setItem(THEME_STORAGE_KEY, preference);
   } catch {
-    // Storage may be disabled (private mode, quota). Fail silently so a
-    // misconfigured browser doesn't crash the page — the in-memory theme
-    // still works for the current session.
+    // Storage may be disabled (private mode, quota, SecurityError on
+    // setItem). Fail silently so a misconfigured browser doesn't crash
+    // the page — the in-memory theme still works for the current session.
   }
 }
 

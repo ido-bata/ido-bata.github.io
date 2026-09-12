@@ -18,6 +18,7 @@ import {
   resolveTheme,
   THEME_ATTRIBUTE,
   THEME_STORAGE_KEY,
+  tryGetLocalStorage,
   writeStoredPreference,
 } from "./theme";
 import type { ThemePreference } from "./theme.types";
@@ -85,6 +86,45 @@ describe("theme persistence", () => {
     it("defaults to 'system' when the stored value is unrecognised", () => {
       const storage = makeStorage({ [THEME_STORAGE_KEY]: "fuchsia" });
       expect(readStoredPreference(storage)).toBe("system");
+    });
+
+    it("defaults to 'system' when getItem throws (SecurityError race)", () => {
+      const storage = makeStorage();
+      vi.spyOn(storage, "getItem").mockImplementation(() => {
+        throw new Error("SecurityError: storage access denied");
+      });
+      expect(readStoredPreference(storage)).toBe("system");
+    });
+  });
+
+  describe("tryGetLocalStorage", () => {
+    afterEach(() => {
+      // happy-dom restores `window.localStorage` between tests but we
+      // may have replaced it with a throwing getter — restore explicitly
+      // so other suites aren't affected.
+      if (
+        Object.getOwnPropertyDescriptor(window, "localStorage")
+          ?.get?.toString()
+          .includes("[native code]")
+      ) {
+        // already the native getter, leave alone
+      } else {
+        delete (window as { localStorage?: Storage }).localStorage;
+      }
+    });
+
+    it("returns the live localStorage when access succeeds", () => {
+      expect(tryGetLocalStorage()).toBe(window.localStorage);
+    });
+
+    it("returns null when accessing localStorage throws (SecurityError)", () => {
+      Object.defineProperty(window, "localStorage", {
+        configurable: true,
+        get() {
+          throw new Error("SecurityError: storage access denied");
+        },
+      });
+      expect(tryGetLocalStorage()).toBeNull();
     });
   });
 
