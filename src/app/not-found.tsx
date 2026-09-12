@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import { css, cx } from "@/styled-system/css";
+import { cluster, container, grid, section, stack } from "@/styles/recipes";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import { DiscordIcon } from "@/components/ui/DiscordIcon";
 import { DISCORD_INVITE } from "@/lib/env";
-import { css } from "@/styled-system/css";
 
 export const metadata: Metadata = {
   title: "404 — ページが見つかりません",
@@ -19,142 +22,183 @@ const NAV_LINKS = [
   { href: "/news", label: "News を見る" },
 ] as const;
 
+/**
+ * 404 ページ。
+ *
+ * Layout:
+ *   - breadcrumb strip (ホーム / 見つかりません) at the top of
+ *     `<main>` so the user can recover with one click even on a 404
+ *   - page-opening band on `container({ size: "content" })` (same
+ *     width as the rest of the site): left rail (404 mark → h1 →
+ *     lede → CTA) plus right rail (page metadata surface). Left-
+ *     aligned grid composition — no centred hero band.
+ *   - balanced 2-up grid of nav cards (`grid({ cols: 2 })`) below.
+ *
+ * The nav links are constrained to routes that actually exist so the
+ * page never advertises a 404 destination.
+ *
+ * Refs: .agents/skills/layout-system
+ */
 export default function NotFound() {
   const invite = DISCORD_INVITE;
 
   return (
-    <main
-      className={css({
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        px: { base: "6", md: "8" },
-        py: { base: "16", md: "20" },
-      })}
-    >
-      <div
-        className={css({
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          gap: "8",
-          width: "100%",
-          maxWidth: "640px",
-        })}
-      >
-        <p
-          aria-hidden="true"
-          className={css({
-            fontSize: "5xl",
-            fontWeight: "bold",
-            lineHeight: "tight",
-            letterSpacing: "-0.04em",
-            color: "fg.muted",
-            fontFamily: "mono",
-          })}
-        >
-          404
-        </p>
+    <main className={cx(container({ size: "content" }))}>
+      <Breadcrumb items={[{ href: "/", label: "ホーム" }, { label: "見つかりません" }]} />
 
-        <h1
-          className={css({
-            fontSize: { base: "2xl", md: "3xl" },
-            fontWeight: "semibold",
-            lineHeight: "tight",
-            color: "fg.DEFAULT",
-          })}
-        >
-          ページが見つかりません
-        </h1>
-
-        <p
-          className={css({
-            fontSize: "md",
-            lineHeight: "relaxed",
-            color: "fg.muted",
-            maxWidth: "480px",
-          })}
-        >
-          お探しのページは移動・削除されたか、URL が正しくない可能性があります。
-          下のリンクから他のページへお進みください。
-        </p>
-
-        {invite ? (
-          <a
-            href={invite}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={css({
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "3",
-              height: "12",
-              px: "6",
-              fontSize: "md",
-              fontWeight: "medium",
-              color: "fg.onAccent",
-              bg: "accent.DEFAULT",
-              borderRadius: "full",
-              textDecoration: "none",
-              transition: "colors",
-              _hover: { bg: "bg.muted" },
-            })}
-          >
-            <Image
-              src="/discord.svg"
-              alt=""
-              width={22}
-              height={22}
-              className={css({ width: "5", height: "5" })}
+      <section className={cx(section({ variant: "flow" }))}>
+        <div className={cx(grid({ cols: 12, gap: 6 }))}>
+          <div className={cx(stack({ gap: 5 }), css({ gridColumn: { base: "1", md: "span 7" } }))}>
+            <p
               aria-hidden="true"
-            />
-            <span>ido-bata Discord サーバに参加する</span>
-          </a>
-        ) : null}
-
-        <nav
-          aria-label="サイト内ナビゲーション"
-          className={css({
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "stretch",
-            gap: "2",
-            width: "100%",
-            maxWidth: "360px",
-            mt: "2",
-          })}
-        >
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
               className={css({
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "10",
-                px: "4",
-                fontSize: "sm",
-                fontWeight: "medium",
-                color: "fg.DEFAULT",
-                bg: "bg.canvas",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                borderColor: "border.DEFAULT",
-                borderRadius: "md",
-                textDecoration: "none",
-                transition: "colors",
-                _hover: { bg: "bg.subtle", borderColor: "border.strong" },
+                fontSize: "5xl",
+                fontWeight: "bold",
+                lineHeight: "tight",
+                letterSpacing: "-0.04em",
+                color: "fg.muted",
+                fontFamily: "mono",
               })}
             >
-              {link.label}
-            </Link>
+              404
+            </p>
+
+            <h1
+              className={css({
+                fontSize: { base: "2xl", md: "3xl" },
+                fontWeight: "semibold",
+                lineHeight: "tight",
+                letterSpacing: "-0.02em",
+                color: "fg.DEFAULT",
+              })}
+            >
+              ページが見つかりません
+            </h1>
+
+            <p
+              className={css({
+                fontSize: "md",
+                lineHeight: "relaxed",
+                color: "fg.muted",
+                maxW: "48ch",
+              })}
+            >
+              お探しのページは移動・削除されたか、URL が正しくない可能性があります。
+              下のリンクから他のページへお進みください。
+            </p>
+
+            {invite ? (
+              <div>
+                <Button asChild variant="solid" size="lg">
+                  <a href={invite} target="_blank" rel="noopener noreferrer">
+                    <DiscordIcon size={18} />
+                    <span>Discord サーバに参加</span>
+                  </a>
+                </Button>
+              </div>
+            ) : null}
+          </div>
+
+          <aside
+            aria-label="ページ情報"
+            className={cx(
+              stack({ gap: 3 }),
+              css({
+                gridColumn: { base: "1", md: "span 5" },
+                bg: "bg.subtle",
+                borderRadius: "lg",
+                padding: { base: "5", md: "6" },
+                border: "1px solid",
+                borderColor: "border.subtle",
+                alignSelf: "stretch",
+              }),
+            )}
+          >
+            <p
+              className={css({
+                fontSize: "xs",
+                fontWeight: "medium",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "fg.subtle",
+              })}
+            >
+              ページ情報
+            </p>
+            <dl
+              className={css({
+                display: "grid",
+                gridTemplateColumns: "auto 1fr",
+                columnGap: "4",
+                rowGap: "3",
+                margin: 0,
+                fontSize: "sm",
+              })}
+            >
+              <dt className={css({ color: "fg.muted" })}>ステータス</dt>
+              <dd className={css({ color: "fg.DEFAULT", fontFamily: "mono", margin: 0 })}>404</dd>
+              <dt className={css({ color: "fg.muted" })}>種別</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>Not Found</dd>
+            </dl>
+          </aside>
+        </div>
+      </section>
+
+      <section className={cx(section({ variant: "flow" }))}>
+        <h2
+          className={css({
+            fontSize: "sm",
+            fontWeight: "medium",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "fg.muted",
+          })}
+        >
+          サイト内ナビゲーション
+        </h2>
+        <ul
+          className={cx(
+            grid({ cols: 2, gap: 3 }),
+            css({ listStyle: "none", margin: 0, padding: 0 }),
+          )}
+        >
+          {NAV_LINKS.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className={cx(
+                  cluster({ justify: "center" }),
+                  css({
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "10",
+                    px: "4",
+                    borderRadius: "md",
+                    border: "1px solid",
+                    borderColor: "border",
+                    bg: "bg.canvas",
+                    color: "fg.DEFAULT",
+                    fontSize: "sm",
+                    fontWeight: "medium",
+                    textDecoration: "none",
+                    textAlign: "center",
+                    _hover: { bg: "bg.subtle", borderColor: "border.strong" },
+                    _focusVisible: {
+                      outlineWidth: "2px",
+                      outlineStyle: "solid",
+                      outlineColor: "accent",
+                      outlineOffset: "2px",
+                    },
+                  }),
+                )}
+              >
+                {link.label}
+              </Link>
+            </li>
           ))}
-        </nav>
-      </div>
+        </ul>
+      </section>
     </main>
   );
 }

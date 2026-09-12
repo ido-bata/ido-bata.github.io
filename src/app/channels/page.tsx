@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { css } from "@/styled-system/css";
+import { css, cx } from "@/styled-system/css";
+import { cluster, container, grid, section, stack } from "@/styles/recipes";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import { DiscordIcon } from "@/components/ui/DiscordIcon";
 import { DISCORD_INVITE } from "@/lib/env";
 import { CHANNELS, CHANNEL_CATEGORIES, type ChannelCategory } from "@/content/channels";
 
@@ -19,200 +22,228 @@ function groupByCategory(): ReadonlyArray<{
   }));
 }
 
+/**
+ * チャネル一覧ページ。
+ *
+ * Layout:
+ *   - breadcrumb strip (ホーム / Channels) at the top of `<main>`
+ *   - page-opening band on `container({ size: "content" })`: left
+ *     rail (eyebrow → h1 → lede → CTA) plus right rail (page
+ *     metadata surface). Left-aligned grid composition — no centred
+ *     hero band.
+ *   - per-category band with a 2-up grid (`grid({ cols: 2 })`) so the
+ *     cards don't collapse into a single left-aligned column
+ *
+ * When `CHANNELS` is empty (the v0.3.0 placeholder state) the page
+ * renders an empty-state paragraph instead of empty category headers.
+ *
+ * Refs:
+ *   - Issue #20
+ *   - .agents/skills/layout-system
+ */
 export default function ChannelsPage() {
   const invite = DISCORD_INVITE;
   const grouped = groupByCategory();
+  const hasChannels = grouped.some(({ channels }) => channels.length > 0);
 
   return (
-    <main
-      className={css({
-        mx: "auto",
-        maxW: "5xl",
-        px: { base: "6", md: "8" },
-        py: { base: "12", md: "16" },
-      })}
-    >
-      <header className={headerClass}>
-        <p className={eyebrowClass}>Channels</p>
-        <h1 className={titleClass}>チャネル一覧</h1>
-        <p className={leadClass}>
-          チャネル一覧は準備中です。実在のチャネル構成は Discord サーバ側で参照できます。
-        </p>
-        {invite ? (
-          <a className={ctaClass} href={invite} target="_blank" rel="noopener noreferrer">
-            <Image
-              src="/discord.svg"
-              alt=""
-              width={20}
-              height={20}
-              aria-hidden="true"
-              className={css({ display: "inline-block", w: "5", h: "5" })}
-            />
-            <span>ido-bata に参加する</span>
-          </a>
-        ) : null}
-      </header>
+    <main className={cx(container({ size: "content" }))}>
+      <Breadcrumb items={[{ href: "/", label: "ホーム" }, { label: "Channels" }]} />
 
-      <section
-        aria-label="カテゴリ別チャネル"
-        className={css({ display: "flex", flexDirection: "column", gap: "12" })}
-      >
-        {grouped.length === 0 ? (
-          <p className={leadClass}>現在、掲載中のチャネルはありません。</p>
-        ) : (
-          grouped.map(({ category, channels }) => (
-            <section
-              key={category}
-              aria-labelledby={`category-${category}`}
-              className={categorySectionClass}
+      <section aria-labelledby="channels-heading" className={cx(section({ variant: "flow" }))}>
+        <div className={cx(grid({ cols: 12, gap: 6 }))}>
+          {/* Left rail — copy + actions */}
+          <div className={cx(stack({ gap: 4 }), css({ gridColumn: { base: "1", md: "span 7" } }))}>
+            <p
+              className={css({
+                fontSize: "xs",
+                fontWeight: "medium",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "fg.muted",
+              })}
             >
-              <div className={categoryHeaderClass}>
-                <h2 id={`category-${category}`} className={categoryTitleClass}>
-                  {category}
-                </h2>
-                <span className={categoryCountClass}>{channels.length} チャネル</span>
+              Channels
+            </p>
+            <h1
+              id="channels-heading"
+              className={css({
+                fontSize: { base: "3xl", md: "4xl" },
+                fontWeight: "bold",
+                lineHeight: "tight",
+                letterSpacing: "-0.02em",
+                color: "fg.DEFAULT",
+              })}
+            >
+              チャネル一覧
+            </h1>
+            <p
+              className={css({
+                maxW: "52ch",
+                fontSize: { base: "md", md: "lg" },
+                lineHeight: "relaxed",
+                color: "fg.muted",
+              })}
+            >
+              チャネル一覧は準備中です。実在のチャネル構成は Discord サーバ側で参照できます。
+            </p>
+            {invite ? (
+              <div className={cx(cluster({ gap: 3 }))}>
+                <Button asChild variant="solid" size="lg">
+                  <a href={invite} target="_blank" rel="noopener noreferrer">
+                    <DiscordIcon size={18} />
+                    <span>Discord サーバに参加</span>
+                  </a>
+                </Button>
               </div>
-              <ul className={channelListClass}>
-                {channels.map((channel) => (
-                  <li key={channel.name} className={channelItemClass}>
-                    <div className={channelNameRowClass}>
-                      <span aria-hidden="true" className={hashMarkClass}>
-                        #
-                      </span>
-                      <span className={channelNameClass}>{channel.name}</span>
-                    </div>
-                    <p className={channelDescriptionClass}>{channel.description}</p>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))
-        )}
+            ) : null}
+          </div>
+
+          {/* Right rail — page metadata */}
+          <aside
+            aria-label="ページ情報"
+            className={cx(
+              stack({ gap: 3 }),
+              css({
+                gridColumn: { base: "1", md: "span 5" },
+                bg: "bg.subtle",
+                borderRadius: "lg",
+                padding: { base: "5", md: "6" },
+                border: "1px solid",
+                borderColor: "border.subtle",
+                alignSelf: "stretch",
+              }),
+            )}
+          >
+            <p
+              className={css({
+                fontSize: "xs",
+                fontWeight: "medium",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "fg.subtle",
+              })}
+            >
+              ページ情報
+            </p>
+            <dl
+              className={css({
+                display: "grid",
+                gridTemplateColumns: "auto 1fr",
+                columnGap: "4",
+                rowGap: "3",
+                margin: 0,
+                fontSize: "sm",
+              })}
+            >
+              <dt className={css({ color: "fg.muted" })}>カテゴリ</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>
+                {CHANNEL_CATEGORIES.length}
+              </dd>
+              <dt className={css({ color: "fg.muted" })}>チャネル数</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>{CHANNELS.length}</dd>
+              <dt className={css({ color: "fg.muted" })}>最終更新</dt>
+              <dd className={css({ color: "fg.DEFAULT", fontFamily: "mono", margin: 0 })}>
+                2026-09-13
+              </dd>
+            </dl>
+          </aside>
+        </div>
       </section>
+
+      {hasChannels ? (
+        <section aria-label="カテゴリ別チャネル" className={cx(section({ variant: "flow" }))}>
+          {grouped.map(({ category, channels }) =>
+            channels.length === 0 ? null : (
+              <div key={category} className={cx(stack({ gap: 4 }))}>
+                <div
+                  className={cx(
+                    cluster({ justify: "between" }),
+                    css({ pb: "2", borderBottom: "1px solid", borderColor: "border.subtle" }),
+                  )}
+                >
+                  <h2
+                    className={css({
+                      fontSize: "xl",
+                      fontWeight: "semibold",
+                      color: "fg.DEFAULT",
+                      letterSpacing: "-0.01em",
+                    })}
+                  >
+                    {category}
+                  </h2>
+                  <span
+                    className={css({ fontSize: "sm", color: "fg.subtle", whiteSpace: "nowrap" })}
+                  >
+                    {channels.length} チャネル
+                  </span>
+                </div>
+                <ul
+                  className={cx(
+                    grid({ cols: 2, gap: 4 }),
+                    css({ listStyle: "none", margin: 0, padding: 0 }),
+                  )}
+                >
+                  {channels.map((channel) => (
+                    <li
+                      key={channel.name}
+                      className={cx(
+                        css({
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "2",
+                          p: "4",
+                          borderRadius: "lg",
+                          border: "1px solid",
+                          borderColor: "border",
+                          bg: "bg.canvas",
+                        }),
+                      )}
+                    >
+                      <div className={cx(cluster(), css({ fontFamily: "mono" }))}>
+                        <span aria-hidden="true" className={css({ color: "fg.subtle" })}>
+                          #
+                        </span>
+                        <span
+                          className={css({
+                            fontSize: "md",
+                            fontWeight: "semibold",
+                            color: "fg.DEFAULT",
+                          })}
+                        >
+                          {channel.name}
+                        </span>
+                      </div>
+                      <p
+                        className={css({
+                          fontSize: "sm",
+                          lineHeight: "relaxed",
+                          color: "fg.muted",
+                        })}
+                      >
+                        {channel.description}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ),
+          )}
+        </section>
+      ) : (
+        <section className={cx(section({ variant: "flow" }))}>
+          <p
+            className={css({
+              fontSize: "md",
+              color: "fg.muted",
+              lineHeight: "relaxed",
+              textAlign: "center",
+            })}
+          >
+            現在、掲載中のチャネルはありません。
+          </p>
+        </section>
+      )}
     </main>
   );
 }
-
-// --- Panda CSS classes (kept colocated for readability) ---
-
-const headerClass = css({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  gap: "4",
-  pb: "10",
-  borderBottom: "1px solid",
-  borderColor: "border",
-  mb: "10",
-});
-
-const eyebrowClass = css({
-  fontSize: "sm",
-  fontWeight: "semibold",
-  letterSpacing: "wide",
-  textTransform: "uppercase",
-  color: "accent",
-});
-
-const titleClass = css({
-  fontSize: { base: "3xl", md: "4xl" },
-  fontWeight: "bold",
-  lineHeight: "tight",
-  color: "fg",
-});
-
-const leadClass = css({
-  maxW: "2xl",
-  fontSize: { base: "md", md: "lg" },
-  lineHeight: "relaxed",
-  color: "fg.muted",
-});
-
-const ctaClass = css({
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "2",
-  mt: "4",
-  px: "5",
-  h: "11",
-  borderRadius: "full",
-  bg: "accent",
-  color: "accent.fg",
-  fontWeight: "semibold",
-  textDecoration: "none",
-  transition: "colors",
-  _hover: { opacity: "0.9" },
-});
-
-const categorySectionClass = css({
-  display: "flex",
-  flexDirection: "column",
-  gap: "4",
-});
-
-const categoryHeaderClass = css({
-  display: "flex",
-  alignItems: "baseline",
-  justifyContent: "space-between",
-  gap: "4",
-  pb: "2",
-  borderBottom: "1px solid",
-  borderColor: "border",
-});
-
-const categoryTitleClass = css({
-  fontSize: "xl",
-  fontWeight: "semibold",
-  color: "fg",
-});
-
-const categoryCountClass = css({
-  fontSize: "sm",
-  color: "fg.subtle",
-  whiteSpace: "nowrap",
-});
-
-const channelListClass = css({
-  display: "grid",
-  gap: "3",
-  gridTemplateColumns: { base: "1fr", md: "repeat(2, minmax(0, 1fr))" },
-  listStyle: "none",
-  p: "0",
-  m: "0",
-});
-
-const channelItemClass = css({
-  display: "flex",
-  flexDirection: "column",
-  gap: "2",
-  p: "4",
-  bg: "bg.canvas",
-  borderWidth: "1px",
-  borderStyle: "solid",
-  borderColor: "border",
-  borderRadius: "lg",
-});
-
-const channelNameRowClass = css({
-  display: "inline-flex",
-  alignItems: "baseline",
-  gap: "1",
-});
-
-const hashMarkClass = css({
-  color: "fg.subtle",
-  fontFamily: "mono",
-});
-
-const channelNameClass = css({
-  fontSize: "md",
-  fontWeight: "semibold",
-  fontFamily: "mono",
-  color: "fg",
-});
-
-const channelDescriptionClass = css({
-  fontSize: "sm",
-  lineHeight: "relaxed",
-  color: "fg.muted",
-});

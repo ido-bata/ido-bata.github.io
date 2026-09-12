@@ -41,6 +41,7 @@ import {
 } from "@/lib/theme";
 import type { ResolvedTheme, ThemePreference } from "@/lib/theme.types";
 import { Button } from "@/components/ui/button";
+import { MaterialIcon } from "@/components/ui/MaterialIcon";
 import { css } from "@/styled-system/css";
 
 interface ThemeSnapshot {
@@ -99,59 +100,18 @@ function readSnapshot(): ThemeSnapshot {
   return cachedSnapshot;
 }
 
-/** Inline sun/moon/glyph — no extra asset, no flash, no extra request. */
+/**
+ * Theme preference glyph.
+ *
+ * Renders through the Material Icons font so the toggle matches the
+ * site's icon system and doesn't ship extra SVGs. The ligature name
+ * (`light_mode`, `dark_mode`, `settings_brightness`) is what
+ * Material Icons substitutes into the glyph — no `<svg>` required.
+ */
 function Glyph({ theme }: { theme: ThemePreference }) {
-  if (theme === "light") {
-    return (
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-        width="16"
-        height="16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-      </svg>
-    );
-  }
-  if (theme === "dark") {
-    return (
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-        width="16"
-        height="16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-      </svg>
-    );
-  }
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      width="16"
-      height="16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="3" y="4" width="18" height="12" rx="2" />
-      <path d="M8 20h8M12 16v4" />
-    </svg>
-  );
+  if (theme === "light") return <MaterialIcon name="light_mode" size={18} />;
+  if (theme === "dark") return <MaterialIcon name="dark_mode" size={18} />;
+  return <MaterialIcon name="settings_brightness" size={18} />;
 }
 
 export function ThemeToggle() {

@@ -1,17 +1,42 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Sans_JP, Zen_Kaku_Gothic_New } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/**
+ * Brand fonts.
+ *
+ * Each font is registered as a CSS variable on `<html>` and consumed
+ * by Panda's `fonts.sans` / `fonts.display` tokens (see
+ * `panda.config.mjs`). Keeping the loader here and the consumer in
+ * Panda means every component can pick the right face via a token
+ * without re-importing next/font.
+ *
+ *  - Noto Sans JP — body copy (high legibility for mixed JP / Latin)
+ *  - Zen Kaku Gothic New — headings (geometric, heavier display voice)
+ *
+ * `display: "swap"` keeps text visible during font load so the FCP
+ * is not blocked by the network round-trip.
+ *
+ * Material Icons (the icon font) is not in `next/font/google`'s
+ * bundled font catalogue, so it is loaded via a CDN `<link>` in
+ * `<head>` below. The `.material-icons` class is registered in
+ * `panda.config.mjs#globalCss`; ligatures in span text drive the
+ * glyph.
+ */
+const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-noto-sans-jp",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const zenKakuGothicNew = Zen_Kaku_Gothic_New({
   subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
+  variable: "--font-zen-kaku",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -66,9 +91,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ja"
       data-theme="light"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${notoSansJP.variable} ${zenKakuGothicNew.variable}`}
     >
       <head>
+        {/* Material Icons is not in next/font/google's bundled font
+            catalogue, so we load it from the Google Fonts CDN here.
+            This is the standard pattern for icon fonts and stays in
+            the document head so the icon system is ready before the
+            first paint. */}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
       </head>
       <body>

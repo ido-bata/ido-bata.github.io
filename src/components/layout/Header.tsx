@@ -3,27 +3,46 @@ import Image from "next/image";
 import { DISCORD_INVITE } from "@/lib/env";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { css } from "@/styled-system/css";
+import { DiscordIcon } from "@/components/ui/DiscordIcon";
+import { css, cx } from "@/styled-system/css";
+import { cluster, container } from "@/styles/recipes";
 
 /**
  * Site-wide header.
  *
- * Styled with Panda CSS semantic tokens so the surface picks up the
- * active theme automatically (light / dark). The header background
- * matches `body` (`bg.canvas`) so it does not float as a contrasting
- * stripe in dark mode — the previous CSS-module implementation used
- * `var(--background, #ffffff)` and fell back to white in dark mode,
- * which produced the visual mismatch reported on v0.3.0.
+ * Layout follows Linear's chrome pattern: a hairline separator on the
+ * bottom and an end-justified action row. The rail uses
+ * `container({ size: "content" })` so the header's inner edge aligns
+ * with the page content below — using a wider container here made the
+ * chrome read as a separate band instead of being part of the page.
  *
- * The Discord CTA keeps the brand Blurple (`#5865f2`) because it is a
- * brand colour, not a theme token; the white text uses the
- * `fg.onAccent` semantic token so it stays white in both themes. The
- * CTA is rendered through the project-wide `Button` primitive with
- * `asChild`, which lets the brand-coloured `<a>` inherit the recipe's
- * focus ring, sizing, and a11y attributes without losing the
- * `_hover` Blurple-darken effect.
+ * The separator uses the `border.hairline` semantic token (low-alpha
+ * neutral) instead of `border.subtle` so the chrome recedes into the
+ * canvas even when the sticky header applies backdrop-blur. Previously
+ * the dark-mode hairline (neutral.900) was bright enough to read as a
+ * contrast line against the canvas.
  *
- * See Issue #22 (theme) and Issue #90 (Ark UI adoption).
+ * The home-link mark is the actual server icon (`/ido-bata-icon.jpg`)
+ * rendered as a 32px circular avatar with a hairline border — the
+ * same asset and shape treatment the footer brand block uses, so the
+ * chrome at the top of the page and the brand stamp at the bottom
+ * read as the same mark. The icon is decorative here (the link's
+ * accessible name is "ido-bata トップへ戻る" so screen readers don't
+ * announce the empty alt).
+ *
+ * The Discord CTA keeps Discord Blurple as a brand override because
+ * the brand colour is not part of the theme palette; the white text
+ * and white icon come from `currentColor` flowing through the
+ * inline `DiscordIcon` SVG (so it actually picks up the button's
+ * `accent.fg` token — `<Image src="*.svg">` does not honour
+ * `currentColor`).
+ *
+ * The CTA label is "Discord に参加" rather than "ido-bata に参加":
+ * "ido-bata" is the organisation, not a Discord handle, so framing
+ * it as a joinable user reads wrong. The CTA points at Discord; the
+ * label describes that target.
+ *
+ * See Issue #22 (theme), Issue #90 (Ark UI / Discord icon).
  */
 export function Header() {
   const invite = DISCORD_INVITE;
@@ -34,76 +53,76 @@ export function Header() {
         width: "100%",
         bg: "bg.canvas",
         borderBottom: "1px solid",
-        borderColor: "border",
+        borderColor: "border.hairline",
+        position: "sticky",
+        top: "0",
+        zIndex: "10",
+        backdropFilter: "saturate(180%) blur(8px)",
       })}
     >
       <div
-        className={css({
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          maxWidth: "1100px",
-          margin: "0 auto",
-          padding: "16px 24px",
-          gap: "16px",
-        })}
+        className={cx(
+          container({ size: "content" }),
+          css({
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "4",
+            py: "3",
+          }),
+        )}
       >
         <Link
           href="/"
+          aria-label="ido-bata トップへ戻る"
           className={css({
             display: "inline-flex",
             alignItems: "center",
             gap: "2",
-            color: "fg",
+            color: "fg.DEFAULT",
             textDecoration: "none",
             fontWeight: "semibold",
+            letterSpacing: "-0.01em",
           })}
         >
-          <span
+          <Image
+            src="/ido-bata-icon.jpg"
+            alt=""
+            width={32}
+            height={32}
             className={css({
-              fontSize: "lg",
-              letterSpacing: "-0.01em",
+              width: "8",
+              height: "8",
+              borderRadius: "full",
+              border: "1px solid",
+              borderColor: "border.subtle",
+              flexShrink: 0,
             })}
-          >
-            ido-bata
-          </span>
+          />
+          <span className={css({ fontSize: "md" })}>ido-bata</span>
         </Link>
-        <nav
-          aria-label="Primary"
-          className={css({
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "3",
-          })}
-        >
+
+        <div className={cx(cluster({ justify: "end" }))}>
           <ThemeToggle />
           {invite ? (
             <Button
               asChild
               variant="solid"
-              size="md"
-              // Brand colour override — Discord Blurple is not part of
-              // the theme palette, so we layer the brand colour on top
-              // of the recipe output instead of growing the Button
-              // API. Keeping the override in the consumer makes the
-              // recipe stay focused on token-driven variants.
+              size="sm"
               className={css({
-                background: "#5865f2", // Discord Blurple (brand colour)
+                // Brand colour override — Discord Blurple is not part
+                // of the theme palette, so we layer the brand colour
+                // on top of the recipe output instead of growing the
+                // Button API. The hover state uses the documented
+                // Blurple-darken so the interaction language stays
+                // recognisable.
+                background: "#5865f2",
                 _hover: { background: "#4752c4" },
-                whiteSpace: "nowrap",
               })}
             >
               <a href={invite} target="_blank" rel="noopener noreferrer">
-                <Image
-                  src="/discord.svg"
-                  alt=""
-                  width={20}
-                  height={20}
-                  className={css({ width: "5", height: "5" })}
-                  aria-hidden="true"
-                />
-                <span>ido-bata に参加</span>
+                <DiscordIcon size={16} />
+                <span>Discord に参加</span>
               </a>
             </Button>
           ) : (
@@ -114,32 +133,23 @@ export function Header() {
               className={css({
                 display: "inline-flex",
                 alignItems: "center",
-                justifyContent: "center",
                 gap: "2",
-                height: "10",
-                padding: "0 16px",
+                height: "8",
+                px: "3",
                 borderRadius: "full",
-                fontSize: "sm",
+                fontSize: "xs",
                 fontWeight: "medium",
                 color: "fg.onAccent",
-                background: "rgba(88, 101, 242, 0.4)", // Discord Blurple @ 40% (brand)
-                whiteSpace: "nowrap",
+                background: "rgba(88, 101, 242, 0.4)",
                 cursor: "not-allowed",
                 opacity: 0.6,
               })}
             >
-              <Image
-                src="/discord.svg"
-                alt=""
-                width={20}
-                height={20}
-                className={css({ width: "5", height: "5" })}
-                aria-hidden="true"
-              />
-              <span>ido-bata に参加</span>
+              <DiscordIcon size={14} />
+              <span>Discord に参加</span>
             </span>
           )}
-        </nav>
+        </div>
       </div>
     </header>
   );

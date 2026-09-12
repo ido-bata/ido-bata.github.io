@@ -1,164 +1,74 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { css } from "@/styled-system/css";
+import { cx } from "@/styled-system/css";
+import { container, grid, section, stack } from "@/styles/recipes";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import { rules, type ChannelRule, type RuleSection } from "@/content/rules";
 
 /**
  * /community/rules - サーバルール / ガイドライン
  *
+ * Composes the shared layout recipes (`container content` / `grid` /
+ * `section` / `stack`) so the page-edge alignment matches the home
+ * page. Page-opening band is a left-aligned 12-col split (left rail:
+ * eyebrow → h1 → lede; right rail: page metadata surface) instead of
+ * a centred hero. Section dividers come from the project-wide
+ * `Separator` primitive (Ark UI styled). Reading rhythm stays
+ * comfortable because the inner prose is capped via the
+ * `<Section>` card width inside the long-form sub-flow.
+ *
+ * Page copy lives in `src/content/rules.ts`. UI and data are kept
+ * separate so additions / reordering stay in the data file.
+ *
  * refs:
  *   - Issue #19
- *   - docs/code-of-conduct.md (理念・禁止行為は本規範と整合)
- *   - docs/privacy.md (Discord 側のデータ取り扱いの前提)
- *
- * 実装メモ:
- *   - Panda CSS のトークン (`colors.*`, `spacing.*`, `fontSizes.*`) のみ使用。
- *     生の CSS / CSS Modules は併用しない。
- *   - Header / Footer は `app/layout.tsx` で自動付与されるため本ファイルでは
- *     レンダリングしない。
- *   - ページ文言は `src/content/rules.ts` に集約し、UI とデータを分離する。
+ *   - docs/code-of-conduct.md
+ *   - docs/privacy.md
+ *   - .agents/skills/layout-system
  */
-
 export const metadata: Metadata = {
   title: "サーバルール / ガイドライン | ido-bata",
   description: "ido-bata コミュニティのサーバルール・ガイドライン。",
 };
 
-const styles = {
-  page: css({
-    maxWidth: "768px",
-    mx: "auto",
-    px: { base: "4", md: "6" },
-    py: { base: "8", md: "12" },
-  }),
-  header: css({
-    mb: "10",
-    pb: "6",
-    borderBottom: "1px solid",
-    borderColor: "border",
-  }),
-  eyebrow: css({
-    fontSize: "sm",
-    fontWeight: "medium",
-    color: "fg.muted",
-    letterSpacing: "0.05em",
-    textTransform: "uppercase",
-    mb: "2",
-  }),
-  title: css({
-    fontSize: { base: "3xl", md: "4xl" },
-    fontWeight: "bold",
-    lineHeight: "tight",
-    color: "fg",
-    mb: "3",
-  }),
-  lede: css({
-    fontSize: "md",
-    color: "fg.muted",
-    lineHeight: "relaxed",
-  }),
-  meta: css({
-    mt: "4",
-    fontSize: "xs",
-    color: "fg.subtle",
-  }),
-  section: css({
-    mt: "12",
-  }),
-  sectionTitle: css({
-    fontSize: { base: "xl", md: "2xl" },
-    fontWeight: "semibold",
-    color: "fg",
-    mb: "3",
-    lineHeight: "tight",
-  }),
-  paragraph: css({
-    fontSize: "md",
-    color: "fg",
-    lineHeight: "relaxed",
-    mb: "4",
-  }),
-  list: css({
-    listStyle: "disc",
-    pl: "6",
-    display: "flex",
-    flexDirection: "column",
-    gap: "2",
-    fontSize: "md",
-    color: "fg",
-    lineHeight: "relaxed",
-  }),
-  channelsIntro: css({
-    fontSize: "md",
-    color: "fg.muted",
-    lineHeight: "relaxed",
-    mb: "6",
-  }),
-  channelCard: css({
-    bg: "bg.canvas",
-    border: "1px solid",
-    borderColor: "border",
-    borderRadius: "lg",
-    p: { base: "4", md: "5" },
-    mb: "4",
-  }),
-  channelHeader: css({
-    display: "flex",
-    flexDirection: "column",
-    gap: "1",
-    mb: "3",
-  }),
-  channelName: css({
-    fontFamily: "mono",
-    fontSize: "md",
-    fontWeight: "semibold",
-    color: "accent.DEFAULT",
-  }),
-  channelPurpose: css({
-    fontSize: "sm",
-    color: "fg.muted",
-    lineHeight: "relaxed",
-  }),
-  channelRules: css({
-    listStyle: "circle",
-    pl: "5",
-    display: "flex",
-    flexDirection: "column",
-    gap: "1",
-    fontSize: "sm",
-    color: "fg",
-    lineHeight: "relaxed",
-  }),
-  channelLabel: css({
-    fontSize: "xs",
-    fontWeight: "semibold",
-    color: "fg.subtle",
-    letterSpacing: "0.05em",
-    textTransform: "uppercase",
-    mt: "3",
-    mb: "1",
-  }),
-  backLink: css({
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "1",
-    fontSize: "sm",
-    color: "accent.DEFAULT",
-    mt: "10",
-    pt: "6",
-    borderTop: "1px solid",
-    borderColor: "border",
-    _hover: { textDecoration: "underline" },
-  }),
-};
-
 function Section({ section }: { section: RuleSection }) {
   return (
-    <section id={section.id} className={styles.section}>
-      <h2 className={styles.sectionTitle}>{section.title}</h2>
-      {section.body ? <p className={styles.paragraph}>{section.body}</p> : null}
+    <section id={section.id} className={cx(stack({ gap: 3 }))}>
+      <h2
+        className={css({
+          fontSize: { base: "xl", md: "2xl" },
+          fontWeight: "semibold",
+          color: "fg.DEFAULT",
+          lineHeight: "tight",
+        })}
+      >
+        {section.title}
+      </h2>
+      {section.body ? (
+        <p
+          className={css({
+            fontSize: "md",
+            color: "fg.DEFAULT",
+            lineHeight: "relaxed",
+          })}
+        >
+          {section.body}
+        </p>
+      ) : null}
       {section.bullets && section.bullets.length > 0 ? (
-        <ul className={styles.list}>
+        <ul
+          className={css({
+            listStyle: "disc",
+            pl: "6",
+            display: "flex",
+            flexDirection: "column",
+            gap: "2",
+            fontSize: "md",
+            color: "fg.DEFAULT",
+            lineHeight: "relaxed",
+          })}
+        >
           {section.bullets.map((item) => (
             <li key={item}>{item}</li>
           ))}
@@ -170,13 +80,64 @@ function Section({ section }: { section: RuleSection }) {
 
 function ChannelCard({ channel }: { channel: ChannelRule }) {
   return (
-    <article className={styles.channelCard}>
-      <header className={styles.channelHeader}>
-        <span className={styles.channelName}>{channel.name}</span>
-        <p className={styles.channelPurpose}>{channel.purpose}</p>
+    <article
+      className={cx(
+        css({
+          bg: "bg.canvas",
+          border: "1px solid",
+          borderColor: "border",
+          borderRadius: "lg",
+          p: { base: "4", md: "5" },
+          display: "flex",
+          flexDirection: "column",
+          gap: "3",
+        }),
+      )}
+    >
+      <header className={cx(stack({ gap: 1 }))}>
+        <span
+          className={css({
+            fontFamily: "mono",
+            fontSize: "md",
+            fontWeight: "semibold",
+            color: "accent.DEFAULT",
+          })}
+        >
+          {channel.name}
+        </span>
+        <p
+          className={css({
+            fontSize: "sm",
+            color: "fg.muted",
+            lineHeight: "relaxed",
+          })}
+        >
+          {channel.purpose}
+        </p>
       </header>
-      <p className={styles.channelLabel}>運用ルール</p>
-      <ul className={styles.channelRules}>
+      <p
+        className={css({
+          fontSize: "xs",
+          fontWeight: "semibold",
+          color: "fg.subtle",
+          letterSpacing: "0.05em",
+          textTransform: "uppercase",
+        })}
+      >
+        運用ルール
+      </p>
+      <ul
+        className={css({
+          listStyle: "circle",
+          pl: "5",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1",
+          fontSize: "sm",
+          color: "fg.DEFAULT",
+          lineHeight: "relaxed",
+        })}
+      >
         {channel.rules.map((rule) => (
           <li key={rule}>{rule}</li>
         ))}
@@ -187,35 +148,136 @@ function ChannelCard({ channel }: { channel: ChannelRule }) {
 
 export default function CommunityRulesPage() {
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <p className={styles.eyebrow}>Community</p>
-        <h1 className={styles.title}>サーバルール / ガイドライン</h1>
-        <p className={styles.lede}>
-          本ページは行動規範 (Code of Conduct)
-          と整合する形で段階的に整えていきます。具体的な理念・推奨・禁止行為・チャネル別運用は、オーナーの正本化後に掲載します。
-        </p>
-        <p className={styles.meta}>最終更新日: {rules.lastUpdated}</p>
+    <main className={cx(container({ size: "content" }))}>
+      <Breadcrumb items={[{ href: "/", label: "ホーム" }, { label: "サーバルール" }]} />
+
+      <header className={cx(section({ variant: "flow" }))}>
+        <div className={cx(grid({ cols: 12, gap: 6 }))}>
+          <div className={cx(stack({ gap: 4 }), css({ gridColumn: { base: "1", md: "span 7" } }))}>
+            <p
+              className={css({
+                fontSize: "xs",
+                fontWeight: "medium",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "fg.muted",
+              })}
+            >
+              Community
+            </p>
+            <h1
+              className={css({
+                fontSize: { base: "3xl", md: "4xl" },
+                fontWeight: "bold",
+                lineHeight: "tight",
+                letterSpacing: "-0.02em",
+                color: "fg.DEFAULT",
+              })}
+            >
+              サーバルール / ガイドライン
+            </h1>
+            <p
+              className={css({
+                fontSize: "md",
+                color: "fg.muted",
+                lineHeight: "relaxed",
+                maxW: "48ch",
+              })}
+            >
+              本ページは行動規範 (Code of Conduct)
+              と整合する形で段階的に整えていきます。具体的な理念・推奨・禁止行為・チャネル別運用は、オーナーの正本化後に掲載します。
+            </p>
+          </div>
+
+          <aside
+            aria-label="ページ情報"
+            className={cx(
+              stack({ gap: 3 }),
+              css({
+                gridColumn: { base: "1", md: "span 5" },
+                bg: "bg.subtle",
+                borderRadius: "lg",
+                padding: { base: "5", md: "6" },
+                border: "1px solid",
+                borderColor: "border.subtle",
+                alignSelf: "stretch",
+              }),
+            )}
+          >
+            <p
+              className={css({
+                fontSize: "xs",
+                fontWeight: "medium",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "fg.subtle",
+              })}
+            >
+              ページ情報
+            </p>
+            <dl
+              className={css({
+                display: "grid",
+                gridTemplateColumns: "auto 1fr",
+                columnGap: "4",
+                rowGap: "3",
+                margin: 0,
+                fontSize: "sm",
+              })}
+            >
+              <dt className={css({ color: "fg.muted" })}>最終更新</dt>
+              <dd className={css({ color: "fg.DEFAULT", fontFamily: "mono", margin: 0 })}>
+                {rules.lastUpdated}
+              </dd>
+              <dt className={css({ color: "fg.muted" })}>関連</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>行動規範 / プライバシー</dd>
+            </dl>
+          </aside>
+        </div>
       </header>
 
-      <Section section={rules.philosophy} />
-      <Section section={rules.recommended} />
-      <Section section={rules.prohibited} />
+      <Separator />
 
-      <section id="channels" className={styles.section}>
-        <h2 className={styles.sectionTitle}>チャネル別運用ルール</h2>
-        <p className={styles.channelsIntro}>{rules.channels.intro}</p>
-        {rules.channels.items.map((channel) => (
-          <ChannelCard key={channel.name} channel={channel} />
-        ))}
-      </section>
+      <div className={cx(section({ variant: "flow" }), stack({ gap: 12 }))}>
+        <Section section={rules.philosophy} />
+        <Section section={rules.recommended} />
+        <Section section={rules.prohibited} />
 
-      <Section section={rules.enforcement} />
-      <Section section={rules.meta} />
+        {rules.channels.items.length > 0 ? (
+          <section id="channels" className={cx(stack({ gap: 4 }))}>
+            <h2
+              className={css({
+                fontSize: { base: "xl", md: "2xl" },
+                fontWeight: "semibold",
+                color: "fg.DEFAULT",
+                lineHeight: "tight",
+                letterSpacing: "-0.01em",
+              })}
+            >
+              チャネル別運用ルール
+            </h2>
+            <p
+              className={css({
+                fontSize: "md",
+                color: "fg.muted",
+                lineHeight: "relaxed",
+              })}
+            >
+              {rules.channels.intro}
+            </p>
+            <div className={cx(stack({ gap: 4 }))}>
+              {rules.channels.items.map((channel) => (
+                <ChannelCard key={channel.name} channel={channel} />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-      <Link href="/" className={styles.backLink}>
-        トップへ戻る
-      </Link>
+        <Section section={rules.enforcement} />
+        <Section section={rules.meta} />
+      </div>
+
+      <Separator />
     </main>
   );
 }
