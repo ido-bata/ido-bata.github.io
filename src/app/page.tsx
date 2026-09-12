@@ -109,18 +109,6 @@ export default function Home() {
               <span className={linkHint}>更新情報・告知</span>
             </Link>
           </li>
-          <li>
-            <Link className={linkCard} href="/code-of-conduct">
-              Code of Conduct
-              <span className={linkHint}>行動規範</span>
-            </Link>
-          </li>
-          <li>
-            <Link className={linkCard} href="/privacy">
-              Privacy
-              <span className={linkHint}>プライバシーポリシー</span>
-            </Link>
-          </li>
         </ul>
       </section>
     </main>

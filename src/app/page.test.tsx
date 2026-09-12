@@ -16,7 +16,7 @@ describe("Home page", () => {
 
     // Related links must cover the routes owned by #14/#18/#19/#20/#21
     // (and the docs pages owned by other issues).
-    const links = ["About", "FAQ", "Rules", "Channels", "News", "Code of Conduct", "Privacy"];
+    const links = ["About", "FAQ", "Rules", "Channels", "News"];
     for (const label of links) {
       expect(screen.getByRole("link", { name: new RegExp(label) })).toBeTruthy();
     }
