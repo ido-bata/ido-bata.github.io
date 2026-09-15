@@ -13,6 +13,14 @@
   - ホームの Status 表面から「メンバー 80 名」を削除し、 「サーバ: いど端 (Discord)」に置換。
   - Footer の "since 2026" / "since 2025-03" のように開始年月を断定する表記を削除し、 "Discord community · 井戸端色の実験場" という質的サブタイトルに置換。
   - Home の About セクション / FAQ ページの lede から「準備中」「オーナー正本化後に掲載」placeholder 表現を除去し、 現状を正確に言い表す文に更新。
+- Issue #101: About ページの lede を Discord 観測の質的特徴からオーナー提供の経緯説明を取り込んだ形に再構成。 反映した一次情報:
+  - 「いど端」は samuido のハンドルネームに由来し井戸端会議の語感を持つ名前
+  - 交流より関心領域での情報共有が主目的
+  - welcome メッセージ・入退会儀式は設けず、 入退会の自由・投稿の匿名性を基本とする（参加にあたっての余計な小さなハードを意図的に削る方針）
+  - ひとりごと・wip は反応を求めないチャネルとして用意
+  - チャネルは PDCA のように試行と撤廃で育て、 「褒めない wip」のように役目を終えたものは Legacy へ移す運用
+- Issue #101: Home の About セクション lede と右側 Memo aside を「順次紹介していきます」placeholder 表現から、 About ページが実体を持つことに合わせて整理。
+- Issue #101: Tooling — `bunx skills add rebuildup/project-init` で 14 件の project-local Skills を導入し `skills-lock.json` を更新。 `interaction-discipline` は upstream SKILL.md frontmatter の YAML parse error により skip（次回復旧時に再評価）。
 
 ### Note
 

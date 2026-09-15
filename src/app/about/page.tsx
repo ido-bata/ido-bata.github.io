@@ -68,20 +68,44 @@ export default function AboutPage() {
             >
               ido-bata
             </h1>
-            <p
-              className={css({
-                fontSize: { base: "md", md: "lg" },
-                color: "fg.muted",
-                lineHeight: "relaxed",
-                maxW: "48ch",
-              })}
-            >
-              ido-bata は Discord 上で運営されている、 思いつきベースで形を
-              作ってきたコミュニティです。 ひとりごと channel や PDCA・いど端
-              底力タイムのような、運営の実験で生まれた場が混在しています。
-              公式の welcome メッセージは用意せず、 参加者は映像・プログラミング・
-              デザインなど自分の関心領域で、 自分の言葉で参加する形を取っています。
-            </p>
+            <div className={cx(stack({ gap: 4 }), css({ maxW: "52ch" }))}>
+              <p
+                className={css({
+                  fontSize: { base: "md", md: "lg" },
+                  color: "fg.muted",
+                  lineHeight: "relaxed",
+                })}
+              >
+                「いど端」は井戸端会議の語感を持つ名前で、 オーナーの samuido が
+                Discord 上に作った小さなコミュニティです。 交流そのものより、
+                映像・プログラミング・デザインといった関心領域での情報共有を
+                主な目的に据えています。
+              </p>
+              <p
+                className={css({
+                  fontSize: { base: "md", md: "lg" },
+                  color: "fg.muted",
+                  lineHeight: "relaxed",
+                })}
+              >
+                そのため、参加にあたっての余計な小さなハードは意図的に削っています。
+                公式の welcome メッセージや入退会の儀式は設けず、 入るのも出るのも、
+                投稿を誰が見ているかも、 できるだけ気にしないで済む状態を基本とします。
+                ひとりごとや wip のような反応を求めないチャネルは、
+                まず書き始められるよう用意しています。
+              </p>
+              <p
+                className={css({
+                  fontSize: { base: "md", md: "lg" },
+                  color: "fg.muted",
+                  lineHeight: "relaxed",
+                })}
+              >
+                場やチャネルは PDCA のように試行と撤廃を繰り返して育て、
+                「褒めない wip」のように実験の末に役目を終えたものは Legacy へ
+                移しています。
+              </p>
+            </div>
           </div>
 
           <aside
