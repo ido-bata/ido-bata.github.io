@@ -76,7 +76,9 @@ export default function AboutPage() {
                   lineHeight: "relaxed",
                 })}
               >
-                「いど端」は、 井戸端会議のように、 Discord 上で続く小さなコミュニティです。
+                「いど端」、 井戸端会議の語感だけ持つ Discord サーバーです。
+                交流そのものより、 関心のある領域について調べて書ける、
+                そういう情報共有の場として運営しています。
               </p>
               <p
                 className={css({
@@ -86,19 +88,8 @@ export default function AboutPage() {
                 })}
               >
                 誰かが来たことは分かりません。 ウェルカムも入会の儀式もなく、
-                関心のあることを書いて、 気が向けば去る。
-                「ひとりごと」「wip」のように、 反応より書くことを優先する
-                場所もいくつか用意しています。
-              </p>
-              <p
-                className={css({
-                  fontSize: { base: "md", md: "lg" },
-                  color: "fg.muted",
-                  lineHeight: "relaxed",
-                })}
-              >
-                交流より関心領域の情報共有を主な目的とし、 場やチャネルは PDCA で
-                育て、 合わなかったものは Legacy に移しています。
+                関心のあることを書いて、 気が向けば去る。 「ひとりごと」「wip」のように、
+                反応より書くことを優先する場所もいくつか用意しています。
               </p>
             </div>
           </div>
