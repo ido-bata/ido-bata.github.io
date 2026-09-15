@@ -15,10 +15,11 @@
   - Home の About セクション / FAQ ページの lede から「準備中」「オーナー正本化後に掲載」placeholder 表現を除去し、 現状を正確に言い表す文に更新。
 - Issue #101: About ページの lede を Discord 観測の質的特徴からオーナー提供の経緯説明を取り込んだ形に再構成。 反映した一次情報:
   - 「いど端」は交流のコミュニティではなく情報共有の Discord サーバー（実利サーバーとしての性格）
-  - 名前は井戸端会議の響きだけもらったもので、 場としては交流の場ではない
+  - 名前は井戸端会議の響きだけ借りたもので、 場としては交流の場ではない
   - welcome メッセージ・入退会儀式は設けず、 入退会の自由・投稿の匿名性を基本とする
-  - ひとりごと・wip は反応より書くことを優先する場所として用意
-- Issue #101: Home の About セクション lede と右側 Memo aside を「順次紹介していきます」placeholder 表現から、 About ページが実体を持つことに合わせて整理。
+  - ひとりごと・wip は反応より書くことを優先するチャネル
+  - 想定読者は新規参加者ではなくサーバーメンバー中心のため、 説明口調を operator の内輪向けポジション表明に絞る
+- Issue #101: Home の About セクション lede と Memo aside を短く再構成。「本サイト」を避け「ここは」に統一。
 - Issue #101: Tooling — `bunx skills add rebuildup/project-init` で 14 件の project-local Skills を導入し `skills-lock.json` を更新。 `interaction-discipline` は upstream SKILL.md frontmatter の YAML parse error により skip（次回復旧時に再評価）。
 
 ### Note

@@ -189,8 +189,7 @@ export default function Home() {
                 lineHeight: "relaxed",
               })}
             >
-              コミュニティの紹介は About ページに集約しています。
-              食い違いがあれば Discord サーバ側を優先します。
+              About ページに集約。 食い違いがあれば Discord サーバ側を優先。
             </p>
             <div>
               <Link
@@ -243,7 +242,7 @@ export default function Home() {
                 color: "fg.DEFAULT",
               })}
             >
-              理念と運営の正本は Discord サーバ側にあります。 本サイトは要約だけを載せています。
+              理念と運営の正本は Discord サーバ側。 ここは要約だけ。
             </p>
           </aside>
         </div>
