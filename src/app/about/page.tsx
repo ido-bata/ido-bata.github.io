@@ -76,9 +76,8 @@ export default function AboutPage() {
                   lineHeight: "relaxed",
                 })}
               >
-                「いど端」、 井戸端会議の語感だけ持つ Discord サーバーです。
-                交流そのものより、 関心のある領域について調べて書ける、
-                そういう情報共有の場として運営しています。
+                「いど端」という Discord サーバーです。 交流より、 関心のある領域について
+                調べて書ける、 そういう情報共有の場です。
               </p>
               <p
                 className={css({
