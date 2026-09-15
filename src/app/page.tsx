@@ -189,9 +189,8 @@ export default function Home() {
                 lineHeight: "relaxed",
               })}
             >
-              コミュニティ紹介・理念・運営体制は About ページに掲載しています。
-              Discord サーバ側で先に共有された内容は一次情報とし、 本サイトはそれを
-              整理・要約する形で反映します。
+              コミュニティの紹介は About ページに集約しています。
+              食い違いがあれば Discord サーバ側を優先します。
             </p>
             <div>
               <Link
@@ -244,9 +243,7 @@ export default function Home() {
                 color: "fg.DEFAULT",
               })}
             >
-              Discord
-              サーバ側で先に共有された理念・運営上の経緯が一次情報で、本サイトはそれを整理・要約する形で反映します。
-              食い違いが生じた場合は Discord 側の投稿を優先します。
+              理念と運営の正本は Discord サーバ側にあります。 本サイトは要約だけを載せています。
             </p>
           </aside>
         </div>
