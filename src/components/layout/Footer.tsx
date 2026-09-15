@@ -98,7 +98,7 @@ export function Footer() {
                     fontFamily: "mono",
                   })}
                 >
-                  Discord community · since 2026
+                  Discord community · since 2025-03
                 </span>
               </div>
             </div>

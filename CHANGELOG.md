@@ -4,6 +4,20 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Issue #101: Discord サーバの実情報（ido-bata-server-bot で 2026-09-16 取得）に基づき、 以下の placeholder を正規化:
+  - `src/content/channels.ts` を 12 カテゴリ・52 チャネル構成で実装（`#moderator-only` は非公開のため除外）
+  - ホームの Status 表面にサーバ実情報（メンバー数 80 名）を反映
+  - Footer の "since 2026" を 実在招待の最古 `created_at` (`2025-03-24`) に基づく "since 2025-03" に修正
+  - About ページの lede を「準備中」から、 行動規範に整合する方針（実利重視・情報共有主体・自由参加脱退）と実メンバー数に更新
+  - `/channels` ページの metadata を実在チャネル数 (52) ・実在カテゴリ数 (12) に更新
+
+### Note
+
+- Discord 招待の fetch / API 統合は build-time / runtime には持ち込まない。 `.tmp/fetch-discord-snapshot.ts` と `.tmp/discord-snapshot.json` は git 管理外。
+- 理念文 / 推奨行為 / 禁止行為 / チャネル別運用ルールなどオーナー正本化が必要な項目は引き続き placeholder のまま。
+
 ## [0.3.0] - 2026-09-13
 
 見た目 + 配信基盤 sprint。Discord コミュニティの公式 portal として、ページ骨格・テーマ・配信パイプライン・デザインシステムを整備する。ページ文言・告知・FAQ などの具体コンテンツは次 sprint 以降でオーナー正本化後に投入する。

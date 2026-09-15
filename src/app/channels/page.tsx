@@ -85,7 +85,8 @@ export default function ChannelsPage() {
                 color: "fg.muted",
               })}
             >
-              チャネル一覧は準備中です。実在のチャネル構成は Discord サーバ側で参照できます。
+              Discord サーバの主要カテゴリ・チャネル構成です。モデレーター専用チャネル
+              （`#moderator-only`）は除外しています。並び順はサーバ表示順に基づきます。
             </p>
             {invite ? (
               <div className={cx(cluster({ gap: 3 }))}>
@@ -144,7 +145,7 @@ export default function ChannelsPage() {
               <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>{CHANNELS.length}</dd>
               <dt className={css({ color: "fg.muted" })}>最終更新</dt>
               <dd className={css({ color: "fg.DEFAULT", fontFamily: "mono", margin: 0 })}>
-                2026-09-13
+                2026-09-16
               </dd>
             </dl>
           </aside>
