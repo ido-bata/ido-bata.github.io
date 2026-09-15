@@ -357,6 +357,6 @@ const RELATED_LINKS = [
 
 const STATUS_ITEMS = [
   { label: "リリース", value: "v0.4.0 (next)" },
-  { label: "メンバー", value: "80 名" },
+  { label: "サーバ", value: "いど端 (Discord)" },
   { label: "最終更新", value: "2026-09-16" },
 ] as const;

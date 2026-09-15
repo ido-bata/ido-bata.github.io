@@ -7,18 +7,19 @@
 ### Changed
 
 - Issue #101: Discord サーバの実情報（ido-bata-server-bot で 2026-09-16 取得）に基づき、 以下の placeholder を正規化:
-  - `src/content/channels.ts` を 12 カテゴリ・52 チャネル構成で実装（`#moderator-only` は非公開のため除外）
-  - ホームの Status 表面にサーバ実情報（メンバー数 80 名）を反映
-  - Footer の "since 2026" を 実在招待の最古 `created_at` (`2025-03-24`) に基づく "since 2025-03" に修正
-  - About ページの lede を「準備中」から Discord サーバの実情報（80 名・11 カテゴリ・59 チャネル）に更新
-  - `/channels` ページの metadata を実在チャネル数 (52) ・実在カテゴリ数 (12) に更新
-  - Home の About セクション / FAQ ページの lede から「準備中」「オーナー正本化後に掲載」placeholder 表現を除去し、 現状を正確に言い表す文に更新
+  - `src/content/channels.ts` を 12 カテゴリ・52 チャネル構成で実装（`#moderator-only` は非公開のため除外）。 各チャネル description は Discord `topic` を一次情報とし、 未設定のものは空のまま据え置いた（推測で purpose を捏造しない）。
+  - `/channels` ページの lede に snapshot である旨を明示。 右側の metadata も「カテゴリ (snapshot)」「チャネル (snapshot)」「取得日時」と再ラベル。
+  - About ページの lede を「準備中」から、 Discord サーバ観測に基づく質的な特徴（ひとりこと channel の存在 / 公式 welcome メッセージなし / PDCA・いど端底力タイム の実験感 / 自分の関心領域で自分の言葉で参加する文化）に更新。 メンバー数・カテゴリ数・チャネル数などの snapshot 値は変動するため記述しない方針。
+  - ホームの Status 表面から「メンバー 80 名」を削除し、 「サーバ: いど端 (Discord)」に置換。
+  - Footer の "since 2026" / "since 2025-03" のように開始年月を断定する表記を削除し、 "Discord community · 井戸端色の実験場" という質的サブタイトルに置換。
+  - Home の About セクション / FAQ ページの lede から「準備中」「オーナー正本化後に掲載」placeholder 表現を除去し、 現状を正確に言い表す文に更新。
 
 ### Note
 
-- Discord 招待の fetch / API 統合は build-time / runtime には持ち込まない。 `.tmp/fetch-discord-snapshot.ts` と `.tmp/discord-snapshot.json` は git 管理外。
+- Discord 招待の fetch / API 統合は build-time / runtime には持ち込まない。 `.tmp/fetch-discord-snapshot.ts` / `.tmp/discord-snapshot.json` / `.tmp/discord-atmosphere.json` / `.tmp/fetch-discord-messages.ts` は git 管理外。
+- メンバー数・カテゴリ数・チャネル数・活動時期のような数値・日付は変動するため、 サイトの事実記述には使わない方針（snapshot が必要な場合は channels.ts 経由かつ `取得日時` ラベル付きで提示）。
 - `src/content/rules.ts` の philosophy / recommended / prohibited / channels.items / enforcement セクションは Discord サーバ上で公開されている実ルールのみを採用する方針のため、 本 Issue では更新していない（オーナーの Discord サーバ上の正本化待ち）。
-- `src/content/news.ts` / `src/content/faq.ts` の具体エントリ（告知・Q&A）もオーナーの事実確定待ち。 該当ページは空状態（"現在、掲載中の X はありません" 系）を維持。
+- `src/content/news.ts` / `src/content/faq.ts` の具体エントリ（告知・Q&A）もオーナーの確定待ち。 該当ページは空状態（"現在、掲載中の X はありません" 系）を維持。
 
 ## [0.3.0] - 2026-09-13
 

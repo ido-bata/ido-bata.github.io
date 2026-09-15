@@ -98,7 +98,7 @@ export function Footer() {
                     fontFamily: "mono",
                   })}
                 >
-                  Discord community · since 2025-03
+                  Discord community · 井戸端色の実験場
                 </span>
               </div>
             </div>
