@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+### Added
+
+- Issue #103: 新規 `/welcome` ページを追加。 newcomer 向け guidance で Discord 招待 CTA を prominent に配置、 「参加前に」 aside に文化的デフォルト (welcome 無し / 匿名 / ひとりごと wip / 各自で共有) を集約。 関連ページ (`/channels` `/community/rules` `/about` `/faq`) への導線を併設。
+
+### Changed
+
+- Issue #103: サイト全体を「紹介ページ」から「utility-first navigator」に再構成:
+  - Home を utility-first に書き換え。 Hero は機能訴求 (`関心領域を各自で調べて書く、共有と下書きの場。` + 3 actions: Discord / Channels / Welcome) に変更し、 旧 Hero / About-section / 関連リンク cards を削除。 右側に Server 概要カード (名前 / プラットフォーム / カテゴリ数 / チャネル数) を配置。
+  - Home に Channels index (12 カテゴリ / 52 チャネル) を inline 展開 — 各カテゴリに channel count + 先頭 3 チャネルを preview 表示、 詳細は `/channels` へ。
+  - Home に News / Rules の empty-state カードを併設し、 `/news` `/community/rules` ページへ deep link。 コンテンツ充填後の表示置換は別 Issue で扱う。
+  - Memo aside を「理念と運営の正本は Discord サーバ側。 ここはインデックスだけ。」の 1 行に整理。
+  - `/about` の metadata.description を `いど端 Discord サーバーの運営スタンス・経緯のリファレンス。` に更新。 h1 / 本文は server-member 向け operator-voice のまま。
+  - Footer の SITE_LINKS を再構成し `/welcome` を先頭に追加 (Welcome / Channels / News / Rules / FAQ / About)。 brand 説明文を portal 表現から utility-first 表現に差し替え。
+  - Home の単体テストを新 IA に合わせて更新 (`/channels` への deep link / News・Rules h2 / 3 primary actions の存在確認)。
+
 ## [0.3.0] - 2026-09-13
 
 見た目 + 配信基盤 sprint。Discord コミュニティの公式 portal として、ページ骨格・テーマ・配信パイプライン・デザインシステムを整備する。ページ文言・告知・FAQ などの具体コンテンツは次 sprint 以降でオーナー正本化後に投入する。

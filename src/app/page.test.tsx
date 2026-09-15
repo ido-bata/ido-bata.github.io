@@ -3,23 +3,27 @@ import { render, screen } from "@testing-library/react";
 import Home from "./page";
 
 describe("Home page", () => {
-  it("renders the ido-bata portal landing with hero, about, and key links", () => {
+  it("renders the utility-first navigator: functional hero, channels index, secondary surfaces", () => {
     render(<Home />);
 
-    // Hero h1 carries the brand tagline. "ido-bata" itself appears in
-    // the eyebrow + link rail — keep the assertion on the heading.
+    // Page-opening hero carries the functional headline.
     expect(screen.getByRole("heading", { level: 1 })).toBeTruthy();
 
-    // Section headings expose the page's information architecture.
-    expect(screen.getByRole("heading", { level: 2, name: /何を大切にする場所か/ })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: /関連リンク/ })).toBeTruthy();
+    // Primary utility surface: the channels index on home.
+    expect(screen.getByRole("heading", { level: 2, name: /チャネル/ })).toBeTruthy();
 
-    // Related links must cover the routes owned by #14/#18/#19/#20/#21
-    // (and the docs pages owned by other issues). Each label may now
-    // appear more than once (footer nav + in-page card / CTA), so use
-    // `getAllByRole` and assert at least one matching link exists.
-    const links = ["About", "FAQ", "Rules", "Channels", "News"];
-    for (const label of links) {
+    // Secondary utility surfaces: News + Rules empty-state cards.
+    expect(screen.getByRole("heading", { level: 2, name: /最新の動き/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: /ルール・ガイドライン/ })).toBeTruthy();
+
+    // Primary actions / navigations exposed by the utility-first hero.
+    // Each label may now appear more than once (footer nav + in-page
+    // button / CTA), so use `getAllByRole` and assert at least one
+    // matching link exists. "Discord に参加" is intentionally omitted
+    // here because its presence depends on `NEXT_PUBLIC_DISCORD_INVITE`
+    // — see the env-conditional test below.
+    const labels = ["チャネルを見る", "初めての方へ", "チャネル一覧ページへ"];
+    for (const label of labels) {
       const matches = screen.getAllByRole("link", { name: new RegExp(label) });
       expect(matches.length).toBeGreaterThanOrEqual(1);
     }

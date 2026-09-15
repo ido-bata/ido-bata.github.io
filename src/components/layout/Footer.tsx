@@ -110,8 +110,8 @@ export function Footer() {
                 maxW: "44ch",
               })}
             >
-              井戸端会議のように気軽に話せる Discord
-              コミュニティ。本サイトは、その活動内容・ルール・最新情報をひとつの場所にまとめるためのポータルです。
+              Discord 上で動いてるサーバーのインデックス。 サーバーメンバー向けに、
+              チャネル・告知・ルールを 1 か所に集約。
             </p>
             {invite ? (
               <div className={cx(cluster({ gap: 2 }))}>
@@ -257,10 +257,12 @@ function FooterNavEntry({ entry }: { entry: FooterEntry }) {
 }
 
 const SITE_LINKS: ReadonlyArray<FooterLink> = [
-  { href: "/about", label: "About", icon: "info" },
-  { href: "/news", label: "News", icon: "campaign" },
+  { href: "/welcome", label: "初めての方へ", icon: "waving_hand" },
   { href: "/channels", label: "Channels", icon: "tag" },
+  { href: "/news", label: "News", icon: "campaign" },
+  { href: "/community/rules", label: "Rules", icon: "gavel" },
   { href: "/faq", label: "FAQ", icon: "help" },
+  { href: "/about", label: "About", icon: "info" },
 ];
 
 const COMMUNITY_ENTRIES: ReadonlyArray<FooterEntry> = [

@@ -4,36 +4,50 @@ import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Button } from "@/components/ui/button";
 import { DiscordIcon } from "@/components/ui/DiscordIcon";
 import { DISCORD_INVITE } from "@/lib/env";
+import { CHANNELS, CHANNEL_CATEGORIES } from "@/content/channels";
 
 /**
- * Landing page for the ido-bata organization.
+ * Home page — utility-first navigator.
+ *
+ * Audience is the server member (most accesses come from current
+ * members), with first-time visitors an important secondary audience.
+ * The page is structured as an at-a-glance index of the things this
+ * site actually lets you reach, not a pitch / "what is this community"
+ * landing.
  *
  * Layout follows the project's "left-aligned grid composition"
- * principle — the design system prefers deliberate asymmetric grid
- * alignment over centred hero bands:
+ * principle — the page-opening band uses the shared 12-col grid (left
+ * rail with the functional hero, right rail with a server-context
+ * card) instead of a centred hero. Below the fold:
+ *   - Channels index (primary utility surface, inline from
+ *     `src/content/channels.ts`) — categories as compact rows with
+ *     channel counts and a 3-channel preview; full detail lives at
+ *     /channels
+ *   - News / Rules empty-state surfaces (placeholder until content
+ *     fills in)
+ *   - Memo line: "正本は Discord サーバ側" stays as a single short
+ *     line so the navigator doesn't pretend to be canonical
  *
- *   - a 12-col page-opening band: left rail (eyebrow → headline →
- *     lede → buttons) plus right rail (Status surface), so the hero
- *     participates in the shared coordinate system instead of
- *     floating dead-centre on the canvas
- *   - a balanced 3-up link grid (Linear-style cards) on the same
- *     12-col rhythm
+ * The "初めての方へ" entry point lives in the page-opening band
+ * itself, not as a separate home section. About does not have a home
+ * section — /about is the operator-voice reference for server members,
+ * not a recruitment page.
  *
- * Composes the shared `container` / `section` / `stack` / `grid` /
- * `cluster` recipes so the page participates in the grid system
- * defined in `.agents/skills/layout-system/`.
- *
- * Refs: Issue #8, .agents/skills/layout-system
+ * Refs: Issue #103, .agents/skills/layout-system
  */
 export default function Home() {
   const invite = DISCORD_INVITE;
 
+  const grouped = CHANNEL_CATEGORIES.map((category) => ({
+    category,
+    channels: CHANNELS.filter((channel) => channel.category === category),
+  }));
+
   return (
     <main className={cx(container({ size: "content" }))}>
-      {/* ───── Page-opening band (left copy + right status) ───── */}
+      {/* ───── Page-opening band (functional hero + server-context rail) ───── */}
       <section aria-labelledby="hero-heading" className={cx(section({ variant: "flow" }))}>
         <div className={cx(grid({ cols: 12, gap: 6 }))}>
-          {/* Left rail — copy + actions */}
           <div className={cx(stack({ gap: 5 }), css({ gridColumn: { base: "1", md: "span 7" } }))}>
             <p
               className={css({
@@ -44,20 +58,20 @@ export default function Home() {
                 color: "fg.muted",
               })}
             >
-              Community Portal
+              いど端
             </p>
             <h1
               id="hero-heading"
               className={css({
-                fontSize: { base: "4xl", md: "5xl" },
+                fontSize: { base: "3xl", md: "4xl" },
                 fontWeight: "bold",
                 lineHeight: "tight",
-                letterSpacing: "-0.03em",
+                letterSpacing: "-0.02em",
                 color: "fg.DEFAULT",
-                maxW: "16ch",
+                maxW: "18ch",
               })}
             >
-              井戸端会議のための、居場所。
+              関心領域を各自で調べて書く、共有と下書きの場。
             </h1>
             <p
               className={css({
@@ -67,28 +81,28 @@ export default function Home() {
                 maxW: "44ch",
               })}
             >
-              ido-bata は Discord
-              上で動くコミュニティです。本サイトは、その活動内容・ルール・最新の動きを
-              ひとつの場所にまとめるためのポータルとして運営されています。
+              Discord で動いてるサーバーのインデックス。 チャネル・告知・ルールを 1 か所に集約。
             </p>
             <div className={cx(cluster({ gap: 3 }))}>
               {invite ? (
                 <Button asChild variant="solid" size="lg">
                   <a href={invite} target="_blank" rel="noopener noreferrer">
                     <DiscordIcon size={18} />
-                    <span>Discord サーバに参加</span>
+                    <span>Discord に参加</span>
                   </a>
                 </Button>
               ) : null}
               <Button asChild variant="outline" size="lg">
-                <Link href="/about">ido-bata について</Link>
+                <Link href="/channels">チャネルを見る</Link>
+              </Button>
+              <Button asChild variant="ghost" size="lg">
+                <Link href="/welcome">初めての方へ</Link>
               </Button>
             </div>
           </div>
 
-          {/* Right rail — Status surface */}
           <aside
-            aria-label="ステータス"
+            aria-label="サーバーの概要"
             className={cx(
               stack({ gap: 3 }),
               css({
@@ -111,148 +125,37 @@ export default function Home() {
                 color: "fg.subtle",
               })}
             >
-              Status
+              Server
             </p>
-            <ul
+            <dl
               className={css({
-                display: "flex",
-                flexDirection: "column",
-                gap: "3",
-                listStyle: "none",
+                display: "grid",
+                gridTemplateColumns: "auto 1fr",
+                columnGap: "4",
+                rowGap: "3",
                 margin: 0,
-                padding: 0,
+                fontSize: "sm",
               })}
             >
-              {STATUS_ITEMS.map((item) => (
-                <li
-                  key={item.label}
-                  className={css({
-                    display: "flex",
-                    alignItems: "baseline",
-                    justifyContent: "space-between",
-                    gap: "3",
-                    borderBottom: "1px solid",
-                    borderColor: "border.subtle",
-                    paddingBottom: "2",
-                    _last: { borderBottom: "none", paddingBottom: 0 },
-                  })}
-                >
-                  <span className={css({ fontSize: "sm", color: "fg.DEFAULT" })}>{item.label}</span>
-                  <span
-                    className={css({
-                      fontSize: "xs",
-                      color: "fg.muted",
-                      fontFamily: "mono",
-                      whiteSpace: "nowrap",
-                    })}
-                  >
-                    {item.value}
-                  </span>
-                </li>
-              ))}
-            </ul>
+              <dt className={css({ color: "fg.muted" })}>名前</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>いど端 (ido-bata)</dd>
+              <dt className={css({ color: "fg.muted" })}>プラットフォーム</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>Discord</dd>
+              <dt className={css({ color: "fg.muted" })}>カテゴリ</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0, fontFamily: "mono" })}>
+                {CHANNEL_CATEGORIES.length}
+              </dd>
+              <dt className={css({ color: "fg.muted" })}>チャネル</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0, fontFamily: "mono" })}>
+                {CHANNELS.length}
+              </dd>
+            </dl>
           </aside>
         </div>
       </section>
 
-      {/* ───── About (split section — left copy, right surface) ───── */}
-      <section aria-labelledby="about-heading" className={cx(section({ variant: "flow" }))}>
-        <div className={cx(grid({ cols: 12, gap: 4 }))}>
-          <div className={cx(stack({ gap: 3 }), css({ gridColumn: { base: "1", md: "span 5" } }))}>
-            <p
-              className={css({
-                fontSize: "xs",
-                fontWeight: "medium",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "fg.muted",
-              })}
-            >
-              About
-            </p>
-            <h2
-              id="about-heading"
-              className={css({
-                fontSize: { base: "2xl", md: "3xl" },
-                fontWeight: "semibold",
-                lineHeight: "tight",
-                letterSpacing: "-0.02em",
-                color: "fg.DEFAULT",
-              })}
-            >
-              何を大切にする場所か
-            </h2>
-            <p
-              className={css({
-                fontSize: "md",
-                color: "fg.muted",
-                lineHeight: "relaxed",
-              })}
-            >
-              コミュニティ紹介・理念・運営体制などの詳細は準備中です。Discord
-              サーバ側で先行して共有している内容と、本ページの公開内容は順次整合させていきます。
-            </p>
-            <div>
-              <Link
-                href="/about"
-                className={css({
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "1",
-                  fontSize: "sm",
-                  fontWeight: "medium",
-                  color: "accent.DEFAULT",
-                  textDecoration: "none",
-                  _hover: { textDecoration: "underline" },
-                })}
-              >
-                About ページを読む →
-              </Link>
-            </div>
-          </div>
-          <aside
-            aria-label="コミュニティの運営メモ"
-            className={cx(
-              stack({ gap: 3 }),
-              css({
-                gridColumn: { base: "1", md: "span 7" },
-                bg: "bg.subtle",
-                borderRadius: "lg",
-                padding: { base: "5", md: "6" },
-                border: "1px solid",
-                borderColor: "border.subtle",
-                alignSelf: "stretch",
-              }),
-            )}
-          >
-            <p
-              className={css({
-                fontSize: "xs",
-                fontWeight: "medium",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "fg.subtle",
-              })}
-            >
-              Memo
-            </p>
-            <p
-              className={css({
-                fontSize: "md",
-                lineHeight: "relaxed",
-                color: "fg.DEFAULT",
-              })}
-            >
-              サーバの理念・運営体制・更新フローは順次このページに反映していきます。 Discord
-              サーバ側で先に共有された内容と本ページの公開内容が食い違う場合は、 Discord
-              側の投稿を一次情報として扱います。
-            </p>
-          </aside>
-        </div>
-      </section>
-
-      {/* ───── Related links (balanced 3-up grid) ───── */}
-      <section aria-labelledby="links-heading" className={cx(section({ variant: "flow" }))}>
+      {/* ───── Channels index (primary utility surface) ───── */}
+      <section aria-labelledby="channels-heading" className={cx(section({ variant: "flow" }))}>
         <div
           className={cx(
             cluster({ justify: "between" }),
@@ -260,103 +163,205 @@ export default function Home() {
           )}
         >
           <h2
-            id="links-heading"
+            id="channels-heading"
             className={css({
-              fontSize: { base: "2xl", md: "3xl" },
+              fontSize: { base: "xl", md: "2xl" },
               fontWeight: "semibold",
-              lineHeight: "tight",
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.01em",
               color: "fg.DEFAULT",
             })}
           >
-            関連リンク
+            チャネル
           </h2>
-          <p
+          <Link
+            href="/channels"
             className={css({
-              fontSize: "xs",
+              fontSize: "sm",
               fontWeight: "medium",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "fg.muted",
+              color: "accent.DEFAULT",
+              textDecoration: "none",
+              _hover: { textDecoration: "underline" },
             })}
           >
-            Explore
-          </p>
+            チャネル一覧ページへ →
+          </Link>
         </div>
-
         <ul
           className={cx(
-            grid({ cols: 3, gap: 4 }),
+            grid({ cols: 3, gap: 3 }),
             css({ listStyle: "none", margin: 0, padding: 0 }),
           )}
         >
-          {RELATED_LINKS.map((link) => (
-            <li key={link.href}>
-              <Link
-                className={css({
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "2",
-                  p: "5",
-                  borderRadius: "lg",
-                  border: "1px solid",
-                  borderColor: "border",
-                  bg: "bg.canvas",
-                  color: "fg.DEFAULT",
-                  height: "100%",
-                  textDecoration: "none",
-                  _motionSafe: {
-                    transitionProperty: "background-color, border-color, transform",
-                    transitionDuration: "150ms",
-                  },
-                  _hover: { bg: "bg.subtle", borderColor: "border.strong" },
-                  _focusVisible: {
-                    outlineWidth: "2px",
-                    outlineStyle: "solid",
-                    outlineColor: "accent",
-                    outlineOffset: "2px",
-                  },
-                })}
-                href={link.href}
+          {grouped.map(({ category, channels }) =>
+            channels.length === 0 ? null : (
+              <li
+                key={category}
+                className={cx(
+                  stack({ gap: 2 }),
+                  css({
+                    p: "4",
+                    borderRadius: "lg",
+                    border: "1px solid",
+                    borderColor: "border",
+                    bg: "bg.canvas",
+                  }),
+                )}
               >
-                <span
+                <div className={cx(cluster({ justify: "between" }))}>
+                  <span
+                    className={css({
+                      fontSize: "md",
+                      fontWeight: "semibold",
+                      color: "fg.DEFAULT",
+                      letterSpacing: "-0.01em",
+                    })}
+                  >
+                    {category}
+                  </span>
+                  <span
+                    className={css({
+                      fontSize: "xs",
+                      color: "fg.subtle",
+                      fontFamily: "mono",
+                    })}
+                  >
+                    {channels.length}
+                  </span>
+                </div>
+                <p
                   className={css({
-                    fontSize: "md",
-                    fontWeight: "semibold",
-                    letterSpacing: "-0.01em",
-                  })}
-                >
-                  {link.label}
-                </span>
-                <span
-                  className={css({
-                    fontSize: "sm",
-                    fontWeight: "normal",
+                    fontSize: "xs",
                     color: "fg.muted",
+                    fontFamily: "mono",
                     lineHeight: "relaxed",
                   })}
                 >
-                  {link.hint}
-                </span>
-              </Link>
-            </li>
-          ))}
+                  {channels
+                    .slice(0, 3)
+                    .map((c) => `#${c.name}`)
+                    .join("  /  ")}
+                  {channels.length > 3 ? "  …" : ""}
+                </p>
+              </li>
+            ),
+          )}
         </ul>
+      </section>
+
+      {/* ───── News / Rules (empty-state utility surfaces) ───── */}
+      <section aria-label="最新の動きとルール" className={cx(section({ variant: "flow" }))}>
+        <div className={cx(grid({ cols: 12, gap: 4 }))}>
+          <div
+            className={cx(
+              stack({ gap: 3 }),
+              css({
+                gridColumn: { base: "1", md: "span 6" },
+                p: "5",
+                borderRadius: "lg",
+                border: "1px solid",
+                borderColor: "border",
+                bg: "bg.subtle",
+              }),
+            )}
+          >
+            <div className={cx(cluster({ justify: "between" }))}>
+              <h2
+                className={css({
+                  fontSize: "xl",
+                  fontWeight: "semibold",
+                  color: "fg.DEFAULT",
+                  letterSpacing: "-0.01em",
+                })}
+              >
+                最新の動き
+              </h2>
+              <Link
+                href="/news"
+                className={css({
+                  fontSize: "sm",
+                  fontWeight: "medium",
+                  color: "accent.DEFAULT",
+                  textDecoration: "none",
+                  _hover: { textDecoration: "underline" },
+                })}
+              >
+                News →
+              </Link>
+            </div>
+            <p
+              className={css({
+                fontSize: "sm",
+                color: "fg.muted",
+                lineHeight: "relaxed",
+              })}
+            >
+              現在、掲載中の告知はありません。 動きがあれば Discord サーバ側にも投稿します。
+            </p>
+          </div>
+          <div
+            className={cx(
+              stack({ gap: 3 }),
+              css({
+                gridColumn: { base: "1", md: "span 6" },
+                p: "5",
+                borderRadius: "lg",
+                border: "1px solid",
+                borderColor: "border",
+                bg: "bg.subtle",
+              }),
+            )}
+          >
+            <div className={cx(cluster({ justify: "between" }))}>
+              <h2
+                className={css({
+                  fontSize: "xl",
+                  fontWeight: "semibold",
+                  color: "fg.DEFAULT",
+                  letterSpacing: "-0.01em",
+                })}
+              >
+                ルール・ガイドライン
+              </h2>
+              <Link
+                href="/community/rules"
+                className={css({
+                  fontSize: "sm",
+                  fontWeight: "medium",
+                  color: "accent.DEFAULT",
+                  textDecoration: "none",
+                  _hover: { textDecoration: "underline" },
+                })}
+              >
+                Rules →
+              </Link>
+            </div>
+            <p
+              className={css({
+                fontSize: "sm",
+                color: "fg.muted",
+                lineHeight: "relaxed",
+              })}
+            >
+              推奨・禁止・チャネル別運用方針はサーバルールページに掲載します。
+              現時点で確定済みの項目はありません。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ───── Memo (正本は Discord サーバ側) ───── */}
+      <section aria-label="正本について" className={cx(section({ variant: "flow" }))}>
+        <p
+          className={css({
+            fontSize: "sm",
+            color: "fg.subtle",
+            lineHeight: "relaxed",
+            maxW: "60ch",
+          })}
+        >
+          理念と運営の正本は Discord サーバ側。 ここはインデックスだけ。
+        </p>
       </section>
     </main>
   );
 }
-
-const RELATED_LINKS = [
-  { href: "/about", label: "About", hint: "コミュニティ紹介" },
-  { href: "/faq", label: "FAQ", hint: "よくある質問" },
-  { href: "/community/rules", label: "Rules", hint: "サーバルールと利用ガイド" },
-  { href: "/channels", label: "Channels", hint: "チャネル構成" },
-  { href: "/news", label: "News", hint: "更新情報・告知" },
-] as const;
-
-const STATUS_ITEMS = [
-  { label: "リリース", value: "v0.3.0" },
-  { label: "お知らせ", value: "近日掲載" },
-  { label: "最終更新", value: "2026-09-13" },
-] as const;

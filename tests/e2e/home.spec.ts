@@ -14,24 +14,25 @@ import { test, expect } from "@playwright/test";
  * To point at an already-running preview / deployed build instead:
  *   PLAYWRIGHT_BASE_URL=https://ido-bata.github.io bun run test:e2e
  *
- * The home page (`src/app/page.tsx`) was replaced as part of Issue #8;
- * these assertions reflect the ido-bata portal content (Issue #8 / Issue #15).
+ * The home page (`src/app/page.tsx`) was rewritten as a utility-first
+ * navigator in Issue #103 — these assertions target the surfaces that
+ * are stable across the IA (functional hero h1, channels index h2,
+ * footer site nav with About / FAQ).
  */
 test.describe("Home page (static export)", () => {
-  test("renders the ido-bata portal landing page", async ({ page }) => {
+  test("renders the utility-first navigator landing", async ({ page }) => {
     const response = await page.goto("/");
     expect(response, "expected a navigation response").not.toBeNull();
     expect(response?.status() ?? 0).toBeLessThan(400);
 
+    // Functional hero headline (Issue #103: utility-first reorientation).
     await expect(
-      page.getByRole("heading", { level: 1, name: /井戸端会議のための、居場所。/ }),
+      page.getByRole("heading", { level: 1, name: /関心領域を各自で調べて書く/ }),
     ).toBeVisible();
-    // ページ内の "About" リンクは複数ある (Hero CTA `ido-bata について` /
-    // About セクション内 `About ページを読む →` / 関連リンクカード
-    // `About コミュニティ紹介` / Footer site nav `About`) ため、
-    // `exact: true` で Footer の `About` / `FAQ` リンクのみに絞り込む。
-    // Footer nav は全ページで常に render されるため、smoke test として
-    // navigation surface が存在することを確認するのに十分な target。
+    // Channels index — primary utility surface on home.
+    await expect(page.getByRole("heading", { level: 2, name: /チャネル/ })).toBeVisible();
+    // Footer nav is rendered on every page, so its About / FAQ links
+    // are stable smoke-test targets for the navigation surface.
     await expect(page.getByRole("link", { name: "About", exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "FAQ", exact: true })).toBeVisible();
   });

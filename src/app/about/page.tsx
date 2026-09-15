@@ -8,7 +8,7 @@ import { DISCORD_INVITE } from "@/lib/env";
 
 export const metadata: Metadata = {
   title: "About | ido-bata",
-  description: "ido-bata コミュニティの紹介ページ。",
+  description: "いど端 Discord サーバーの運営スタンス・経緯のリファレンス。",
 };
 
 /**
