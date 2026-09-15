@@ -10,13 +10,15 @@
   - `src/content/channels.ts` を 12 カテゴリ・52 チャネル構成で実装（`#moderator-only` は非公開のため除外）
   - ホームの Status 表面にサーバ実情報（メンバー数 80 名）を反映
   - Footer の "since 2026" を 実在招待の最古 `created_at` (`2025-03-24`) に基づく "since 2025-03" に修正
-  - About ページの lede を「準備中」から、 行動規範に整合する方針（実利重視・情報共有主体・自由参加脱退）と実メンバー数に更新
+  - About ページの lede を「準備中」から Discord サーバの実情報（80 名・11 カテゴリ・59 チャネル）に更新
   - `/channels` ページの metadata を実在チャネル数 (52) ・実在カテゴリ数 (12) に更新
+  - Home の About セクション / FAQ ページの lede から「準備中」「オーナー正本化後に掲載」placeholder 表現を除去し、 現状を正確に言い表す文に更新
 
 ### Note
 
 - Discord 招待の fetch / API 統合は build-time / runtime には持ち込まない。 `.tmp/fetch-discord-snapshot.ts` と `.tmp/discord-snapshot.json` は git 管理外。
-- 理念文 / 推奨行為 / 禁止行為 / チャネル別運用ルールなどオーナー正本化が必要な項目は引き続き placeholder のまま。
+- `src/content/rules.ts` の philosophy / recommended / prohibited / channels.items / enforcement セクションは Discord サーバ上で公開されている実ルールのみを採用する方針のため、 本 Issue では更新していない（オーナーの Discord サーバ上の正本化待ち）。
+- `src/content/news.ts` / `src/content/faq.ts` の具体エントリ（告知・Q&A）もオーナーの事実確定待ち。 該当ページは空状態（"現在、掲載中の X はありません" 系）を維持。
 
 ## [0.3.0] - 2026-09-13
 
