@@ -84,15 +84,16 @@ the regression marker takes precedence over the negative marker.
 ## Controls
 
 - `fixtures/positive.md` — must PASS.
+- `fixtures/positive-transition.md` — must PASS. transition 句 ("Projects v2 is display, but ...") を使いながら Issue-side action を推奨する canonical 答えを contradictory に false-positive 分類しない (PR #98 thread #4026680617 follow-up)。
 - `fixtures/negative.md` — must FAIL.
 - `fixtures/regression.md` — must FAIL.
 - `fixtures/contradictory.md` — must FAIL.
 
-Run all four:
+Run all five:
 
 ```bash
 bash evals/policy-evaluation/controls.sh
-# Expected: PASS: 4-control separation holds
+# Expected: PASS: 5-control separation holds
 ```
 
 ## Fresh-agent runner — limitation
@@ -116,10 +117,11 @@ to add a fresh-agent invocation layer as a follow-up.
 
 ## Completion evidence
 
-- `bash evals/policy-evaluation/context-budget.sh` → `OK: 9 files, ...KB / 65536B`
-- `bash evals/policy-evaluation/controls.sh` → `PASS: 4-control separation holds`
+- `bash evals/policy-evaluation/context-budget.sh` → `OK: 10 files, ...KB / 65536B`
+- `bash evals/policy-evaluation/controls.sh` → `PASS: 5-control separation holds`
 - Each fixture grades independently:
   - `bash evals/policy-evaluation/grade.sh fixtures/positive.md` → `PASS`
+  - `bash evals/policy-evaluation/grade.sh fixtures/positive-transition.md` → `PASS`
   - `bash evals/policy-evaluation/grade.sh fixtures/negative.md` → `FAIL`
   - `bash evals/policy-evaluation/grade.sh fixtures/regression.md` → `FAIL`
   - `bash evals/policy-evaluation/grade.sh fixtures/contradictory.md` → `FAIL`

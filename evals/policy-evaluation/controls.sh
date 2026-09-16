@@ -1,21 +1,27 @@
 #!/usr/bin/env bash
 # `policy-evaluation` Skill §4 (Grader controls) の negative /
-# regression / contradictory / positive control を順に走らせる driver。
+# regression / contradictory / positive-transition / positive
+# control を順に走らせる driver。
 #
 # v0.4.0 では structural seed のため、各 fixture が「control として
 # 期待通りに分離できる」こと (negative / regression / contradictory は
-# FAIL シグナルを持ち、positive は PASS シグナルを持つ) を assert する。
-# contradictory control は PR #98 review thread #4026270165 follow-up で
-# 追加: canonical-surface marker を肯定しつつ Projects-first write を
-# 戻す latent contradiction を独立に reject する。
+# FAIL シグナルを持ち、positive / positive-transition は PASS シグナル
+# を持つ) を assert する。contradictory control は PR #98 review thread
+# #4026270165 follow-up で追加: canonical-surface marker を肯定しつつ
+# Projects-first write を戻す latent contradiction を独立に reject する。
+# positive-transition control は PR #98 thread #4026680617 follow-up で
+# 追加: `Projects v2 is display, but ...` transition 句を使いながら実際は
+# Issue-side action を推奨する canonical 答えを過剰に contradictory に
+# 分類しない (false-positive 抑止) ことを assert する。
 #
 # 使い方:
 #   bash evals/policy-evaluation/controls.sh
 #
 # 終了コード:
-#   0 — 4 control が期待通りに分離
-#         (negative=FAIL, regression=FAIL, contradictory=FAIL, positive=PASS)
-#   1 — control 分離失敗 (grader が surface shape だけで PASS させた等)
+#   0 — 5 control が期待通りに分離
+#         (negative=FAIL, regression=FAIL, contradictory=FAIL,
+#          positive=PASS, positive-transition=PASS)
+#   1 — control 分離失敗
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -42,8 +48,7 @@ if "$GRADER" "$DIR/fixtures/regression.md" >/dev/null; then
 fi
 echo "OK: regression control correctly rejected"
 
-# 3. contradictory は FAIL しなければならない (canonical-surface 肯定 +
-#    projects-first paraphrase を併存する latent violation も単独で reject)
+# 3. contradictory は FAIL しなければならない
 if "$GRADER" "$DIR/fixtures/contradictory.md" >/dev/null; then
   echo "FAIL: contradictory control unexpectedly PASSed" >&2
   echo "  grader is not separating canonical-surface affirmation from projects-first paraphrase" >&2
@@ -59,4 +64,15 @@ if ! "$GRADER" "$DIR/fixtures/positive.md" >/dev/null; then
 fi
 echo "OK: positive control correctly accepted"
 
-echo "PASS: 4-control separation holds"
+# 5. positive-transition は PASS しなければならない
+#    transition 句 ("Projects v2 is display, but ...") を使いながら
+#    実際は Issue-side action を推奨する canonical 答えを、
+#    contradictory に false-positive 分類していないか確認。
+if ! "$GRADER" "$DIR/fixtures/positive-transition.md" >/dev/null; then
+  echo "FAIL: positive-transition control unexpectedly rejected" >&2
+  echo "  transition 句を持つ canonical 答えを contradictory に false-positive 分類している" >&2
+  exit 1
+fi
+echo "OK: positive-transition control correctly accepted"
+
+echo "PASS: 5-control separation holds"

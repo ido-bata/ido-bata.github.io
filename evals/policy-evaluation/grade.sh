@@ -110,7 +110,7 @@ fi
 # 系の paraphrase を捕捉する。
 projects_first_paraphrase=0
 if grep -qiE \
-  "update the Projects( field)? to create|update the Projects( field)? to record|add a Project entry to record|Projects v2 is display,? but|though Projects v2 is display,? (still|use|update|edit)" \
+  "update the Projects( field)? to create|update the Projects( field)? to record|add a Project entry to record|Projects v2 is display,? but[^.\n]*(update|edit|use)[^.\n]*Projects( field| v2)?|though Projects v2 is display,? (still )?(update|edit|use)[^.\n]*Projects( field| v2)?" \
   <<<"$answer_body"; then
   projects_first_paraphrase=1
 fi

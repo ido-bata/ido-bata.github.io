@@ -8,9 +8,10 @@ evals/<policy-area>/
   scenarios/
     S-NNN-<name>.md            # one or more live scenarios
   grade.sh                     # semantic grader
-  controls.sh                  # 4-control driver (positive / negative / regression / contradictory)
+  controls.sh                  # 5-control driver (positive / positive-transition / negative / regression / contradictory)
   fixtures/
     positive.md
+    positive-transition.md     # optional: transition 句を持つ canonical 答え (false-positive 抑止)
     negative.md
     regression.md
     contradictory.md           # optional: latent canonical-surface-vs-projects-first contradiction
