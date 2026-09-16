@@ -14,10 +14,9 @@ import { test, expect } from "@playwright/test";
  * To point at an already-running preview / deployed build instead:
  *   PLAYWRIGHT_BASE_URL=https://ido-bata.github.io bun run test:e2e
  *
- * The home page (`src/app/page.tsx`) was rewritten as a utility-first
- * navigator in Issue #103 — these assertions target the surfaces that
- * are stable across the IA (site name, channels index,
- * footer site nav with About / FAQ).
+ * The home page (`src/app/page.tsx`) is the directory for activities,
+ * projects, and server information. These assertions cover those primary
+ * routes in the static export.
  */
 test.describe("Home page (static export)", () => {
   test("renders the utility-first navigator landing", async ({ page }) => {
@@ -26,11 +25,21 @@ test.describe("Home page (static export)", () => {
     expect(response?.status() ?? 0).toBeLessThan(400);
 
     await expect(page.getByRole("heading", { level: 1, name: "いど端" })).toBeVisible();
-    // Channels index — primary utility surface on home.
+    await expect(page.getByRole("heading", { level: 2, name: "使えるもの" })).toBeVisible();
     await expect(page.getByRole("heading", { level: 2, name: "チャネルから探す" })).toBeVisible();
-    // Footer nav is rendered on every page, so its About / FAQ links
-    // are stable smoke-test targets for the navigation surface.
     await expect(page.getByRole("link", { name: "About", exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "FAQ", exact: true })).toBeVisible();
   });
+
+  for (const entry of [
+    { href: "/activities/idobata-time", heading: "いど端 底力 タイム" },
+    { href: "/projects/layer-note", heading: "LayerNote" },
+    { href: "/projects/server-bot", heading: "ido-bata-server-bot" },
+  ]) {
+    test(`renders ${entry.href}`, async ({ page }) => {
+      const response = await page.goto(entry.href);
+      expect(response?.status() ?? 0).toBeLessThan(400);
+      await expect(page.getByRole("heading", { level: 1, name: entry.heading })).toBeVisible();
+    });
+  }
 });

@@ -30,7 +30,7 @@ export const PROJECTS: readonly Project[] = [
       "検索、整形、検証をひとつのパネルから行える",
     ],
     status:
-      "署名済みZXPをGitHub Releasesで配布する設計です。現在はリポジトリの案内に沿って利用できます。",
+      "署名済みZXPをGitHub Releasesで配布する設計です。公開状況と導入手順はリポジトリで確認できます。",
     links: [
       {
         label: "GitHubでソースを見る",
