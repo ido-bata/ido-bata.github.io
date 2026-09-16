@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 # `policy-evaluation` Skill §3 (Cold eval contract) / §5 (Eval fixture
-# structure) の context budget sanity check.
+# structure) の context budget sanity check。
 #
-# v0.4.0 では structural seed しか入っていないため、本 script は
-# 「必須 file が全て存在し、grader が deterministic 採点できる最低限の
-# 構造を持つ」ことを assert する。policy 意味評価 (cold eval scenario
-# の中身) は Skill 本体の意味が変わる PR が来た時点で追加する。
+# Skill §5 の構造 (README + scenario + scenarios/<live> + grade / controls
+# + fixtures/{positive,negative,regression}) と各 file の最小サイズを
+# assert する。v0.4.0 では最初の live scenario S-001 を同梱しているため、
+# 本 script は "structural seed のみ" の sanity から live scenario 込みの
+# sanity へ役割が変わっている。
 #
 # 使い方:
 #   bash evals/policy-evaluation/context-budget.sh
 #
 # 終了コード:
-#   0 — structural context budget OK
+#   0 — context budget OK (live scenario + grader 構造が健全)
 #   1 — required file missing or size anomaly
 set -euo pipefail
 
@@ -43,9 +44,9 @@ if (( ${#missing[@]} > 0 )); then
   exit 1
 fi
 
-# Minimal size sanity: README + scenario + 3 fixtures 合わせて
-# ある程度の context を渡す前提。各 file が 100 bytes 以上あれば
-# placeholder header ではなく実体があるとみなす。
+# Minimal size sanity: README + scenario + live scenario + 3 fixtures
+# 合わせてある程度の context を渡す前提。各 file が 100 bytes 以上
+# あれば placeholder header ではなく実体があるとみなす。
 total_bytes=0
 for f in "${required[@]}"; do
   size=$(wc -c < "$DIR/$f")
@@ -58,7 +59,7 @@ done
 
 # 1 cold eval scenario あたりの context budget 上限 (bytes):
 # policy-evaluation Skill §3 "fresh agent / fresh context を使用" を
-# 満たすための sanity 上限。structural seed 段階では超過しない。
+# 満たすための sanity 上限。v0.4.0 の live scenario 込みでも超過しない。
 CONTEXT_BUDGET_BYTES=65536
 
 if (( total_bytes > CONTEXT_BUDGET_BYTES )); then

@@ -107,9 +107,9 @@ to add a fresh-agent invocation layer as a follow-up.
 
 ## Completion evidence
 
-- `bash evals/policy-evaluation/context-budget.sh` → `OK: ... 7 files, ...B / 65536B`
+- `bash evals/policy-evaluation/context-budget.sh` → `OK: 8 files, ~19.3KB / 65536B`
 - `bash evals/policy-evaluation/controls.sh` → `PASS: 3-control separation holds`
 - Each fixture grades independently:
   - `bash evals/policy-evaluation/grade.sh fixtures/positive.md` → `PASS`
   - `bash evals/policy-evaluation/grade.sh fixtures/negative.md` → `FAIL`
-  - `bash evals/policy-evaluation/grade.sh fixtures/registry.md` → `FAIL`
+  - `bash evals/policy-evaluation/grade.sh fixtures/regression.md` → `FAIL`
