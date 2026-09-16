@@ -38,7 +38,7 @@ function groupByCategory(): ReadonlyArray<{
  *   - per-category band with a 2-up grid (`grid({ cols: 2 })`) so the
  *     cards don't collapse into a single left-aligned column
  *
- * When `CHANNELS` is empty (the v0.3.0 placeholder state) the page
+ * When `CHANNELS` is empty the page
  * renders an empty-state paragraph instead of empty category headers.
  *
  * Refs:
@@ -249,7 +249,7 @@ export default function ChannelsPage() {
               textAlign: "center",
             })}
           >
-            現在、掲載中のチャネルはありません。
+            チャネル情報はまだ登録されていません。
           </p>
         </section>
       )}

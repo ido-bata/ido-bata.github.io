@@ -8,9 +8,6 @@
  *   - unordered lists: a block whose every line starts with `- `
  *   - inline links: `[label](https://example.com)`
  *
- * NOTE: Entries are intentionally empty for the v0.3.0 release. Concrete
- * announcements are authored after the community owner confirms facts
- * (dates, schedules, channel names, people). See follow-up issue.
  */
 
 export interface NewsItem {
@@ -24,7 +21,15 @@ export interface NewsItem {
   tags?: string[];
 }
 
-export const newsItems: NewsItem[] = [];
+export const newsItems: NewsItem[] = [
+  {
+    date: "2026-09-16",
+    title: "活動とツールの案内を追加しました",
+    body:
+      "トップページから、いど端 底力 タイム、LayerNote、ido-bata-server-botの案内を確認できるようになりました。\n\nチャネル一覧には、現在使われている音声・ステージチャネルも掲載しています。",
+    tags: ["サイト更新"],
+  },
+];
 
 /**
  * Announcements ordered newest first.

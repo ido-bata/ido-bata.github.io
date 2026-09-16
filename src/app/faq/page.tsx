@@ -74,7 +74,7 @@ export default function FaqPage() {
                 maxW: "48ch",
               })}
             >
-              コミュニティへのよくある質問を準備しています。具体的な質問と回答はオーナーの正本化後に掲載します。
+              参加方法や、サーバーでできることをまとめています。
             </p>
           </div>
 
@@ -117,7 +117,7 @@ export default function FaqPage() {
               <dt className={css({ color: "fg.muted" })}>件数</dt>
               <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>{FAQ_ITEMS.length}</dd>
               <dt className={css({ color: "fg.muted" })}>並び順</dt>
-              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>正本化順</dd>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>参加前の疑問から</dd>
             </dl>
           </aside>
         </div>
@@ -132,7 +132,7 @@ export default function FaqPage() {
               lineHeight: "relaxed",
             })}
           >
-            現在、掲載中の質問はありません。
+            質問はまだ登録されていません。
           </p>
         </section>
       ) : (

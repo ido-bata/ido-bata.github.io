@@ -5,11 +5,6 @@
  * Copy stays consistent with `docs/code-of-conduct.md` and `docs/privacy.md`;
  * changes go through an Issue first.
  *
- * NOTE: Content is intentionally a minimal placeholder for the v0.3.0
- * release. The community owner populates philosophy / recommended /
- * prohibited / channel-by-channel rules after confirming what actually
- * applies. Until then, the `/community/rules` page renders an empty shell.
- * See follow-up issue.
  */
 
 export type ChannelRule = {
@@ -52,46 +47,65 @@ export type RulesContent = {
   meta: RuleSection;
 };
 
-/**
- * Minimal placeholder. Fields are still typed so the page renders without
- * runtime errors; copy is explicitly honest about being a stub.
- */
 export const rules: RulesContent = {
-  lastUpdated: "2026-09-13",
+  lastUpdated: "2026-09-16",
 
   philosophy: {
     id: "philosophy",
     title: "理念",
-    body: "本セクションは準備中です。コミュニティの理念はオーナーの正本化後に掲載します。",
+    body: "制作や開発を実際に進めるための場です。互いの時間と成果物を尊重し、相談や共有が次の作業につながる状態を保ちます。",
   },
 
   recommended: {
     id: "recommended",
     title: "推奨されるふるまい",
-    bullets: [],
+    bullets: [
+      "相手の立場や経験の違いを踏まえて、具体的に伝える",
+      "批評するときは、対象と理由を明確にする",
+      "知見や制作途中の内容を、適したチャネルで共有する",
+    ],
   },
 
   prohibited: {
     id: "prohibited",
     title: "禁止行為",
-    body: "本セクションは準備中です。禁止行為の具体はオーナーの正本化後に掲載します。",
+    bullets: [
+      "嫌がらせ、差別、脅迫、個人攻撃",
+      "本人の同意なく個人情報や非公開情報を共有する行為",
+      "スパム、荒らし、運営や会話を妨げる行為",
+    ],
   },
 
   channels: {
-    intro:
-      "チャネル別運用ルールはオーナーの正本化後に掲載します。実在チャネル一覧は Discord サーバ側で参照できます。",
-    items: [],
+    intro: "各チャネルの説明を確認し、話題に合う場所を使ってください。",
+    items: [
+      {
+        name: "WIP",
+        purpose: "制作途中のものを共有する場所です。",
+        rules: ["未完成の状態で投稿できます", "求める反応があれば本文に添えてください"],
+      },
+      {
+        name: "technical-critique",
+        purpose: "技術面の相談や批評を扱います。",
+        rules: ["対象と困っている点を具体的に書いてください", "人ではなく成果物や実装を扱ってください"],
+      },
+      {
+        name: "宣伝・共有",
+        purpose: "作品、記事、イベントなどを知らせる場所です。",
+        rules: ["内容が分かる説明とリンクを添えてください", "同じ内容の連投は控えてください"],
+      },
+    ],
   },
 
   enforcement: {
     id: "enforcement",
     title: "違反時の対応",
-    body: "本セクションは準備中です。",
+    body: "運営は内容を確認し、必要に応じて投稿の削除、警告、一時停止、追放などを判断します。報告方法は行動規範に記載しています。",
   },
 
   meta: {
     id: "meta",
     title: "改定・問い合わせ",
-    body: "本ページはコミュニティの実態に合わせて段階的に更新します。問い合わせ窓口は行動規範 (Code of Conduct) に集約します。",
+    body: "運用に合わせて内容を更新します。違反の報告や問い合わせ窓口は行動規範に記載しています。",
   },
 };
