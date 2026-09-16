@@ -73,7 +73,7 @@ const CHANNEL_PREVIEW: ReadonlyArray<{
         type: "voice",
       },
       {
-        name: "作業 (雑)",
+        name: "作業（雑）",
         description: "雑談を交えながら作業する音声チャンネル。",
         type: "voice",
       },
@@ -275,8 +275,6 @@ export default function Home() {
       {/* Rest of the page — content container ─────────────── */}
       <div className={cx(container({ size: "content" }))}>
         {/* Tools & activities ───────────────────────────────── */}
-
-      {/* Tools & activities ───────────────────────────────── */}
       <section
         aria-labelledby="utility-heading"
         className={cx(

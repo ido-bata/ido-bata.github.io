@@ -70,9 +70,15 @@ export function Footer() {
                 <p className={css({ fontSize: "lg", fontWeight: "bold", color: "fg.DEFAULT" })}>
                   ido-bata
                 </p>
-                <p className={css({ fontSize: "xs", color: "fg.subtle" })}>
-                  Creator / Engineer community
-                </p>
+                <span
+                  className={css({
+                    fontSize: "xs",
+                    color: "fg.muted",
+                    fontFamily: "mono",
+                  })}
+                >
+                  Discord community · 井戸端色の実験場
+                </span>
               </div>
             </div>
             <p

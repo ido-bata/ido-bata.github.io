@@ -89,7 +89,11 @@ export default function ChannelsPage() {
                 color: "fg.muted",
               })}
             >
-              話題ごとのテキスト、フォーラム、音声、ステージを用途別に確認できます。
+              井戸端色の Discord サーバの主要カテゴリ・チャネル構成です。
+              モデレーター専用チャネル（`#moderator-only`）は非公開のため除外しています。
+              並び順はサーバ表示順に基づきます。 各カテゴリの位置やチャネル一覧は
+              随時変動するため、 ここに掲載している数値・名前は 2026-09-16 時点の
+              snapshot です。
             </p>
             {invite ? (
               <div className={cx(cluster({ gap: 3 }))}>
@@ -135,15 +139,15 @@ export default function ChannelsPage() {
                 fontSize: "sm",
               })}
             >
-              <dt className={css({ color: "fg.muted" })}>カテゴリ</dt>
+              <dt className={css({ color: "fg.muted" })}>カテゴリ (snapshot)</dt>
               <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>
                 {CHANNEL_CATEGORIES.length}
               </dd>
-              <dt className={css({ color: "fg.muted" })}>チャネル数</dt>
+              <dt className={css({ color: "fg.muted" })}>チャネル (snapshot)</dt>
               <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>{CHANNELS.length}</dd>
-              <dt className={css({ color: "fg.muted" })}>最終更新</dt>
+              <dt className={css({ color: "fg.muted" })}>取得日時</dt>
               <dd className={css({ color: "fg.DEFAULT", fontFamily: "mono", margin: 0 })}>
-                2026-09-13
+                2026-09-16
               </dd>
             </dl>
           </aside>

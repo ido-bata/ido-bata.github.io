@@ -4,6 +4,7 @@ import { CHANNELS, CHANNEL_CATEGORIES } from "./channels";
 describe("Discord channel directory", () => {
   it("lists the current public channel categories", () => {
     expect(CHANNEL_CATEGORIES).toEqual([
+      "ご案内",
       "話題",
       "PDCA",
       "共有",
@@ -14,6 +15,7 @@ describe("Discord channel directory", () => {
       "いど端LT会",
       "LayerNote",
       "要望",
+      "Legacy",
     ]);
   });
 
@@ -23,7 +25,10 @@ describe("Discord channel directory", () => {
     for (const channel of CHANNELS) {
       expect(CHANNEL_CATEGORIES).toContain(channel.category);
       expect(channel.name.trim()).not.toBe("");
-      expect(channel.description.trim()).not.toBe("");
+      // Empty `description` is allowed and expected when the
+      // Discord `topic` was unset at snapshot time. We deliberately
+      // do not invent purposes that the server itself does not
+      // state (see channels.ts JSDoc).
     }
 
     const paths = CHANNELS.map((channel) => `${channel.category}/${channel.name}`);

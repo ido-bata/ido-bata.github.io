@@ -39,15 +39,29 @@ export default function AboutPage() {
             >
               いど端について
             </h1>
-            <p
-              className={css({
-                fontSize: { base: "md", md: "lg" },
-                color: "fg.muted",
-                lineHeight: "relaxed",
-              })}
-            >
-              クリエイターやエンジニアが、制作や開発を実際に進めるためのDiscordサーバーです。
-            </p>
+            <div className={cx(stack({ gap: 4 }), css({ maxW: "52ch" }))}>
+              <p
+                className={css({
+                  fontSize: { base: "md", md: "lg" },
+                  color: "fg.muted",
+                  lineHeight: "relaxed",
+                })}
+              >
+                いど端、 Discord で動いてる小さいサーバー。 名前は井戸端会議の響きだけ借りてる。
+                うちは交流じゃなくて情報共有のためのサーバーってとこでやってる。
+              </p>
+              <p
+                className={css({
+                  fontSize: { base: "md", md: "lg" },
+                  color: "fg.muted",
+                  lineHeight: "relaxed",
+                })}
+              >
+                関心領域は映像 / プログラミング / デザインあたり、 各自で調べて書いて共有する。
+                ウェルカムも入会の儀式もないし、 誰が来たかは誰にも分からない。
+                ひとりごと / wip は反応より書くことを優先するチャネル。
+              </p>
+            </div>
           </div>
           <aside
             aria-label="管理者"

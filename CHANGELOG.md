@@ -12,6 +12,19 @@
 
 ### Changed
 
+- Issue #101: Discord サーバの実情報（ido-bata-server-bot で 2026-09-16 取得）に基づき、 以下の placeholder を正規化:
+  - `src/content/channels.ts` を 12 カテゴリ構成に拡張（`ご案内` カテゴリ追加 / `#moderator-only` 除外 / `Legacy` カテゴリで archived channel を保持）。 各チャネル description は Discord `topic` を一次情報とし、 未設定のものは空のまま据え置いた（推測で purpose を捏造しない）。
+  - `/channels` ページの lede に snapshot である旨を明示。 右側の metadata も「カテゴリ (snapshot)」「チャネル (snapshot)」「取得日時」と再ラベル。
+  - About ページの lede を「準備中」から、 Discord サーバ観測に基づく質的な特徴（ひとりごと channel の存在 / 公式 welcome メッセージなし / PDCA・いど端底力タイム の実験感 / 自分の関心領域で自分の言葉で参加する文化）に更新。 メンバー数・カテゴリ数・チャネル数などの snapshot 値は変動するため記述しない方針。
+  - Footer の "Creator / Engineer community" サブタイトルを「Discord community · 井戸端色の実験場」という質的サブタイトルに置換（開始年月を断定する表記を廃止）。
+  - FAQ ページの lede を「準備中」「オーナー正本化後に掲載」placeholder 表現を除去し、 Discord 観測に基づく具体的な案内に更新。
+- Issue #101: About ページの lede を Discord 観測の質的特徴からオーナー提供の経緯説明を取り込んだ形に再構成。 反映した一次情報:
+  - 「いど端」は交流のコミュニティではなく情報共有の Discord サーバー（実利サーバーとしての性格）
+  - 名前は井戸端会議の響きだけ借りたもので、 場としては交流の場ではない
+  - welcome メッセージ・入退会儀式は設けず、 入退会の自由・投稿の匿名性を基本とする
+  - ひとりごと・wip は反応より書くことを優先するチャネル
+  - 想定読者は新規参加者ではなくサーバーメンバー中心のため、 説明口調を operator の内輪向けポジション表明に絞る
+- Issue #101: Tooling — `bunx skills add rebuildup/project-init` で 14 件の project-local Skills を導入し `skills-lock.json` を更新。 `interaction-discipline` は upstream SKILL.md frontmatter の YAML parse error により skip（次回復旧時に再評価）。
 - Issue #103: Home をチャネル一覧を中心とするサイト内索引へ変更。Discord、チャネル、告知、ルールへの導線をまとめた。
 - Issue #103: Discord の公開チャンネル構成を `/channels` と Home に反映。
 - Issue #103: `/about` に、制作や開発を前に進めるための実利を重視する方針を掲載。
@@ -39,6 +52,13 @@
 - Issue #103: `CommunityVisual` の予定イベント card を GitHub link embed と同じ `4px coloured bar + content` の embed form に統一。旧 `auto 1fr auto` の horizontal layout は description が 2 行目に折れる一方で time だけが右に浮いて整合せず、`SCHEDULED` eyebrow + title + `毎日 21:00–22:40` (mono) + description の縦積みに置換。Discord scheduled event embed として読める構造になり、Message 1 の GitHub link embed と visual family が揃った。
 - Issue #103: Home Hero のキャッチコピー `CREATOR / ENGINEER COMMUNITY` + `つくる途中を、持ち寄る。` + 説明的 lede を撤廃し、`samuido の実利サーバー` (eyebrow) + `いど端` (h1) + `Discord 上で、制作と開発を前に進めるための小さなコミュニティ。` (短文 lede) に置換。Hero は decorative な slogan で開かず identity を直接提示する形になり、コミュニティの "褒めない wip / 実利" 方針と整合。右の Discord window visual が「どんな場所か」の情報を担い、左 text rail は場所を特定する identity のみという役割分担を明確化。page test と e2e の h1 expectation も `いど端` に追従して更新。
 - Issue #103: Home Hero の Discord window mockup (`CommunityVisual`) を `#ひとりごと` channel の実投稿ベースに置換。channel を `WORK > # WIP` から `雑 > # ひとりごと` へ移設（channels.ts の category 構造に準拠）、sidebar も `雑` の `wip / ひとりごと / 世迷言` に更新し ひとりごと を active 強調。header の `# WIP / 制作途中のものを持ち寄る` も `# ひとりごと / 作業中に考えたことを気軽に書く。` に差し替え。message body は samuido が 2026/03/21 に `#ひとりごと` に投稿した実 content (VSCode UX / 認知負荷 / 高み / この世のUIすべてがVSCodeになってほしい) を verbatim 採用し、`(唐突)` や段落間の空行もそのまま保持。空行は `<p>` boundary + `margin-block-start` で paragraph spacing として表現し、同一段落内の改行は `<br />`。wip / GitHub link embed / wai 二番目 message / scheduled event card は `#ひとりごと` の low-noise 文脈から外れるため撤廃し、`defaultAvatar` 定義も同時に除去。`CommunityVisual.test.tsx` も新 content に合わせて更新。
+
+### Note
+
+- Discord 招待の fetch / API 統合は build-time / runtime には持ち込まない。 `.tmp/fetch-discord-snapshot.ts` / `.tmp/discord-snapshot.json` / `.tmp/discord-atmosphere.json` / `.tmp/fetch-discord-messages.ts` は git 管理外。
+- メンバー数・カテゴリ数・チャネル数・活動時期のような数値・日付は変動するため、 サイトの事実記述には使わない方針（snapshot が必要な場合は channels.ts 経由かつ `取得日時` ラベル付きで提示）。
+- `src/content/rules.ts` の philosophy / recommended / prohibited / channels.items / enforcement セクションは Discord サーバ上で公開されている実ルールのみを採用する方針のため、 本 Issue では更新していない（オーナーの Discord サーバ上の正本化待ち）。
+- `src/content/news.ts` / `src/content/faq.ts` の具体エントリ（告知・Q&A）もオーナーの確定待ち。 該当ページは空状態（"現在、掲載中の X はありません" 系）を維持。
 
 ## [0.3.0] - 2026-09-13
 
