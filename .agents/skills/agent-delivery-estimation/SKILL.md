@@ -113,6 +113,7 @@ risk:
 ~~~
 
 Work Unitは絶対時間ではなくproject内の相対作業量である。
+`weight` は WU 定義時に producer が保存する **canonical field** である。後続の `(actual_total_WU - original_WU) / original_WU` 計算および bootstrap 入力は `original_WU` を要求するため、producer は保存時に同値で `original_WU` も生成する（`weight === original_WU` を初期値とし、sampled rework が反映される計算過程でだけ分岐する）。schema を読む側・書く側どちらもこの alias 規則を前提とし、`weight` だけ書き残して `original_WU` を欠落させない。
 `weight` / `original_WU` は必ず正の値とし、0以下のWork Unitを作らない。作業量を持たないgateやmilestoneはWork UnitではなくDAG上のgate / eventとして表現する。
 
 ## Anchor-based WU calibration
@@ -696,6 +697,8 @@ Evidence confidence:
 P50 / P80 / P95の各`evidence_ref`は、少なくともforecast input snapshotとbootstrap / simulation runを個別に参照する。WU calibration、throughput、agent count、human capacity等、forecastへ入るcapacity数値にも同じrecord形式を適用する。
 
 sample policy上利用できないquantileは、値を捏造せずunavailable / provisionalと表示する。
+
+`Status` に応じて quantile template の `provenance` を分岐する。上の template は `Status: complete` を前提に P50 / P80 / P95 を `provenance: derived` とするが、`Status: conditional` の場合は `provenance: provisional` に書き換え、`Status: unavailable` の場合は値そのものを `value: unavailable` / `provenance: unknown` に置き換える。decision-grade data として保存する前に必ず `Status` を見て template を分岐し、conditional / unavailable を decision-grade として保存しない。
 
 Acceleration candidateへ数値効果を付ける場合もobserved evidenceまたはsimulationを必要とする。
 

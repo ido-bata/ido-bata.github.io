@@ -11,7 +11,7 @@
 - Aboutは導入5列＋管理者7列、本文は見出し4列＋本文8列。
 - モバイルでは意味順を保って1列化する。
 - 実在するWIP、technical-critique、いど端 底力 タイムを題材に、独自の会話ボードをCSSとHTMLで作る。
-- 管理者は samuido、Xは @361do_sleep と明記する。本人画像は推測せずサーバーアイコンを使う。
+- 管理者は samuido（owner / maintainer / 投稿者 = 同一人物）、Xは @361do_sleep と明記する。owner / maintainer (= samuido) の本人画像・スクリーンショット・投稿を、本人の同意済み素材として Hero visual の説明要素に明示的に使用してよい（捏造・脚色はしない）。
 - GitHubリポジトリ、Issues、CONTRIBUTING.mdをHome、About、Footerから参照可能にする。
 
 ## 制約
@@ -19,4 +19,4 @@
 - Discord UIライブラリや新規ランタイム依存は追加しない。
 - Next.jsの静的exportを維持する。
 - 既存のcontainer、grid、section、stack、clusterを座標系として使う。
-- 会話例に実在人物の発言を引用しない。
+- 第三者（owner / maintainer = samuido 以外）の実在人物の発言を捏造・引用しない。owner / maintainer (= samuido) 自身の投稿を Hero visual に verbatim 採用することは同意済み素材として許可する。
