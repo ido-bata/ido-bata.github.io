@@ -139,6 +139,12 @@ export const rules: RulesContent = {
   meta: {
     id: "meta",
     title: "改定・問い合わせ",
-    body: "運用に合わせて内容を更新します。違反の報告や問い合わせ窓口は行動規範に記載しています。",
+    body: "運用に合わせて内容を更新します。違反の報告や問い合わせ窓口は次の行動規範を参照してください。",
+    links: [
+      {
+        label: "行動規範",
+        href: "https://github.com/ido-bata/ido-bata.github.io/blob/main/docs/code-of-conduct.md",
+      },
+    ],
   },
 };
