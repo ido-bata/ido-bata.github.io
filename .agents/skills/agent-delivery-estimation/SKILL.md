@@ -696,6 +696,8 @@ P95:
 
 ### Status: conditional (sample policy 上、利用できない quantile がある)
 
+値が存在して暫定的な quantile は `provenance: provisional`、値が unavailable な quantile は `value: unavailable` + `provenance: unknown` + `evidence_ref.reason` で表す。
+
 ~~~yaml
 Status: conditional
 P50:
@@ -708,13 +710,13 @@ P50:
 P80:
   value: unavailable
   unit: calendar-duration
-  provenance: provisional
+  provenance: unknown
   evidence_ref:
     - reason: P80 bootstrap が sample policy 上算出不可
 P95:
   value: unavailable
   unit: calendar-duration
-  provenance: provisional
+  provenance: unknown
   evidence_ref:
     - reason: P95 bootstrap が sample policy 上算出不可
 ~~~

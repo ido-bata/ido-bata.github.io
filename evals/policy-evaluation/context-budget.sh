@@ -20,6 +20,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 required=(
   "README.md"
   "scenario.md"
+  "scenarios/S-001-dependency-ownership.md"
   "controls.sh"
   "grade.sh"
   "fixtures/positive.md"

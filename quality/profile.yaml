@@ -88,6 +88,11 @@ gates:
     command: "bun run gate:integration"
     timeout_seconds: 900
     triggers: [pull_request]
+  e2e:
+    purpose: "ticket-level E2E (Playwright), build + playwright を 1 ジョブで完結"
+    command: "bun run gate:e2e"
+    timeout_seconds: 1200
+    triggers: [pull_request]
   release:
     purpose: "release-→-main gate"
     command: "bun run gate:release"
@@ -108,6 +113,7 @@ stack_reconciliation:
 canonical_entry_points:
   worker: "bun run gate:worker"
   integration: "bun run gate:integration"
+  e2e: "bun run gate:e2e"
   release: "bun run gate:release"
 
 # Required CI checks. The `release-source-check` is enforced by

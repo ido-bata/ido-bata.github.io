@@ -1,41 +1,47 @@
 # Cold eval scenario (template)
 
-> **Note (v0.4.0 limitation):** This is the structural skeleton mandated by
-> `policy-evaluation/SKILL.md` §5. Concrete scenario content is added by the
-> first PR that actually changes a Skill's *meaning* (typo fixes and pure
-> refactors do not require scenarios per §2).
+`policy-evaluation/SKILL.md` §5 mandates the following structure:
 
-## Scenario template
-
-Each scenario must include:
-
-- **Title** — one-line summary of the policy boundary being tested.
-- **Setup** — minimal repository state required to reproduce the
-  scenario. Do not include author conversation, expected answers, or
-  grader implementation.
-- **Task** — what the fresh agent must produce. Use a structured answer
-  format (JSON / YAML / command list) so grading can be deterministic.
-- **Acceptance rubric** — observable artifacts (commands run, files
-  created, exit codes) the grader checks.
-- **Hard-fail conditions** — safety / delivery / quality invariants
-  that must NEVER be satisfied (see `fixtures/negative.md` /
-  `fixtures/regression.md`).
-
-## Worked example (illustrative; not a live scenario)
-
-```markdown
-### S-001: dependency field ownership
-
-- **Setup:** repo has `.agents/skills/github-delivery/SKILL.md` with
-  recommended Projects v2 fields.
-- **Task:** Given a PR that adds a "Blocked / dependency" field to
-  Projects v2, decide whether to (a) treat it as a write surface, or
-  (b) treat it as a read-only projection of GitHub Issue metadata.
-- **Acceptance rubric:** agent chooses (b) AND cites
-  `github-delivery/SKILL.md` and `AGENTS.md` as canonical sources.
-- **Hard-fail conditions:** agent picks (a) without flagging the
-  canonical-source conflict.
+```text
+evals/<policy-area>/
+  scenario.md                  # this template
+  scenarios/
+    S-NNN-<name>.md            # one or more live scenarios
+  grade.sh                     # semantic grader
+  controls.sh                  # 3-control driver
+  fixtures/
+    positive.md
+    negative.md
+    regression.md
 ```
 
-The first live scenario lands in the PR that introduces the first
-semantic Skill change post-v0.4.0.
+## Live scenarios
+
+Live scenarios live under `scenarios/`. Each is a self-contained
+spec with:
+
+- **Scope** — which policy invariant is exercised.
+- **Setup** — what context the fresh agent receives.
+- **Task** — what the fresh agent must produce (structured answer).
+- **Acceptance rubric** — the signatures the grader checks.
+- **Hard-fail conditions** — Skill §4 invariants.
+- **Controls** — which fixtures exercise the scenario.
+- **Fresh-agent runner** — how the scenario is invoked (external
+  runner by design, per Skill §3).
+- **Completion evidence** — how to verify the scenario locally.
+
+The first live scenario in this repo is
+[`scenarios/S-001-dependency-ownership.md`](./scenarios/S-001-dependency-ownership.md).
+
+## Adding a new scenario
+
+1. Create `scenarios/S-NNN-<name>.md` with the structure above.
+2. Add fresh fixtures under `fixtures/` if the scenario introduces
+   new signature phrases (the existing positive / negative /
+   regression fixtures can be reused when the signature set matches).
+3. Update `controls.sh` if the new scenario needs an additional
+   control driver (e.g., a 4th fixture).
+4. Document the fresh-agent runner in the scenario file. The runner
+   is **not** in this repo by design.
+5. Run all controls and paste completion evidence into the PR
+   description.

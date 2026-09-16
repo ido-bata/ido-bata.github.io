@@ -6,23 +6,26 @@
 
 ```text
 evals/policy-evaluation/
-  README.md          # 本ファイル (purpose / structure / limitation)
-  scenario.md        # cold eval 用 scenario (fresh agent / cold context)
-  grade.sh           # grader (artifact 採点。deterministic 中心)
-  controls.sh        # positive / negative / regression control を 1 つで束ねる driver
-  context-budget.sh  # policy 評価時に渡す最小 context budget の sanity check
+  README.md                # 本ファイル (purpose / structure / live scenarios / limitation)
+  scenario.md              # scenario template + 既存 scenario への pointer
+  scenarios/
+    S-001-dependency-ownership.md  # 最初の live scenario (PR #111 で昇格)
+  grade.sh                 # semantic grader (fixture **Answer:** ブロック本文を採点)
+  controls.sh              # positive / negative / regression control を 1 つで束ねる driver
+  context-budget.sh        # policy 評価時に渡す最小 context budget の sanity check
   fixtures/
-    positive.md      # current policy が意図する valid answer
-    negative.md      # 典型的だが policy 上誤っている naive answer (FAIL 必須)
-    regression.md    # 過去に誤って通った broken answer / behavior (FAIL 必須)
+    positive.md            # current policy が意図する valid answer
+    negative.md            # 典型的だが policy 上誤っている naive answer (FAIL 必須)
+    regression.md          # 過去に誤って通った broken answer / behavior (FAIL 必須)
 ```
 
-`grade.sh` / `controls.sh` / `context-budget.sh` は repository-controlled state として再現可能にする。model invocation はここでは行わず、deterministic な構造 / 存在 / 文面のチェックに絞る (Skill §3 cold eval contract: fresh agent を model runner 側で起動する経路は将来追加)。
+`grade.sh` / `controls.sh` / `context-budget.sh` は repository-controlled state として再現可能にする。model invocation はここでは行わず、deterministic な構造 / 存在 / 文面のチェックに絞る (Skill §3 cold eval contract: fresh agent を model runner 側で起動する経路は **external / CI service / manual** のいずれかとし、本 repo には同梱しない — provider-specific runner を canonical policy へ固定しないため)。
 
-## v0.4.0 時点の limitation
+## v0.4.0 live scenario
 
-- 本 PR は project-init Skills (`.agents/skills/*`) を v0.4.0 scope に導入した最初の commit であり、本 eval scaffolding を **seed** として用意する。具体的 policy change scenario と grader は Skill 本体の意味を変える PR が来た時点で追加する (Skill §2: 「小さな誤字修正や意味を変えない refactor へ無意味な eval を増やさない」)。
-- したがって v0.4.0 では `grade.sh` は **構造 + control file の存在 + 必須項目 coverage** のみを採点対象とし、policy 意味解釈の cold eval は次回の Skill 修正 PR で追加する。
+[`scenarios/S-001-dependency-ownership.md`](./scenarios/S-001-dependency-ownership.md) を live scenario として同梱する。これは v0.4.0 で `.agents/skills/*` を導入した PR #111 自体が `policy-evaluation/SKILL.md` §2 の policy change gate を trigger するため、§5 の構造 + §3 の cold eval contract + §4 の grader controls を満たす最初の live evidence として昇格させたもの。
+
+fresh-agent 起動層は本 repo に同梱しない (Skill §3: provider-specific runner を canonical policy へ固定しない)。本 PR で提供するのは scenario spec + semantic grader + 3-control driver + fixtures まで。fresh-agent invocation は `gh Actions matrix` / 外部 Claude API / manual reproduction のいずれかで次 PR が追加する想定。
 
 ## 実行
 
