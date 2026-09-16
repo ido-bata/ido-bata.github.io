@@ -27,8 +27,12 @@ describe("Home page", () => {
 
     expect(screen.getByRole("heading", { level: 2, name: "チャネルから探す" })).toBeTruthy();
 
-    expect(screen.getByRole("heading", { level: 2, name: /最新の動き/ })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: /ルール・ガイドライン/ })).toBeTruthy();
+    // The "Reference" section uses h3 for each reference card
+    // (News / Welcome / Guide) — they sit one level below the
+    // page-opening section h2s, so they read as siblings of the
+    // wider section band rather than parallel sections.
+    expect(screen.getByRole("heading", { level: 3, name: /最新の動き/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 3, name: /ルール・ガイドライン/ })).toBeTruthy();
 
     const labels = ["初めての方へ", "すべてのチャネルを見る"];
     for (const label of labels) {

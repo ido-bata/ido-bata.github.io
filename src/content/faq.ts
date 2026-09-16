@@ -8,7 +8,12 @@
  * - `answer`: array of paragraphs. Each element renders as one paragraph.
  * - `id`: anchor (e.g. `/faq#some-id`). Do not change once published.
  *
+ * Activity-name and time references pull from `IDOBATA_TIME` in
+ * `src/content/activities.ts` so a rebrand of the activity (or a
+ * schedule change) only has to land in one place.
  */
+
+import { IDOBATA_TIME } from "./activities";
 
 export type FaqItem = {
   /** Stable id used as URL anchor. Do not change once published. */
@@ -40,15 +45,15 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     id: "voice-required",
     question: "ボイスチャネルで話す必要はありますか？",
     answer: [
-      "必要ありません。無言作業向けのチャネルもあり、いど端 底力 タイムも発言やリアクションなしで参加できます。",
+      `必要ありません。無言作業向けのチャネルもあり、${IDOBATA_TIME.name}も発言やリアクションなしで参加できます。`,
     ],
   },
   {
     id: "idobata-time",
-    question: "いど端 底力 タイムとは何ですか？",
+    question: `${IDOBATA_TIME.name}とは何ですか？`,
     answer: [
-      "毎日21:00から22:40まで、仕事以外の何かに集中するための作業時間です。",
-      "Botが作業と休憩の切り替わりを案内します。",
+      `毎日${IDOBATA_TIME.time}まで、仕事以外の何かに集中するための作業時間です。`,
+      "Bot が作業と休憩の切り替わりを案内します。",
     ],
   },
 ];

@@ -54,13 +54,25 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
       className={css({
         width: "100%",
         position: "sticky",
-        // Header height: py:3 (12px × 2) + content 32px = 56px.
-        // Header も同じ 56px 分スクロールで上に隠れるので、
-        // ちょうど Header の直下に docked する位置で止める。
-        top: "14",
-        zIndex: "5",
+        // Header chrome height is registered as `--chrome-height` in
+        // `src/app/layout.tsx` (py:3 + content 32px = 56px). Reference
+        // the variable instead of inlining a magic number so Header
+        // and Breadcrumb stay docked in lockstep if either changes.
+        // If you tune the Header's vertical padding, update the
+        // `--chrome-height` declaration rather than this top value.
+        top: "var(--chrome-height)",
+        // Below Header (100) so any page-level sticky sibling slots in
+        // predictably between the docked chrome and the page content.
+        zIndex: "90",
         paddingBlock: "3",
         bg: "bg.canvas",
+        // Hairline border keeps a visible bottom edge even when the
+        // strip sits over a section that uses the same `bg.canvas`
+        // token — `backdrop-filter` only produces an edge against
+        // content actively scrolling underneath, so at rest we still
+        // need a static separator.
+        borderBottom: "1px solid",
+        borderColor: "border.hairline",
         backdropFilter: "saturate(180%) blur(8px)",
       })}
     >

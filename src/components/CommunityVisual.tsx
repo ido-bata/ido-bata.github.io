@@ -1,7 +1,9 @@
+import { Fragment } from "react";
 import Image from "next/image";
 import { css, cx } from "@/styled-system/css";
 import { grid, stack } from "@/styles/recipes";
-import { ADMINISTRATOR } from "@/content/community";
+import { ADMINISTRATOR, FEATURED_POST } from "@/content/community";
+import { CHANNELS } from "@/content/channels";
 
 /**
  * Discord-style chat preview that anchors the home page Hero.
@@ -12,10 +14,12 @@ import { ADMINISTRATOR } from "@/content/community";
  *   description as in `src/content/channels.ts`. The sidebar shows
  *   the surrounding `雑` channels so the context (wip, ひとりごと,
  *   世迷言) is visible rather than a single-channel island.
- * - samuido posts an actual message they sent on 2026/03/21 in
- *   `#ひとりごと` — preserved verbatim, including the "(唐突)"
- *   aside and the second-paragraph line break. This is a real
- *   post, not a fabricated wip / GitHub-PR demo.
+ * - The post body and timestamp come from `FEATURED_POST` in
+ *   `src/content/community.ts` — samuido's real 2026/03/21 message
+ *   in `#ひとりごと`, preserved verbatim with the original
+ *   `<br />` line breaks. The visible timestamp keeps the
+ *   Discord-style `YYYY/MM/DD HH:mm` format; `<time dateTime>`
+ *   carries the ISO 8601 value for assistive tech.
  * - The samuido avatar uses the real profile photo from
  *   `ADMINISTRATOR`. There is no fabricated second participant
  *   and no fabricated GitHub link embed.
@@ -54,6 +58,12 @@ import { ADMINISTRATOR } from "@/content/community";
  *   minmax(0, 1fr)` so the icon column (`#`) has a fixed width
  *   and every channel name starts at the same x.
  *
+ * - On the `base` breakpoint the recipe collapses to a single
+ *   `1fr` track, so both panes auto-flow into successive
+ *   full-width rows — the Discord window visually compresses to
+ *   one rail rather than the desktop 2-rail chrome, which matches
+ *   how most Discord clients adapt.
+ *
  * Hierarchy note:
  * - Borders are intentionally minimal. The outer aside uses
  *   `border.subtle` + `boxShadow` for chrome; the internal
@@ -63,6 +73,26 @@ import { ADMINISTRATOR } from "@/content/community";
  *   "ellipsis"` (set in `channelName`) so a long channel label
  *   doesn't wrap to a second line in the narrow sidebar.
  */
+
+// Pull the `#ひとりごと` description from the canonical channels
+// module rather than re-typing it here. If the upstream
+// description ever changes, this surface updates with it.
+const FEATURED_CHANNEL = CHANNELS.find((channel) => channel.name === "ひとりごと");
+
+// Sidebar shows the other channels in the same `雑` category, so
+// the Discord window reads as a real category context rather than
+// a single-channel island. The category is in `CHANNEL_CATEGORIES`,
+// so the filter always returns at least the featured channel;
+// an empty result means the category was removed upstream, in
+// which case the sidebar collapses cleanly to no rows.
+const SIDEBAR_CHANNELS: readonly { name: string; active?: boolean }[] = CHANNELS.filter(
+  (channel) => channel.category === "雑",
+).map((channel) => ({
+  name: channel.name,
+  active: channel.name === "ひとりごと",
+}));
+
+const FEATURED_CATEGORY_LABEL = "雑";
 
 const sidebarChannel = css({
   display: "grid",
@@ -89,12 +119,6 @@ const sidebarChannelActive = css({
   color: "fg.DEFAULT",
   fontWeight: "semibold",
 });
-
-const SIDEBAR_CHANNELS: readonly { name: string; active?: boolean }[] = [
-  { name: "wip" },
-  { name: "ひとりごと", active: true },
-  { name: "世迷言" },
-];
 
 const channelName = css({
   overflow: "hidden",
@@ -126,18 +150,8 @@ export function CommunityVisual() {
         overflow: "hidden",
       })}
     >
-      {/* Sidebar / main split — on the shared 12-col grid. Sidebar
-          occupies cols 1–3 on md+, cols 1–2 on mobile; main occupies
-          the rest. The recipe's responsive collapse to a single
-          column at base is acceptable here — at mobile the Discord
-          window visually compresses to one rail rather than the
-          desktop 2-rail chrome, which matches how most Discord
-          clients adapt. */}
       <div className={cx(grid({ cols: 12, gap: 3 }))}>
-        {/* Sidebar — shows the `雑` category from channels.ts with
-            wip / ひとりごと / 世迷言 so the channel context is
-            visible. ひとりご と is the currently-viewed channel
-            (matching the header on the right). */}
+        {/* Sidebar */}
         <div
           className={cx(
             stack({ gap: 4 }),
@@ -178,19 +192,30 @@ export function CommunityVisual() {
                 paddingX: "2",
               })}
             >
-              雑
+              {FEATURED_CATEGORY_LABEL}
             </p>
-            {SIDEBAR_CHANNELS.map((ch) => (
-              <span
-                key={ch.name}
-                className={cx(sidebarChannel, ch.active && sidebarChannelActive)}
-              >
-                <span aria-hidden="true" className={sidebarChannelIcon}>
-                  #
-                </span>
-                <span className={channelName}>{ch.name}</span>
-              </span>
-            ))}
+            <ul
+              className={css({
+                listStyle: "none",
+                margin: 0,
+                padding: 0,
+                display: "flex",
+                flexDirection: "column",
+                gap: "1",
+              })}
+            >
+              {SIDEBAR_CHANNELS.map((ch) => (
+                <li
+                  key={ch.name}
+                  className={cx(sidebarChannel, ch.active && sidebarChannelActive)}
+                >
+                  <span aria-hidden="true" className={sidebarChannelIcon}>
+                    #
+                  </span>
+                  <span className={channelName}>{ch.name}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
@@ -224,29 +249,22 @@ export function CommunityVisual() {
               >
                 # ひとりごと
               </p>
-              <p
-                className={css({
-                  display: { base: "none", sm: "block" },
-                  fontSize: "2xs",
-                  color: "fg.subtle",
-                  lineHeight: "tight",
-                })}
-              >
-                作業中に考えたことを気軽に書く。
-              </p>
+              {FEATURED_CHANNEL ? (
+                <p
+                  className={css({
+                    display: { base: "none", sm: "block" },
+                    fontSize: "2xs",
+                    color: "fg.subtle",
+                    lineHeight: "tight",
+                  })}
+                >
+                  {FEATURED_CHANNEL.description}
+                </p>
+              ) : null}
             </div>
           </header>
 
           <div className={cx(stack({ gap: 4 }), css({ padding: { base: "3", sm: "4" } }))}>
-            {/* Samuido's real post in #ひとりごと from 2026/03/21.
-                Preserved verbatim, including the "(唐突)" aside and
-                the blank-line paragraph break. The line break
-                inside each paragraph uses a literal `<br />` to
-                match how Discord renders consecutive non-empty
-                lines; the blank line between the two paragraphs is
-                expressed as a `<p>` boundary with `marginBlockStart`
-                so the visual separation reads as paragraph spacing,
-                not extra line spacing inside one paragraph. */}
             <div className={message}>
               <Image
                 src={ADMINISTRATOR.profileImageUrl}
@@ -264,11 +282,14 @@ export function CommunityVisual() {
               <div className={cx(stack({ gap: 1 }))}>
                 <div className={css({ display: "flex", gap: "2", alignItems: "baseline" })}>
                   <strong className={css({ fontSize: "sm", color: "fg.DEFAULT", fontWeight: "semibold" })}>
-                    {ADMINISTRATOR.name}
+                    {FEATURED_POST.author}
                   </strong>
-                  <span className={css({ fontSize: "2xs", color: "fg.subtle" })}>
-                    2026/03/21 17:58
-                  </span>
+                  <time
+                    dateTime={FEATURED_POST.dateTime}
+                    className={css({ fontSize: "2xs", color: "fg.subtle" })}
+                  >
+                    {FEATURED_POST.dateLabel}
+                  </time>
                 </div>
                 <div
                   className={css({
@@ -279,16 +300,16 @@ export function CommunityVisual() {
                     "& p + p": { marginBlockStart: "2" },
                   })}
                 >
-                  <p>
-                    私はVSCodeのUXデザインが一番のお手本だと思ってる(唐突)
-                    <br />
-                    大量の機能があるわりに認知負荷が低くて自由度が高い
-                  </p>
-                  <p>
-                    目指すべき高みである
-                    <br />
-                    この世のUIすべてがVSCodeになってほしい
-                  </p>
+                  {FEATURED_POST.paragraphs.map((paragraph, paragraphIndex) => (
+                    <p key={paragraphIndex}>
+                      {paragraph.lines.map((line, lineIndex) => (
+                        <Fragment key={lineIndex}>
+                          {lineIndex > 0 ? <br /> : null}
+                          {line}
+                        </Fragment>
+                      ))}
+                    </p>
+                  ))}
                 </div>
               </div>
             </div>
@@ -298,4 +319,3 @@ export function CommunityVisual() {
     </aside>
   );
 }
-

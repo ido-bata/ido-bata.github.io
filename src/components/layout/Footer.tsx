@@ -4,6 +4,7 @@ import { css, cx } from "@/styled-system/css";
 import { cluster, container, grid, stack } from "@/styles/recipes";
 import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { ADMINISTRATOR, CONTRIBUTION_LINKS } from "@/content/community";
+import { SITE_LINKS } from "@/content/nav";
 import { DISCORD_INVITE } from "@/lib/env";
 
 const headingStyle = css({
@@ -21,13 +22,6 @@ const linkStyle = css({
   lineHeight: "relaxed",
   _hover: { color: "fg.DEFAULT", textDecoration: "underline" },
 });
-
-const SITE_LINKS = [
-  { href: "/welcome", label: "初めての方へ" },
-  { href: "/projects", label: "プロジェクト" },
-  { href: "/channels", label: "チャネル" },
-  { href: "/about", label: "About" },
-] as const;
 
 export function Footer() {
   return (
@@ -66,14 +60,20 @@ export function Footer() {
                 height={48}
                 className={css({ width: "12", height: "12", borderRadius: "full" })}
               />
-              <div>
-                <p className={css({ fontSize: "lg", fontWeight: "bold", color: "fg.DEFAULT" })}>
+              <div className={cx(stack({ gap: 1 }))}>
+                <span
+                  className={css({
+                    fontSize: "lg",
+                    fontWeight: "bold",
+                    color: "fg.DEFAULT",
+                  })}
+                >
                   ido-bata
-                </p>
+                </span>
                 <span
                   className={css({
                     fontSize: "xs",
-                    color: "fg.muted",
+                    color: "fg.subtle",
                     fontFamily: "mono",
                   })}
                 >
@@ -110,7 +110,7 @@ export function Footer() {
             })}
           >
             <nav aria-label="サイト案内" className={cx(stack({ gap: 4 }))}>
-              <p className={headingStyle}>Explore</p>
+              <h3 className={headingStyle}>Explore</h3>
               <ul
                 className={cx(stack({ gap: 3 }), css({ listStyle: "none", margin: 0, padding: 0 }))}
               >
@@ -125,13 +125,18 @@ export function Footer() {
             </nav>
 
             <nav aria-label="サイトへの参加" className={cx(stack({ gap: 4 }))}>
-              <p className={headingStyle}>Contribute</p>
+              <h3 className={headingStyle}>Contribute</h3>
               <ul
                 className={cx(stack({ gap: 3 }), css({ listStyle: "none", margin: 0, padding: 0 }))}
               >
                 {CONTRIBUTION_LINKS.map((link) => (
                   <li key={link.kind}>
-                    <a href={link.href} target="_blank" rel="noreferrer" className={linkStyle}>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={linkStyle}
+                    >
                       {link.label} ↗
                     </a>
                   </li>
@@ -140,7 +145,7 @@ export function Footer() {
             </nav>
 
             <div className={cx(stack({ gap: 4 }))}>
-              <p className={headingStyle}>Administrator</p>
+              <h3 className={headingStyle}>Administrator</h3>
               <div className={cx(cluster({ gap: 3 }))}>
                 <Image
                   src={ADMINISTRATOR.profileImageUrl}
@@ -156,7 +161,7 @@ export function Footer() {
                   <a
                     href={ADMINISTRATOR.xUrl}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className={linkStyle}
                   >
                     X {ADMINISTRATOR.xHandle} ↗

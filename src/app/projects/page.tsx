@@ -137,7 +137,13 @@ export default function ProjectsPage() {
                     borderRadius: "lg",
                     color: "fg.DEFAULT",
                     textDecoration: "none",
-                    _hover: { borderColor: "border.strong" },
+                    _hover: { bg: "bg.subtle", borderColor: "border.strong" },
+                    _focusVisible: {
+                      outlineWidth: "2px",
+                      outlineStyle: "solid",
+                      outlineColor: "accent",
+                      outlineOffset: "2px",
+                    },
                   }),
                 )}
               >

@@ -7,6 +7,7 @@ import { DISCORD_INVITE } from "@/lib/env";
 import {
   CHANNELS,
   CHANNEL_CATEGORIES,
+  CHANNEL_SNAPSHOT_DATE,
   CHANNEL_TYPE_LABELS,
   type ChannelCategory,
 } from "@/content/channels";
@@ -147,7 +148,7 @@ export default function ChannelsPage() {
               <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>{CHANNELS.length}</dd>
               <dt className={css({ color: "fg.muted" })}>取得日時</dt>
               <dd className={css({ color: "fg.DEFAULT", fontFamily: "mono", margin: 0 })}>
-                2026-09-16
+                {CHANNEL_SNAPSHOT_DATE}
               </dd>
             </dl>
           </aside>
@@ -212,7 +213,7 @@ export default function ChannelsPage() {
                 >
                   {channels.map((channel) => (
                     <li
-                      key={channel.name}
+                      key={`${channel.category}::${channel.name}`}
                       className={cx(
                         css({
                           display: "flex",
@@ -228,13 +229,23 @@ export default function ChannelsPage() {
                     >
                       <div className={cx(cluster({ justify: "between" }), css({ width: "100%" }))}>
                         <span
-                          className={css({
-                            fontSize: "md",
-                            fontWeight: "semibold",
-                            color: "fg.DEFAULT",
-                          })}
+                          className={cx(
+                            cluster({ gap: 1 }),
+                            css({ fontFamily: "mono", color: "fg.DEFAULT" }),
+                          )}
                         >
-                          {channel.name}
+                          <span aria-hidden="true" className={css({ color: "fg.subtle" })}>
+                            #
+                          </span>
+                          <span
+                            className={css({
+                              fontSize: "md",
+                              fontWeight: "semibold",
+                              color: "fg.DEFAULT",
+                            })}
+                          >
+                            {channel.name}
+                          </span>
                         </span>
                         <span
                           className={css({

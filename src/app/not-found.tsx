@@ -3,7 +3,6 @@ import Link from "next/link";
 import { css, cx } from "@/styled-system/css";
 import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
 

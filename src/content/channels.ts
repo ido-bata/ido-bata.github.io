@@ -28,7 +28,34 @@
  *     (top-to-bottom in the server's sidebar).
  */
 
-export type ChannelCategory = string;
+/**
+ * Date the channel listing was last refreshed from the Discord server.
+ * Bump this every time `CHANNEL_INPUTS` is edited so the page's
+ * "最終更新" date stays in sync with the data — and so visitors can
+ * judge how stale the listing is at a glance.
+ */
+export const CHANNEL_SNAPSHOT_DATE = "2026-09-13";
+
+/**
+ * Display order is controlled by declaration order. Categories appear in the
+ * order they are listed here.
+ */
+export const CHANNEL_CATEGORIES = [
+  "ご案内",
+  "話題",
+  "PDCA",
+  "共有",
+  "参考",
+  "雑",
+  "いど端 底力 タイム",
+  "作業",
+  "いど端LT会",
+  "LayerNote",
+  "要望",
+  "Legacy",
+] as const;
+
+export type ChannelCategory = (typeof CHANNEL_CATEGORIES)[number];
 export type ChannelType = "text" | "announcement" | "forum" | "voice" | "stage";
 
 export interface Channel {
@@ -54,26 +81,6 @@ export const CHANNEL_TYPE_LABELS: Readonly<Record<ChannelType, string>> = {
   voice: "音声",
   stage: "ステージ",
 };
-
-/**
- * Display order is controlled by declaration order. Categories appear in the
- * order they are listed here.
- */
-export const CHANNEL_CATEGORIES: readonly ChannelCategory[] = [
-  "ご案内",
-  "話題",
-  "PDCA",
-  "共有",
-  "参考",
-  "雑",
-  "いど端 底力 タイム",
-  "作業",
-  "いど端LT会",
-  "LayerNote",
-  "要望",
-  "Legacy",
-];
-
 const CHANNEL_INPUTS: readonly ChannelInput[] = [
   // ───── ご案内 (top-level public welcome channels) ─────
   { name: "ようこそ", description: "", category: "ご案内" },
@@ -87,7 +94,7 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     category: "話題",
   },
   { name: "プログラミング", description: "プログラミング全般の質問や情報交換。", category: "話題" },
-  { name: "ꓪeb開発・ꓴꓲ", description: "Web開発とUIに関する話題。", category: "話題" },
+  { name: "Web開発・UI", description: "Web開発とUIに関する話題。", category: "話題" },
   {
     name: "ツール開発",
     description: "プラグイン、拡張機能、制作支援ツールの開発。",
@@ -103,8 +110,8 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     description: "デザイン、イラストなど静止画表現の話題。",
     category: "話題",
   },
-  { name: "音楽・ꓓꓔꓟ", description: "音楽制作やDTMの話題。", category: "話題" },
-  { name: "ꓮꓲ", description: "AIの技術、サービス、制作への利用について。", category: "話題" },
+  { name: "音楽・DTM", description: "音楽制作やDTMの話題。", category: "話題" },
+  { name: "AI", description: "AIの技術、サービス、制作への利用について。", category: "話題" },
   { name: "技術・工学", description: "科学技術、機械、工学の話題。", category: "話題" },
   { name: "文化・社会", description: "文化や社会に関する話題。", category: "話題" },
   { name: "専門交錯（１）", description: "複数の専門分野にまたがる話題。", category: "話題" },
@@ -117,10 +124,10 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
   },
 
   // ───── PDCA ─────
-  { name: "ꓑlan-計画", description: "やりたいことや目標を宣言する。", category: "PDCA" },
-  { name: "ꓓo-実行", description: "試したことや制作の進み具合を共有する。", category: "PDCA" },
-  { name: "ꓚheck-評価", description: "制作物を見せて評価を受ける。", category: "PDCA" },
-  { name: "ꓮction-改善", description: "評価を受けて次に直すことを宣言する。", category: "PDCA" },
+  { name: "Plan-計画", description: "やりたいことや目標を宣言する。", category: "PDCA" },
+  { name: "Do-実行", description: "試したことや制作の進み具合を共有する。", category: "PDCA" },
+  { name: "Check-評価", description: "制作物を見せて評価を受ける。", category: "PDCA" },
+  { name: "Action-改善", description: "評価を受けて次に直すことを宣言する。", category: "PDCA" },
   {
     name: "転送-補足",
     description: "評価対象への補足やフィードバックをまとめる。",
@@ -142,7 +149,7 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
   { name: "参考-映像", description: "映像制作の参考作品。", category: "参考" },
   { name: "参考-技術", description: "技術面で参考になる制作物や資料。", category: "参考" },
   { name: "参考-表現", description: "表現や演出の参考。", category: "参考" },
-  { name: "参考-ꓪeb", description: "WebサイトやWeb表現の参考。", category: "参考" },
+  { name: "参考-Web", description: "WebサイトやWeb表現の参考。", category: "参考" },
   { name: "参考-楽曲", description: "楽曲制作の参考。", category: "参考" },
   { name: "参考-その他", description: "分類を決めにくい参考資料。", category: "参考" },
 
@@ -241,3 +248,43 @@ export const CHANNELS: readonly Channel[] = CHANNEL_INPUTS.map((channel) => ({
   ...channel,
   type: channel.type ?? "text",
 }));
+
+/**
+ * Pick a few representative channels per category for the home-page
+ * Discord preview. The home page shouldn't dump the whole server
+ * tree (that's `/channels`'s job); it should let a visitor see the
+ * shape of the place.
+ *
+ * Categories chosen to span text + forum + voice so the preview
+ * hints at the medium, not just the topic. Channel entries are
+ * looked up by name from `CHANNELS` so the preview stays in sync
+ * with the canonical data — a rename / re-type upstream is
+ * reflected here automatically, no parallel hand-curated list.
+ */
+export function getChannelPreviewByCategory(): ReadonlyArray<{
+  category: ChannelCategory;
+  channels: ReadonlyArray<Channel>;
+}> {
+  const preview: Record<ChannelCategory, readonly string[]> = {
+    ご案内: [],
+    話題: [],
+    PDCA: ["Plan-計画", "Do-実行", "転送-補足"],
+    共有: ["素材・配布", "チートシート", "宣伝・拡散希望"],
+    参考: [],
+    雑: [],
+    "いど端 底力 タイム": [],
+    作業: ["作業（無言）", "作業（雑）", "聞き専"],
+    "いど端LT会": [],
+    LayerNote: [],
+    要望: [],
+    Legacy: [],
+  };
+  return (Object.entries(preview) as Array<[ChannelCategory, readonly string[]]>)
+    .filter(([, names]) => names.length > 0)
+    .map(([category, names]) => ({
+      category,
+      channels: names
+        .map((name) => CHANNELS.find((channel) => channel.name === name))
+        .filter((channel): channel is Channel => channel !== undefined),
+    }));
+}

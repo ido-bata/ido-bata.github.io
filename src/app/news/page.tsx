@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { css, cx } from "@/styled-system/css";
-import { container, grid, section, stack } from "@/styles/recipes";
+import { container, grid, section, stack, surface } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { getNewsSortedByDateDesc } from "@/content/news";
@@ -165,21 +165,10 @@ export default function NewsPage() {
               <li key={`${item.date}-${item.title}`}>
                 <article
                   className={cx(
-                    // Each news entry uses the same 12-col coordinate
-                    // system as the rest of the site: left rail
-                    // (span 3) for date + tag metadata, right rail
-                    // (span 9) for title + body. Previously the article
-                    // was a single full-width card with no rail split,
-                    // so long bodies pushed everything to the right
-                    // edge instead of aligning to the same content
-                    // column as the page header / section copy.
                     grid({ cols: 12, gap: 6 }),
+                    surface({ elevation: "flat" }),
                     css({
                       padding: { base: "5", md: "6" },
-                      borderRadius: "lg",
-                      border: "1px solid",
-                      borderColor: "border",
-                      bg: "bg.canvas",
                     }),
                   )}
                 >
@@ -202,16 +191,14 @@ export default function NewsPage() {
                     {item.tags && item.tags.length > 0 ? (
                       <ul
                         aria-label="タグ"
-                        className={cx(
-                          css({
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: "2",
-                            margin: 0,
-                            padding: 0,
-                            listStyleType: "none",
-                          }),
-                        )}
+                        className={css({
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "2",
+                          margin: 0,
+                          padding: 0,
+                          listStyleType: "none",
+                        })}
                       >
                         {item.tags.map((tag) => (
                           <li
