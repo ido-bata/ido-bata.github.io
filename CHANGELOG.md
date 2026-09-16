@@ -118,8 +118,7 @@
 
 - v0.3.0 のページ文言・告知・FAQ・チャネル一覧・サーバルールはオーナーの事実確認後に別途投入する。`src/content/*` は空配列 / minimal placeholder で merge した。
 
-[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.4.0...HEAD
-[0.4.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...v0.4.0
+[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...HEAD
 [0.3.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.2.0...v0.3.0
 
 ## [0.2.0] - 2026-09-06
@@ -141,7 +140,6 @@ foundational sprint。Discord コミュニティ「ido-bata（いど端）」の
 - About ページ / FAQ / サーバルール (#14, #18, #19)
 - i18n / RSS / sitemap / OG 画像 / favicon set (#23, #25, #26, #24, #28)
 
-[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...HEAD
 [0.2.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.1.0...v0.2.0
 
 ## [0.1.0] - 2026-09-06
