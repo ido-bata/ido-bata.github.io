@@ -13,20 +13,12 @@ export const metadata: Metadata = {
 };
 
 /**
- * /welcome — newcomer guidance.
- *
- * Audience: first-time visitor who hasn't joined the Discord server yet.
- * Distinct from /about (operator-voice reference for server members):
- *   - /welcome is the warm on-ramp, Discord CTA is prominent
- *   - /about  is the operator's stance / origin reference, no CTA
+ * /welcome — a short entry point for people who have not joined yet.
  *
  * Layout:
  *   - breadcrumb strip
  *   - left-aligned page-opening band: h1 + lede + Discord CTA
- *   - right rail ("参加前に") listing cultural defaults a newcomer
- *     benefits from seeing upfront — server members already know these
- *     by experience, so this is the only place on the site that names
- *     them as a guide
+ *   - right rail showing where to start in the server
  *   - "関連するページ" rail to /channels / /community/rules / /about / /faq
  *
  * Refs: Issue #103
@@ -62,7 +54,7 @@ export default function WelcomePage() {
                 color: "fg.DEFAULT",
               })}
             >
-              いど端へ。
+              いど端に参加する
             </h1>
             <div className={cx(stack({ gap: 4 }), css({ maxW: "52ch" }))}>
               <p
@@ -72,8 +64,8 @@ export default function WelcomePage() {
                   lineHeight: "relaxed",
                 })}
               >
-                いど端は Discord で動いてる小さいサーバー。 名前は井戸端会議の響きだけ借りてる。
-                うちは交流じゃなくて情報共有のためのサーバーってとこでやってる。
+                いど端は、クリエイターやエンジニアが制作・開発を進めるための Discord
+                サーバーです。専門分野の話、制作途中の共有、作業の記録などに使われています。
               </p>
               <p
                 className={css({
@@ -82,8 +74,7 @@ export default function WelcomePage() {
                   lineHeight: "relaxed",
                 })}
               >
-                招待リンクから参加できます。 入ったらチャネル一覧 / ルール / FAQ
-                を順に眺めてもらえれば、 場の使い方はだいたい分かる。
+                参加後は、興味のある分野や使っているツールのロールを選び、必要なチャンネルから使ってください。
               </p>
             </div>
             {invite ? (
@@ -99,7 +90,7 @@ export default function WelcomePage() {
           </div>
 
           <aside
-            aria-label="参加前に知っておきたいこと"
+            aria-labelledby="getting-started-heading"
             className={cx(
               stack({ gap: 4 }),
               css({
@@ -113,17 +104,16 @@ export default function WelcomePage() {
               }),
             )}
           >
-            <p
+            <h2
+              id="getting-started-heading"
               className={css({
-                fontSize: "xs",
-                fontWeight: "medium",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "fg.subtle",
+                fontSize: "lg",
+                fontWeight: "semibold",
+                color: "fg.DEFAULT",
               })}
             >
-              参加前に
-            </p>
+              参加したら
+            </h2>
             <ul
               className={css({
                 display: "flex",
@@ -134,7 +124,7 @@ export default function WelcomePage() {
                 padding: 0,
               })}
             >
-              {EXPECTATIONS.map((item) => (
+              {START_GUIDE.map((item) => (
                 <li
                   key={item.title}
                   className={css({
@@ -232,24 +222,28 @@ export default function WelcomePage() {
   );
 }
 
-const EXPECTATIONS = [
+const START_GUIDE = [
   {
-    title: "ウェルカム無し / 匿名",
-    body: "ウェルカムメッセージや入会の儀式は作ってない。 入退会は完全に自由で、 誰が来たかは誰にも分からない。 投稿の匿名性が基本。",
+    title: "話題",
+    body: "専門分野の質問や会話をする場所です。分野をまたぐ話題にも専用のチャンネルがあります。",
   },
   {
-    title: "ひとりごと / wip は反応より書くことが優先",
-    body: "リアクションを気にせず、 書きたいことをそのまま書けるチャネル。 反応 (返信 / リアクション) を求めない。",
+    title: "共有",
+    body: "素材、ツール、資料、作品の公開や募集に使います。",
   },
   {
-    title: "各自で調べて書く、 共有する",
-    body: "関心領域は映像 / プログラミング / デザインあたり。 交流の場じゃなくて、 情報共有のための場所として使ってる。",
+    title: "雑",
+    body: "雑談、制作途中のもの、まとまる前の考えを書けます。",
+  },
+  {
+    title: "PDCA",
+    body: "やることを宣言し、進捗や評価、次の改善を記録する場所です。",
   },
 ] as const;
 
 const RELATED = [
   { href: "/channels", label: "チャネル一覧", hint: "カテゴリ別のチャネル構成" },
   { href: "/community/rules", label: "サーバルール", hint: "推奨・禁止・運用方針" },
-  { href: "/about", label: "About", hint: "運営スタンス・経緯" },
+  { href: "/about", label: "About", hint: "サーバーの考え方" },
   { href: "/faq", label: "FAQ", hint: "よくある質問" },
 ] as const;

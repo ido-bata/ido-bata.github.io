@@ -98,7 +98,7 @@ export function Footer() {
                     fontFamily: "mono",
                   })}
                 >
-                  Discord community · since 2026
+                  Discord community · since 2025
                 </span>
               </div>
             </div>
@@ -110,8 +110,7 @@ export function Footer() {
                 maxW: "44ch",
               })}
             >
-              Discord 上で動いてるサーバーのインデックス。 サーバーメンバー向けに、
-              チャネル・告知・ルールを 1 か所に集約。
+              いど端 Discord サーバーのチャネル、告知、ルールをまとめています。
             </p>
             {invite ? (
               <div className={cx(cluster({ gap: 2 }))}>

@@ -16,7 +16,7 @@ import { test, expect } from "@playwright/test";
  *
  * The home page (`src/app/page.tsx`) was rewritten as a utility-first
  * navigator in Issue #103 — these assertions target the surfaces that
- * are stable across the IA (functional hero h1, channels index h2,
+ * are stable across the IA (site name, channels index,
  * footer site nav with About / FAQ).
  */
 test.describe("Home page (static export)", () => {
@@ -25,12 +25,9 @@ test.describe("Home page (static export)", () => {
     expect(response, "expected a navigation response").not.toBeNull();
     expect(response?.status() ?? 0).toBeLessThan(400);
 
-    // Functional hero headline (Issue #103: utility-first reorientation).
-    await expect(
-      page.getByRole("heading", { level: 1, name: /関心領域を各自で調べて書く/ }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "いど端" })).toBeVisible();
     // Channels index — primary utility surface on home.
-    await expect(page.getByRole("heading", { level: 2, name: /チャネル/ })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "チャネルから探す" })).toBeVisible();
     // Footer nav is rendered on every page, so its About / FAQ links
     // are stable smoke-test targets for the navigation surface.
     await expect(page.getByRole("link", { name: "About", exact: true })).toBeVisible();

@@ -7,13 +7,7 @@ import { DISCORD_INVITE } from "@/lib/env";
 import { CHANNELS, CHANNEL_CATEGORIES } from "@/content/channels";
 
 /**
- * Home page — utility-first navigator.
- *
- * Audience is the server member (most accesses come from current
- * members), with first-time visitors an important secondary audience.
- * The page is structured as an at-a-glance index of the things this
- * site actually lets you reach, not a pitch / "what is this community"
- * landing.
+ * Home page for finding the site's working information.
  *
  * Layout follows the project's "left-aligned grid composition"
  * principle — the page-opening band uses the shared 12-col grid (left
@@ -23,15 +17,7 @@ import { CHANNELS, CHANNEL_CATEGORIES } from "@/content/channels";
  *     `src/content/channels.ts`) — categories as compact rows with
  *     channel counts and a 3-channel preview; full detail lives at
  *     /channels
- *   - News / Rules empty-state surfaces (placeholder until content
- *     fills in)
- *   - Memo line: "正本は Discord サーバ側" stays as a single short
- *     line so the navigator doesn't pretend to be canonical
- *
- * The "初めての方へ" entry point lives in the page-opening band
- * itself, not as a separate home section. About does not have a home
- * section — /about is the operator-voice reference for server members,
- * not a recruitment page.
+ *   - News / Rules surfaces
  *
  * Refs: Issue #103, .agents/skills/layout-system
  */
@@ -45,7 +31,7 @@ export default function Home() {
 
   return (
     <main className={cx(container({ size: "content" }))}>
-      {/* ───── Page-opening band (functional hero + server-context rail) ───── */}
+      {/* ───── Page-opening band ───── */}
       <section aria-labelledby="hero-heading" className={cx(section({ variant: "flow" }))}>
         <div className={cx(grid({ cols: 12, gap: 6 }))}>
           <div className={cx(stack({ gap: 5 }), css({ gridColumn: { base: "1", md: "span 7" } }))}>
@@ -58,7 +44,7 @@ export default function Home() {
                 color: "fg.muted",
               })}
             >
-              いど端
+              ido-bata
             </p>
             <h1
               id="hero-heading"
@@ -71,7 +57,7 @@ export default function Home() {
                 maxW: "18ch",
               })}
             >
-              関心領域を各自で調べて書く、共有と下書きの場。
+              いど端
             </h1>
             <p
               className={css({
@@ -81,7 +67,7 @@ export default function Home() {
                 maxW: "44ch",
               })}
             >
-              Discord で動いてるサーバーのインデックス。 チャネル・告知・ルールを 1 か所に集約。
+              クリエイターやエンジニアが、制作・開発・情報共有に使う Discord サーバーです。
             </p>
             <div className={cx(cluster({ gap: 3 }))}>
               {invite ? (
@@ -93,7 +79,7 @@ export default function Home() {
                 </Button>
               ) : null}
               <Button asChild variant="outline" size="lg">
-                <Link href="/channels">チャネルを見る</Link>
+                <Link href="/channels">チャネル一覧</Link>
               </Button>
               <Button asChild variant="ghost" size="lg">
                 <Link href="/welcome">初めての方へ</Link>
@@ -102,7 +88,7 @@ export default function Home() {
           </div>
 
           <aside
-            aria-label="サーバーの概要"
+            aria-label="掲載内容"
             className={cx(
               stack({ gap: 3 }),
               css({
@@ -125,7 +111,7 @@ export default function Home() {
                 color: "fg.subtle",
               })}
             >
-              Server
+              Directory
             </p>
             <dl
               className={css({
@@ -137,10 +123,10 @@ export default function Home() {
                 fontSize: "sm",
               })}
             >
-              <dt className={css({ color: "fg.muted" })}>名前</dt>
-              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>いど端 (ido-bata)</dd>
-              <dt className={css({ color: "fg.muted" })}>プラットフォーム</dt>
-              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>Discord</dd>
+              <dt className={css({ color: "fg.muted" })}>使い方</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>必要なページを探す</dd>
+              <dt className={css({ color: "fg.muted" })}>更新対象</dt>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>チャネル・告知・ルール</dd>
               <dt className={css({ color: "fg.muted" })}>カテゴリ</dt>
               <dd className={css({ color: "fg.DEFAULT", margin: 0, fontFamily: "mono" })}>
                 {CHANNEL_CATEGORIES.length}
@@ -171,7 +157,7 @@ export default function Home() {
               color: "fg.DEFAULT",
             })}
           >
-            チャネル
+            チャネルから探す
           </h2>
           <Link
             href="/channels"
@@ -183,7 +169,7 @@ export default function Home() {
               _hover: { textDecoration: "underline" },
             })}
           >
-            チャネル一覧ページへ →
+            すべてのチャネルを見る →
           </Link>
         </div>
         <ul
@@ -295,7 +281,7 @@ export default function Home() {
                 lineHeight: "relaxed",
               })}
             >
-              現在、掲載中の告知はありません。 動きがあれば Discord サーバ側にも投稿します。
+              現在、サイトに掲載している告知はありません。
             </p>
           </div>
           <div
@@ -342,25 +328,10 @@ export default function Home() {
                 lineHeight: "relaxed",
               })}
             >
-              推奨・禁止・チャネル別運用方針はサーバルールページに掲載します。
-              現時点で確定済みの項目はありません。
+              サーバーを利用するときの基本事項を確認できます。
             </p>
           </div>
         </div>
-      </section>
-
-      {/* ───── Memo (正本は Discord サーバ側) ───── */}
-      <section aria-label="正本について" className={cx(section({ variant: "flow" }))}>
-        <p
-          className={css({
-            fontSize: "sm",
-            color: "fg.subtle",
-            lineHeight: "relaxed",
-            maxW: "60ch",
-          })}
-        >
-          理念と運営の正本は Discord サーバ側。 ここはインデックスだけ。
-        </p>
       </section>
     </main>
   );
