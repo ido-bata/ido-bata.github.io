@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { css, cx } from "@/styled-system/css";
 import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { DiscordIcon } from "@/components/ui/DiscordIcon";
+import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
 import { CHANNELS, CHANNEL_CATEGORIES, type ChannelCategory } from "@/content/channels";
 
@@ -89,12 +88,7 @@ export default function ChannelsPage() {
             </p>
             {invite ? (
               <div className={cx(cluster({ gap: 3 }))}>
-                <Button asChild variant="solid" size="lg">
-                  <a href={invite} target="_blank" rel="noopener noreferrer">
-                    <DiscordIcon size={18} />
-                    <span>Discord サーバに参加</span>
-                  </a>
-                </Button>
+                <DiscordJoinButton href={invite} size="lg" />
               </div>
             ) : null}
           </div>

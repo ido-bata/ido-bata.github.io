@@ -2,8 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { DISCORD_INVITE } from "@/lib/env";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Button } from "@/components/ui/button";
-import { DiscordIcon } from "@/components/ui/DiscordIcon";
+import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { css, cx } from "@/styled-system/css";
 import { cluster, container } from "@/styles/recipes";
 
@@ -105,50 +104,8 @@ export function Header() {
         <div className={cx(cluster({ justify: "end" }))}>
           <ThemeToggle />
           {invite ? (
-            <Button
-              asChild
-              variant="solid"
-              size="sm"
-              className={css({
-                // Brand colour override — Discord Blurple is not part
-                // of the theme palette, so we layer the brand colour
-                // on top of the recipe output instead of growing the
-                // Button API. The hover state uses the documented
-                // Blurple-darken so the interaction language stays
-                // recognisable.
-                background: "#5865f2",
-                _hover: { background: "#4752c4" },
-              })}
-            >
-              <a href={invite} target="_blank" rel="noopener noreferrer">
-                <DiscordIcon size={16} />
-                <span>Discord に参加</span>
-              </a>
-            </Button>
-          ) : (
-            // env 未設定時の placeholder — ビルドは壊さないが、デプロイ前に
-            // `.env` (または CI シークレット) で NEXT_PUBLIC_DISCORD_INVITE を設定すること。
-            <span
-              aria-label="Discord 招待リンク未設定"
-              className={css({
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "2",
-                height: "8",
-                px: "3",
-                borderRadius: "full",
-                fontSize: "xs",
-                fontWeight: "medium",
-                color: "fg.onAccent",
-                background: "rgba(88, 101, 242, 0.4)",
-                cursor: "not-allowed",
-                opacity: 0.6,
-              })}
-            >
-              <DiscordIcon size={14} />
-              <span>Discord に参加</span>
-            </span>
-          )}
+            <DiscordJoinButton href={invite} label="Discord に参加" size="sm" />
+          ) : null}
         </div>
       </div>
     </header>

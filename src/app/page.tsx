@@ -2,7 +2,7 @@ import Link from "next/link";
 import { css, cx } from "@/styled-system/css";
 import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Button } from "@/components/ui/button";
-import { DiscordIcon } from "@/components/ui/DiscordIcon";
+import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
 import { CHANNELS, CHANNEL_CATEGORIES } from "@/content/channels";
 
@@ -71,12 +71,7 @@ export default function Home() {
             </p>
             <div className={cx(cluster({ gap: 3 }))}>
               {invite ? (
-                <Button asChild variant="solid" size="lg">
-                  <a href={invite} target="_blank" rel="noopener noreferrer">
-                    <DiscordIcon size={18} />
-                    <span>Discord に参加</span>
-                  </a>
-                </Button>
+                <DiscordJoinButton href={invite} label="Discord に参加" size="lg" />
               ) : null}
               <Button asChild variant="outline" size="lg">
                 <Link href="/channels">チャネル一覧</Link>

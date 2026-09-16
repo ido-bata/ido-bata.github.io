@@ -1,8 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { DISCORD_INVITE } from "@/lib/env";
-import { Button } from "@/components/ui/button";
-import { DiscordIcon } from "@/components/ui/DiscordIcon";
+import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { MaterialIcon } from "@/components/ui/MaterialIcon";
 import { css, cx } from "@/styled-system/css";
 import { cluster, container, grid, stack } from "@/styles/recipes";
@@ -114,12 +113,7 @@ export function Footer() {
             </p>
             {invite ? (
               <div className={cx(cluster({ gap: 2 }))}>
-                <Button asChild variant="solid" size="md">
-                  <a href={invite} target="_blank" rel="noopener noreferrer">
-                    <DiscordIcon size={16} />
-                    <span>Discord サーバに参加</span>
-                  </a>
-                </Button>
+                <DiscordJoinButton href={invite} />
               </div>
             ) : null}
           </div>
