@@ -21,8 +21,21 @@ const nextConfig: NextConfig = {
 
   // `output: "export"` では next/image の最適化が動かないため、無効化して静的書き出しを通す。
   // 画像最適化が必要になったら docs/architecture.md#画像最適化の節に従ってカスタムローダーを導入する。
+  //
+  // `unoptimized: true` でも外部 URL の src は remotePatterns 検証の対象になる
+  // (next/image は src 解決時にパターン照合を行うため)。運営者のプロフィール
+  // 写真を Twitter から直接貼るために pbs.twimg.com のみ許可する。
+  // 公式 doc: node_modules/next/dist/docs/02-pages/04-api-reference/
+  //          01-components/image-legacy.md#remote-patterns
   images: {
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "pbs.twimg.com",
+        pathname: "/profile_images/**",
+      },
+    ],
   },
 };
 

@@ -1,0 +1,39 @@
+name: release-source-check
+
+# required status check として main への PR head が `release-*` pattern に
+# 一致することを enforce する。branch protection だけでは PR head pattern を
+# 制約できないため、required status check で代替する。
+# 詳細は docs/adr/0003-release-branch-stack-protection.md を参照。
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-head:
+    name: Verify PR head branch matches release-*
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Inspect PR head ref
+        id: head
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          if [ -z "$HEAD_REF" ]; then
+            echo "::error::head ref が見つかりません (fork PR の可能性)"
+            exit 1
+          fi
+          if [[ "$HEAD_REF" == release-* ]]; then
+            echo "head ref '${HEAD_REF}' は release-* pattern に一致"
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::head ref '${HEAD_REF}' は release-* pattern に一致しません。main への PR は release branch からのみ merge できます。"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi

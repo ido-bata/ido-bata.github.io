@@ -17,6 +17,10 @@
  *   - "ご案内" is a public-facing umbrella for the top-level welcome
  *     channels (`#ようこそ` / `#この鯖について` / `#自己紹介`).
  *     `#moderator-only` (staff-only) is intentionally excluded.
+ *   - "Legacy" collects channels whose names have been retired but
+ *     remain visible to long-time members. Kept as a separate category
+ *     rather than deleted so existing references in shared links and
+ *     pinned posts do not silently 404.
  *   - Per-channel `description` is the Discord `topic` when present
  *     and the empty string otherwise. We do not invent purposes that
  *     are not stated on the server.
@@ -25,6 +29,7 @@
  */
 
 export type ChannelCategory = string;
+export type ChannelType = "text" | "announcement" | "forum" | "voice" | "stage";
 
 export interface Channel {
   /** Discord display name (without the leading `#`). */
@@ -36,7 +41,19 @@ export interface Channel {
   description: string;
   /** Category the channel belongs to. */
   category: ChannelCategory;
+  /** Discord channel kind. */
+  type: ChannelType;
 }
+
+type ChannelInput = Omit<Channel, "type"> & { type?: ChannelType };
+
+export const CHANNEL_TYPE_LABELS: Readonly<Record<ChannelType, string>> = {
+  text: "テキスト",
+  announcement: "アナウンス",
+  forum: "フォーラム",
+  voice: "音声",
+  stage: "ステージ",
+};
 
 /**
  * Display order is controlled by declaration order. Categories appear in the
@@ -44,12 +61,12 @@ export interface Channel {
  */
 export const CHANNEL_CATEGORIES: readonly ChannelCategory[] = [
   "ご案内",
-  "いど端 底力 タイム",
   "話題",
   "PDCA",
   "共有",
   "参考",
   "雑",
+  "いど端 底力 タイム",
   "作業",
   "いど端LT会",
   "LayerNote",
@@ -57,74 +74,159 @@ export const CHANNEL_CATEGORIES: readonly ChannelCategory[] = [
   "Legacy",
 ];
 
-export const CHANNELS: readonly Channel[] = [
+const CHANNEL_INPUTS: readonly ChannelInput[] = [
   // ───── ご案内 (top-level public welcome channels) ─────
   { name: "ようこそ", description: "", category: "ご案内" },
   { name: "この鯖について", description: "弊ディスコードサーバーの概要", category: "ご案内" },
   { name: "自己紹介", description: "", category: "ご案内" },
 
-  // ───── いど端 底力 タイム ─────
-  { name: "いど底-アナウンス", description: "", category: "いど端 底力 タイム" },
-
   // ───── 話題 ─────
-  { name: "映像・アニメーション", description: "", category: "話題" },
-  { name: "プログラミング", description: "", category: "話題" },
-  { name: "ꓪeb開発・ꓴꓲ", description: "", category: "話題" },
-  { name: "ツール開発", description: "", category: "話題" },
-  { name: "ゲーム・インタラクション", description: "", category: "話題" },
-  { name: "デザイン・イラスト", description: "", category: "話題" },
-  { name: "音楽・ꓓꓔꓟ", description: "", category: "話題" },
-  { name: "ꓮꓲ", description: "", category: "話題" },
-  { name: "技術・工学", description: "科学技術や機械", category: "話題" },
-  { name: "文化・社会", description: "", category: "話題" },
-  { name: "専門交錯（１）", description: "", category: "話題" },
-  { name: "専門交錯（２）", description: "", category: "話題" },
+  {
+    name: "映像・アニメーション",
+    description: "映像制作やアニメーションの話題。",
+    category: "話題",
+  },
+  { name: "プログラミング", description: "プログラミング全般の質問や情報交換。", category: "話題" },
+  { name: "ꓪeb開発・ꓴꓲ", description: "Web開発とUIに関する話題。", category: "話題" },
+  {
+    name: "ツール開発",
+    description: "プラグイン、拡張機能、制作支援ツールの開発。",
+    category: "話題",
+  },
+  {
+    name: "ゲーム・インタラクション",
+    description: "ゲームやインタラクティブ表現の話題。",
+    category: "話題",
+  },
+  {
+    name: "デザイン・イラスト",
+    description: "デザイン、イラストなど静止画表現の話題。",
+    category: "話題",
+  },
+  { name: "音楽・ꓓꓔꓟ", description: "音楽制作やDTMの話題。", category: "話題" },
+  { name: "ꓮꓲ", description: "AIの技術、サービス、制作への利用について。", category: "話題" },
+  { name: "技術・工学", description: "科学技術、機械、工学の話題。", category: "話題" },
+  { name: "文化・社会", description: "文化や社会に関する話題。", category: "話題" },
+  { name: "専門交錯（１）", description: "複数の専門分野にまたがる話題。", category: "話題" },
+  { name: "専門交錯（２）", description: "分野を一つに決めにくい話題。", category: "話題" },
+  {
+    name: "いろいろ",
+    description: "既存のチャンネルに当てはまらない話題。",
+    category: "話題",
+    type: "forum",
+  },
 
   // ───── PDCA ─────
-  { name: "ꓑlan-計画", description: "", category: "PDCA" },
-  { name: "ꓓo-実行", description: "", category: "PDCA" },
-  { name: "ꓚheck-評価", description: "", category: "PDCA" },
-  { name: "ꓮction-改善", description: "", category: "PDCA" },
+  { name: "ꓑlan-計画", description: "やりたいことや目標を宣言する。", category: "PDCA" },
+  { name: "ꓓo-実行", description: "試したことや制作の進み具合を共有する。", category: "PDCA" },
+  { name: "ꓚheck-評価", description: "制作物を見せて評価を受ける。", category: "PDCA" },
+  { name: "ꓮction-改善", description: "評価を受けて次に直すことを宣言する。", category: "PDCA" },
+  {
+    name: "転送-補足",
+    description: "評価対象への補足やフィードバックをまとめる。",
+    category: "PDCA",
+    type: "forum",
+  },
 
   // ───── 共有 ─────
-  { name: "素材・配布", description: "", category: "共有" },
-  { name: "拡張機能・ツール", description: "", category: "共有" },
-  { name: "チートシート", description: "", category: "共有" },
-  { name: "チュートリアル", description: "", category: "共有" },
-  { name: "ブログ・本", description: "", category: "共有" },
-  { name: "宣伝・拡散希望", description: "", category: "共有" },
-  { name: "募集・告知", description: "", category: "共有" },
-  { name: "その他", description: "", category: "共有" },
+  { name: "素材・配布", description: "制作に使える素材を共有・配布する。", category: "共有" },
+  { name: "拡張機能・ツール", description: "便利な拡張機能やツールを共有する。", category: "共有" },
+  { name: "チートシート", description: "手元で参照できる資料を共有する。", category: "共有" },
+  { name: "チュートリアル", description: "手順や学習資料を共有する。", category: "共有" },
+  { name: "ブログ・本", description: "記事や書籍を共有する。", category: "共有" },
+  { name: "宣伝・拡散希望", description: "公開した作品やツールを知らせる。", category: "共有" },
+  { name: "募集・告知", description: "協力者の募集やイベントを告知する。", category: "共有" },
+  { name: "その他", description: "ほかの共有チャンネルに当てはまらない情報。", category: "共有" },
 
   // ───── 参考 ─────
-  { name: "参考-映像", description: "", category: "参考" },
-  { name: "参考-技術", description: "", category: "参考" },
-  { name: "参考-表現", description: "", category: "参考" },
-  { name: "参考-ꓪeb", description: "", category: "参考" },
-  { name: "参考-楽曲", description: "", category: "参考" },
-  { name: "参考-その他", description: "", category: "参考" },
+  { name: "参考-映像", description: "映像制作の参考作品。", category: "参考" },
+  { name: "参考-技術", description: "技術面で参考になる制作物や資料。", category: "参考" },
+  { name: "参考-表現", description: "表現や演出の参考。", category: "参考" },
+  { name: "参考-ꓪeb", description: "WebサイトやWeb表現の参考。", category: "参考" },
+  { name: "参考-楽曲", description: "楽曲制作の参考。", category: "参考" },
+  { name: "参考-その他", description: "分類を決めにくい参考資料。", category: "参考" },
 
   // ───── 雑 ─────
-  { name: "雑談", description: "", category: "雑" },
-  { name: "wip", description: "", category: "雑" },
-  { name: "ひとりごと", description: "", category: "雑" },
-  { name: "世迷言", description: "", category: "雑" },
+  { name: "雑談", description: "話題を限定しない会話。", category: "雑" },
+  { name: "wip", description: "制作途中のものや進捗を共有する。", category: "雑" },
+  { name: "ひとりごと", description: "作業中に考えたことを気軽に書く。", category: "雑" },
+  { name: "世迷言", description: "まとまる前の考えや雑多な話題。", category: "雑" },
+
+  // ───── いど端 底力 タイム ─────
+  {
+    name: "いど底-アナウンス",
+    description: "いど端 底力 タイムからのお知らせ。",
+    category: "いど端 底力 タイム",
+    type: "announcement",
+  },
+  {
+    name: "いど底-フォーラム",
+    description: "集中して取り組む内容や成果を共有する。",
+    category: "いど端 底力 タイム",
+    type: "forum",
+  },
+  {
+    name: "いど底-ステージ",
+    description: "底力タイムで使うステージ。",
+    category: "いど端 底力 タイム",
+    type: "stage",
+  },
 
   // ───── 作業 ─────
-  { name: "聞き専", description: "", category: "作業" },
+  { name: "聞き専", description: "作業中の音声を聞く人向けのテキストチャンネル。", category: "作業" },
+  {
+    name: "作業（修羅場）",
+    description: "会話しながら集中して作業する音声チャンネル。",
+    category: "作業",
+    type: "voice",
+  },
+  {
+    name: "作業（雑）",
+    description: "雑談を交えながら作業する音声チャンネル。",
+    category: "作業",
+    type: "voice",
+  },
+  {
+    name: "作業（無言）",
+    description: "会話せず同じ場所で作業する音声チャンネル。",
+    category: "作業",
+    type: "voice",
+  },
 
   // ───── いど端LT会 ─────
-  { name: "アナウンス", description: "", category: "いど端LT会" },
-  { name: "テキスト", description: "", category: "いど端LT会" },
+  {
+    name: "アナウンス",
+    description: "LT会の開催案内。",
+    category: "いど端LT会",
+    type: "announcement",
+  },
+  { name: "テキスト", description: "LT会で使うテキストチャンネル。", category: "いど端LT会" },
+  {
+    name: "ボイスチャンネル",
+    description: "LT会の発表と視聴に使う音声チャンネル。",
+    category: "いど端LT会",
+    type: "voice",
+  },
 
   // ───── LayerNote ─────
-  { name: "アナウンス", description: "", category: "LayerNote" },
-  { name: "テキスト", description: "", category: "LayerNote" },
-  { name: "質問", description: "", category: "LayerNote" },
+  {
+    name: "アナウンス",
+    description: "LayerNoteプロジェクトからのお知らせ。",
+    category: "LayerNote",
+    type: "announcement",
+  },
+  { name: "テキスト", description: "LayerNoteの開発に関する会話。", category: "LayerNote" },
+  { name: "質問", description: "LayerNoteに関する質問。", category: "LayerNote" },
+  {
+    name: "フォーラム",
+    description: "LayerNoteの話題を項目ごとに扱う。",
+    category: "LayerNote",
+    type: "forum",
+  },
 
   // ───── 要望 ─────
-  { name: "弊鯖", description: "", category: "要望" },
-  { name: "メンバー", description: "", category: "要望" },
+  { name: "弊鯖", description: "サーバーへの要望や改善案。", category: "要望" },
+  { name: "メンバー", description: "メンバーに関する要望や相談。", category: "要望" },
 
   // ───── Legacy ─────
   { name: "作業", description: "", category: "Legacy" },
@@ -134,3 +236,8 @@ export const CHANNELS: readonly Channel[] = [
   { name: "チャット（２）", description: "", category: "Legacy" },
   { name: "チャット（３）", description: "", category: "Legacy" },
 ];
+
+export const CHANNELS: readonly Channel[] = CHANNEL_INPUTS.map((channel) => ({
+  ...channel,
+  type: channel.type ?? "text",
+}));

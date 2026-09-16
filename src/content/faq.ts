@@ -8,9 +8,6 @@
  * - `answer`: array of paragraphs. Each element renders as one paragraph.
  * - `id`: anchor (e.g. `/faq#some-id`). Do not change once published.
  *
- * NOTE: Entries are intentionally empty for the v0.3.0 release. Concrete
- * questions and answers are authored after the community owner confirms
- * facts (moderation policy, joining rules, etc.). See follow-up issue.
  */
 
 export type FaqItem = {
@@ -22,4 +19,36 @@ export type FaqItem = {
   readonly answer: readonly string[];
 };
 
-export const FAQ_ITEMS: readonly FaqItem[] = [];
+export const FAQ_ITEMS: readonly FaqItem[] = [
+  {
+    id: "who-can-join",
+    question: "誰が参加できますか？",
+    answer: [
+      "クリエイターやエンジニアを中心に、制作や開発を進めたい人が参加できます。",
+      "参加後は、興味のあるチャネルを必要なときに使ってください。",
+    ],
+  },
+  {
+    id: "what-to-post",
+    question: "何を投稿できますか？",
+    answer: [
+      "制作途中のもの、技術的な相談、知見、告知、雑談などを、話題に合うチャネルへ投稿できます。",
+      "完成した成果だけでなく、進める途中の相談や共有にも使われています。",
+    ],
+  },
+  {
+    id: "voice-required",
+    question: "ボイスチャネルで話す必要はありますか？",
+    answer: [
+      "必要ありません。無言作業向けのチャネルもあり、いど端 底力 タイムも発言やリアクションなしで参加できます。",
+    ],
+  },
+  {
+    id: "idobata-time",
+    question: "いど端 底力 タイムとは何ですか？",
+    answer: [
+      "毎日21:00から22:40まで、仕事以外の何かに集中するための作業時間です。",
+      "Botが作業と休憩の切り替わりを案内します。",
+    ],
+  },
+];
