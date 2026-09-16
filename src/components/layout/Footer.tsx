@@ -19,7 +19,7 @@ const linkStyle = css({
   fontSize: "sm",
   textDecoration: "none",
   lineHeight: "relaxed",
-  _hover: { color: "fg.DEFAULT" },
+  _hover: { color: "fg.DEFAULT", textDecoration: "underline" },
 });
 
 const SITE_LINKS = [

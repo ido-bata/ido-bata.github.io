@@ -71,7 +71,7 @@ export function ProjectDetailPage({ project }: { project: Project }) {
             ))}
           </div>
           <aside
-            aria-label="利用状況"
+            aria-labelledby="project-status-heading"
             className={cx(
               stack({ gap: 3 }),
               css({
@@ -84,16 +84,18 @@ export function ProjectDetailPage({ project }: { project: Project }) {
               }),
             )}
           >
-            <p
+            <h2
+              id="project-status-heading"
               className={css({
                 fontSize: "xs",
                 fontWeight: "medium",
                 letterSpacing: "0.08em",
+                textTransform: "uppercase",
                 color: "fg.muted",
               })}
             >
-              STATUS
-            </p>
+              ステータス
+            </h2>
             <p className={css({ fontSize: "sm", lineHeight: "relaxed", color: "fg.DEFAULT" })}>
               {project.status}
             </p>

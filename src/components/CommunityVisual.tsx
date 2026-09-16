@@ -132,7 +132,7 @@ export function CommunityVisual() {
             css({
               padding: { base: "2", sm: "3" },
               bg: "bg.muted",
-              gridColumn: { base: "1 / span 2", md: "1 / span 3" },
+              gridColumn: { base: "1", md: "1 / span 3" },
               minW: 0,
             }),
           )}
@@ -200,7 +200,7 @@ export function CommunityVisual() {
             display: "flex",
             flexDirection: "column",
             minW: 0,
-            gridColumn: { base: "1 / span 12", md: "4 / span 9" },
+            gridColumn: { base: "1", md: "4 / span 9" },
           })}
         >
           <header

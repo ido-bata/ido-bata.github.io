@@ -3,12 +3,14 @@ export type ProjectLinkKind = "repository" | "releases" | "guide";
 export type ProjectLink = {
   label: string;
   href: string;
-  kind: ProjectLinkKind;
-};
-
-export type ProjectRelatedLink = {
-  label: string;
-  href: string;
+  /**
+   * Optional link kind. When present, the project detail page renders
+   * the link with a primary "solid" button for `repository` and an
+   * outline button otherwise. Internal cross-references
+   * (`relatedLinks`) intentionally omit `kind` and always render as
+   * outline buttons, so a single `ProjectLink` shape covers both.
+   */
+  kind?: ProjectLinkKind;
 };
 
 export type Project = {
@@ -20,7 +22,7 @@ export type Project = {
   status: string;
   featured?: boolean;
   links: readonly ProjectLink[];
-  relatedLinks?: readonly ProjectRelatedLink[];
+  relatedLinks?: readonly ProjectLink[];
 };
 
 export const PROJECTS: readonly Project[] = [
@@ -89,10 +91,21 @@ export const FEATURED_PROJECTS: readonly Project[] = PROJECTS.filter(
   (project) => project.featured,
 ).slice(0, 2);
 
+/**
+ * Slug → project lookup. Built once from `PROJECTS` so `getProject`
+ * and `generateStaticParams` share an O(1) read instead of each
+ * render scanning the array. With only a handful of projects today
+ * this is overkill, but the cost of precomputing is one Map and it
+ * keeps the API shape stable as the directory grows.
+ */
+const PROJECT_BY_SLUG: ReadonlyMap<string, Project> = new Map(
+  PROJECTS.map((project) => [project.slug, project] as const),
+);
+
 export function getProjectPath(project: Pick<Project, "slug">): string {
   return `/projects/${project.slug}`;
 }
 
 export function getProject(slug: string): Project | undefined {
-  return PROJECTS.find((project) => project.slug === slug);
+  return PROJECT_BY_SLUG.get(slug);
 }
