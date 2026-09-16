@@ -112,8 +112,7 @@ export function Header() {
         >
           {[
             { href: "/activities/idobata-time", label: "底力タイム" },
-            { href: "/projects/layer-note", label: "LayerNote" },
-            { href: "/projects/server-bot", label: "Server Bot" },
+            { href: "/projects", label: "プロジェクト" },
             { href: "/channels", label: "チャネル" },
           ].map((link) => (
             <Link

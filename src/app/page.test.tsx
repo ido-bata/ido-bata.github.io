@@ -15,6 +15,9 @@ describe("Home page", () => {
       "/projects/server-bot",
     );
     expect(screen.getAllByRole("link", { name: /いど端 底力 タイム/ }).length).toBeGreaterThan(0);
+    expect(
+      screen.getByRole("link", { name: "すべてのプロジェクトを見る" }).getAttribute("href"),
+    ).toBe("/projects");
 
     expect(screen.getByRole("heading", { level: 2, name: "チャネルから探す" })).toBeTruthy();
 

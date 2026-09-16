@@ -6,23 +6,29 @@ export type ProjectLink = {
   kind: ProjectLinkKind;
 };
 
+export type ProjectRelatedLink = {
+  label: string;
+  href: string;
+};
+
 export type Project = {
-  slug: "layer-note" | "server-bot";
+  slug: string;
   name: string;
-  path: string;
   eyebrow: string;
   summary: string;
   features: readonly string[];
   status: string;
+  featured?: boolean;
   links: readonly ProjectLink[];
+  relatedLinks?: readonly ProjectRelatedLink[];
 };
 
 export const PROJECTS: readonly Project[] = [
   {
     slug: "layer-note",
     name: "LayerNote",
-    path: "/projects/layer-note",
     eyebrow: "After Effects extension",
+    featured: true,
     summary: "After Effectsのレイヤーにメモを残し、プロジェクトの中で管理できる拡張機能です。",
     features: [
       "レイヤーごとのメモをプロジェクト内に保存し、あとから編集できる",
@@ -52,8 +58,8 @@ export const PROJECTS: readonly Project[] = [
   {
     slug: "server-bot",
     name: "ido-bata-server-bot",
-    path: "/projects/server-bot",
     eyebrow: "Discord bot",
+    featured: true,
     summary:
       "いど端のDiscord運営を支えるBotです。現在は「いど端 底力 タイム」の進行を担っています。",
     features: [
@@ -70,8 +76,22 @@ export const PROJECTS: readonly Project[] = [
         kind: "repository",
       },
     ],
+    relatedLinks: [
+      {
+        label: "底力タイムの時間割を見る",
+        href: "/activities/idobata-time",
+      },
+    ],
   },
 ];
+
+export const FEATURED_PROJECTS: readonly Project[] = PROJECTS.filter(
+  (project) => project.featured,
+).slice(0, 2);
+
+export function getProjectPath(project: Pick<Project, "slug">): string {
+  return `/projects/${project.slug}`;
+}
 
 export function getProject(slug: string): Project | undefined {
   return PROJECTS.find((project) => project.slug === slug);

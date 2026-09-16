@@ -6,7 +6,7 @@ import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
 import { CHANNELS, CHANNEL_CATEGORIES } from "@/content/channels";
 import { IDOBATA_TIME } from "@/content/activities";
-import { PROJECTS } from "@/content/projects";
+import { FEATURED_PROJECTS, getProjectPath } from "@/content/projects";
 
 const cardStyle = css({
   display: "flex",
@@ -143,8 +143,8 @@ export default function Home() {
               {IDOBATA_TIME.summary}
             </span>
           </Link>
-          {PROJECTS.map((project) => (
-            <Link key={project.slug} href={project.path} className={cardStyle}>
+          {FEATURED_PROJECTS.map((project) => (
+            <Link key={project.slug} href={getProjectPath(project)} className={cardStyle}>
               <span className={css({ fontSize: "xs", color: "fg.muted" })}>{project.eyebrow}</span>
               <strong className={css({ fontSize: "xl" })}>{project.name}</strong>
               <span className={css({ color: "fg.muted", lineHeight: "relaxed" })}>
@@ -153,6 +153,9 @@ export default function Home() {
             </Link>
           ))}
         </div>
+        <Button asChild variant="outline">
+          <Link href="/projects">すべてのプロジェクトを見る</Link>
+        </Button>
       </section>
 
       <section

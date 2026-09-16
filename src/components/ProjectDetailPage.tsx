@@ -1,17 +1,11 @@
-import type { ReactNode } from "react";
+import Link from "next/link";
 import { css, cx } from "@/styled-system/css";
 import { container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import type { Project } from "@/content/projects";
 
-export function ProjectDetailPage({
-  project,
-  children,
-}: {
-  project: Project;
-  children?: ReactNode;
-}) {
+export function ProjectDetailPage({ project }: { project: Project }) {
   return (
     <main className={cx(container({ size: "content" }))}>
       <Breadcrumb items={[{ href: "/", label: "ホーム" }, { label: project.name }]} />
@@ -64,7 +58,17 @@ export function ProjectDetailPage({
                 </Button>
               ))}
             </div>
-            {children}
+            {project.relatedLinks?.map((link) => (
+              <Button
+                key={link.href}
+                asChild
+                variant="outline"
+                size="lg"
+                className={css({ width: "fit-content" })}
+              >
+                <Link href={link.href}>{link.label}</Link>
+              </Button>
+            ))}
           </div>
           <aside
             aria-label="利用状況"
