@@ -4,7 +4,12 @@ import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
-import { CHANNELS, CHANNEL_CATEGORIES, type ChannelCategory } from "@/content/channels";
+import {
+  CHANNELS,
+  CHANNEL_CATEGORIES,
+  CHANNEL_TYPE_LABELS,
+  type ChannelCategory,
+} from "@/content/channels";
 
 export const metadata: Metadata = {
   title: "チャネル一覧 | ido-bata",
@@ -84,7 +89,7 @@ export default function ChannelsPage() {
                 color: "fg.muted",
               })}
             >
-              チャネル一覧は準備中です。実在のチャネル構成は Discord サーバ側で参照できます。
+              話題ごとのテキスト、フォーラム、音声、ステージを用途別に確認できます。
             </p>
             {invite ? (
               <div className={cx(cluster({ gap: 3 }))}>
@@ -194,10 +199,7 @@ export default function ChannelsPage() {
                         }),
                       )}
                     >
-                      <div className={cx(cluster(), css({ fontFamily: "mono" }))}>
-                        <span aria-hidden="true" className={css({ color: "fg.subtle" })}>
-                          #
-                        </span>
+                      <div className={cx(cluster({ justify: "between" }), css({ width: "100%" }))}>
                         <span
                           className={css({
                             fontSize: "md",
@@ -206,6 +208,19 @@ export default function ChannelsPage() {
                           })}
                         >
                           {channel.name}
+                        </span>
+                        <span
+                          className={css({
+                            px: "2",
+                            py: "1",
+                            borderRadius: "full",
+                            bg: "bg.subtle",
+                            color: "fg.subtle",
+                            fontSize: "xs",
+                            whiteSpace: "nowrap",
+                          })}
+                        >
+                          {CHANNEL_TYPE_LABELS[channel.type]}
                         </span>
                       </div>
                       <p

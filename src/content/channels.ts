@@ -10,6 +10,7 @@
  */
 
 export type ChannelCategory = string;
+export type ChannelType = "text" | "announcement" | "forum" | "voice" | "stage";
 
 export interface Channel {
   /** Discord display name (without the leading `#`). */
@@ -18,7 +19,19 @@ export interface Channel {
   description: string;
   /** Category the channel belongs to. */
   category: ChannelCategory;
+  /** Discord channel kind. */
+  type: ChannelType;
 }
+
+type ChannelInput = Omit<Channel, "type"> & { type?: ChannelType };
+
+export const CHANNEL_TYPE_LABELS: Readonly<Record<ChannelType, string>> = {
+  text: "テキスト",
+  announcement: "アナウンス",
+  forum: "フォーラム",
+  voice: "音声",
+  stage: "ステージ",
+};
 
 /**
  * Display order is controlled by declaration order. Categories appear in the
@@ -37,7 +50,7 @@ export const CHANNEL_CATEGORIES: readonly ChannelCategory[] = [
   "要望",
 ];
 
-export const CHANNELS: readonly Channel[] = [
+const CHANNEL_INPUTS: readonly ChannelInput[] = [
   {
     name: "映像・アニメーション",
     description: "映像制作やアニメーションの話題。",
@@ -66,7 +79,12 @@ export const CHANNELS: readonly Channel[] = [
   { name: "文化・社会", description: "文化や社会に関する話題。", category: "話題" },
   { name: "専門交錯（１）", description: "複数の専門分野にまたがる話題。", category: "話題" },
   { name: "専門交錯（２）", description: "分野を一つに決めにくい話題。", category: "話題" },
-  { name: "いろいろ", description: "既存のチャンネルに当てはまらない話題。", category: "話題" },
+  {
+    name: "いろいろ",
+    description: "既存のチャンネルに当てはまらない話題。",
+    category: "話題",
+    type: "forum",
+  },
   { name: "ꓑlan-計画", description: "やりたいことや目標を宣言する。", category: "PDCA" },
   { name: "ꓓo-実行", description: "試したことや制作の進み具合を共有する。", category: "PDCA" },
   { name: "ꓚheck-評価", description: "制作物を見せて評価を受ける。", category: "PDCA" },
@@ -75,6 +93,7 @@ export const CHANNELS: readonly Channel[] = [
     name: "転送-補足",
     description: "評価対象への補足やフィードバックをまとめる。",
     category: "PDCA",
+    type: "forum",
   },
   { name: "素材・配布", description: "制作に使える素材を共有・配布する。", category: "共有" },
   { name: "拡張機能・ツール", description: "便利な拡張機能やツールを共有する。", category: "共有" },
@@ -98,27 +117,75 @@ export const CHANNELS: readonly Channel[] = [
     name: "いど底-アナウンス",
     description: "いど端 底力 タイムからのお知らせ。",
     category: "いど端 底力 タイム",
+    type: "announcement",
   },
   {
     name: "いど底-フォーラム",
     description: "集中して取り組む内容や成果を共有する。",
     category: "いど端 底力 タイム",
+    type: "forum",
+  },
+  {
+    name: "いど底-ステージ",
+    description: "底力タイムで使うステージ。",
+    category: "いど端 底力 タイム",
+    type: "stage",
   },
   {
     name: "聞き専",
     description: "作業中の音声を聞く人向けのテキストチャンネル。",
     category: "作業",
   },
-  { name: "アナウンス", description: "LT会の開催案内。", category: "いど端LT会" },
+  {
+    name: "作業 (修羅場)",
+    description: "会話しながら集中して作業する音声チャンネル。",
+    category: "作業",
+    type: "voice",
+  },
+  {
+    name: "作業 (雑)",
+    description: "雑談を交えながら作業する音声チャンネル。",
+    category: "作業",
+    type: "voice",
+  },
+  {
+    name: "作業（無言）",
+    description: "会話せず同じ場所で作業する音声チャンネル。",
+    category: "作業",
+    type: "voice",
+  },
+  {
+    name: "アナウンス",
+    description: "LT会の開催案内。",
+    category: "いど端LT会",
+    type: "announcement",
+  },
   { name: "テキスト", description: "LT会で使うテキストチャンネル。", category: "いど端LT会" },
+  {
+    name: "ボイスチャンネル",
+    description: "LT会の発表と視聴に使う音声チャンネル。",
+    category: "いど端LT会",
+    type: "voice",
+  },
   {
     name: "アナウンス",
     description: "LayerNoteプロジェクトからのお知らせ。",
     category: "LayerNote",
+    type: "announcement",
   },
   { name: "テキスト", description: "LayerNoteの開発に関する会話。", category: "LayerNote" },
   { name: "質問", description: "LayerNoteに関する質問。", category: "LayerNote" },
-  { name: "フォーラム", description: "LayerNoteの話題を項目ごとに扱う。", category: "LayerNote" },
+  {
+    name: "フォーラム",
+    description: "LayerNoteの話題を項目ごとに扱う。",
+    category: "LayerNote",
+    type: "forum",
+  },
   { name: "弊鯖", description: "サーバーへの要望や改善案。", category: "要望" },
   { name: "メンバー", description: "メンバーに関する要望や相談。", category: "要望" },
 ];
+
+export const CHANNELS: readonly Channel[] = CHANNEL_INPUTS.map((channel) => ({
+  ...channel,
+  type: channel.type ?? "text",
+}));

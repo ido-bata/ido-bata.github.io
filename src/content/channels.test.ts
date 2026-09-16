@@ -29,4 +29,12 @@ describe("Discord channel directory", () => {
     const paths = CHANNELS.map((channel) => `${channel.category}/${channel.name}`);
     expect(new Set(paths).size).toBe(paths.length);
   });
+
+  it("covers every public channel type, including voice and stage", () => {
+    expect(new Set(CHANNELS.map((channel) => channel.type))).toEqual(
+      new Set(["text", "announcement", "forum", "voice", "stage"]),
+    );
+    expect(CHANNELS.some((channel) => channel.name === "いど底-ステージ")).toBe(true);
+    expect(CHANNELS.filter((channel) => channel.type === "voice")).toHaveLength(4);
+  });
 });
