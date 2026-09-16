@@ -51,10 +51,13 @@ import { cluster, container } from "@/styles/recipes";
  * label describes that target.
  *
  * When `DISCORD_INVITE` is unset (local dev, missing CI secret,
- * freshly-cloned repo) the CTA is replaced by a non-interactive
- * labelled placeholder so the missing env var is visible rather
- * than silently disappearing from the DOM. Set
- * `NEXT_PUBLIC_DISCORD_INVITE` in `.env.local`.
+ * freshly-cloned repo) the CTA is **not rendered** — we do not show a
+ * placeholder because a labelled "未設定" affordance reads as
+ * production content and confuses visitors. Missing invite is an
+ * operator concern (check the deploy log / repo variables), not a
+ * visitor-facing state. Set `NEXT_PUBLIC_DISCORD_INVITE` in
+ * `.env.local` or in repo Settings → Secrets and variables →
+ * Variables for deploy-time inlining.
  *
  * See Issue #22 (theme), Issue #90 (Ark UI / Discord icon).
  */
@@ -147,22 +150,7 @@ export function Header() {
           <ThemeToggle />
           {DISCORD_INVITE ? (
             <DiscordJoinButton href={DISCORD_INVITE} label="Discord に参加" size="sm" />
-          ) : (
-            <span
-              aria-label="Discord 招待リンク未設定"
-              className={css({
-                fontSize: "xs",
-                color: "fg.subtle",
-                paddingX: "3",
-                paddingY: "2",
-                border: "1px dashed",
-                borderColor: "border.subtle",
-                borderRadius: "full",
-              })}
-            >
-              Discord 招待リンク未設定
-            </span>
-          )}
+          ) : null}
         </div>
       </div>
     </header>

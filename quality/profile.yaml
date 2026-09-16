@@ -149,10 +149,12 @@ ci_triggers:
   workflow_dispatch: { required: true }
 
 # Runner policy: pinned runner images, no self-hosted runners for
-# v0.4.0.
+# v0.4.0. `ubuntu-latest` (floating label) は使わず specific major
+# version を pin する。runner 差し替えで CI 挙動が変わるのを防ぐ。
 runner_policy:
-  default: "ubuntu-latest"
+  default: "ubuntu-24.04"
   self_hosted_allowed: false
+  pin_strategy: "specific-major-version"
 
 # Expensive / native / platform-specific gates — only when triggered.
 expensive_gates:

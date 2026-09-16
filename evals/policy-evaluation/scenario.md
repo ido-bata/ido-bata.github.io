@@ -8,11 +8,12 @@ evals/<policy-area>/
   scenarios/
     S-NNN-<name>.md            # one or more live scenarios
   grade.sh                     # semantic grader
-  controls.sh                  # 3-control driver
+  controls.sh                  # 4-control driver (positive / negative / regression / contradictory)
   fixtures/
     positive.md
     negative.md
     regression.md
+    contradictory.md           # optional: latent canonical-surface-vs-projects-first contradiction
 ```
 
 ## Live scenarios

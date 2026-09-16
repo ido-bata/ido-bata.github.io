@@ -93,8 +93,8 @@ export default function ChannelsPage() {
               井戸端色の Discord サーバの主要カテゴリ・チャネル構成です。
               モデレーター専用チャネル（`#moderator-only`）は非公開のため除外しています。
               並び順はサーバ表示順に基づきます。 各カテゴリの位置やチャネル一覧は
-              随時変動するため、 ここに掲載している数値・名前は 2026-09-16 時点の
-              snapshot です。
+              随時変動するため、 ここに掲載している数値・名前は {CHANNEL_SNAPSHOT_DATE}
+              時点の snapshot です。
             </p>
             {invite ? (
               <div className={cx(cluster({ gap: 3 }))}>

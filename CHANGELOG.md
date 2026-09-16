@@ -4,15 +4,9 @@
 
 ## [Unreleased]
 
-### Added
-
-### Fixed
-
-### Changed
-
-### Note
-
-## [0.4.0] - 2026-09-16
+> `## [0.4.0] - <release merge date>` への rename は `release-0-4-0` → `main` の
+> release PR が merge された後に行う ([`docs/release.md`](./docs/release.md)
+> 参照)。merge 前の日付確定は release workflow invariant に違反するため。
 
 ### Added
 

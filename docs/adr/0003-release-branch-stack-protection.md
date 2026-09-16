@@ -57,7 +57,13 @@ main                 released source (protected)
 | `required_conversation_resolution` | true                                                      |
 | `enforce_admins`           | true                                                              |
 | `required_pull_request_reviews` | `required_approving_review_count: 1`, `dismiss_stale_reviews: true` |
-| `required_status_checks`   | `ci / quality`, `ci / e2e`, `release-source-check` (strict)        |
+| `required_status_checks`   | `ci / Quality gate`, `ci / E2E gate (Playwright)`, `release-source-check / release-source-check` (strict) |
+
+`release-source-check` workflow の `check-head` job は `release-source-check` という
+job 名で登録されるため、GitHub branch protection の required status check context
+は `release-source-check / release-source-check` (workflow 名 + job 名) になる。
+`jobs.<name>` を改名すると check context も変わるため、ADR update を伴わない
+job rename は禁止。
 
 `release-source-check` は `.github/workflows/release-source-check.yml` で実装し、
 次の 3 条件を同時に満たす場合のみ success を返す:

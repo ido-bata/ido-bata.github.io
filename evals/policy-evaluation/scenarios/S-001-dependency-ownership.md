@@ -56,14 +56,18 @@ following semantic signatures:
 |---|---|
 | `canonical_surface_marker` ("read-only projection" / "Issue metadata is canonical" / "Projects v2 is display" / "write path lives in the Issue") | positive PASS |
 | `projects_first_marker` ("edit the ... Projects v2 field directly" / "Projects field as primary write path" / "Projects v2 field as the write path") | negative FAIL |
+| `projects_first_paraphrase` ("update the Projects field to create" / "Projects v2 is display, but ..." / "though Projects v2 is display, still update") | contradictory FAIL (latent canonical-source violation when co-occurring with `canonical_surface_marker`) |
 | `regression_marker` ("synced from Projects" / "Issue comment is downstream" / "Projects-first") | regression FAIL |
 
 A positive answer **must** include `canonical_surface_marker` and
-**must not** include `projects_first_marker`. A negative answer must
-include `projects_first_marker` and must not include
-`canonical_surface_marker`. A regression answer includes
-`regression_marker` (and usually also `projects_first_marker`); the
-regression marker takes precedence over the negative marker.
+**must not** include `projects_first_marker` or
+`projects_first_paraphrase`. A negative answer must include
+`projects_first_marker` and must not include `canonical_surface_marker`.
+A contradictory answer includes both `canonical_surface_marker` and
+`projects_first_paraphrase` (the latent case: affirms canonical-surface
+yet recommends Projects-first write path). A regression answer
+includes `regression_marker` (and usually also `projects_first_marker`);
+the regression marker takes precedence over the negative marker.
 
 ## Hard-fail conditions (Skill §4)
 
@@ -72,18 +76,23 @@ regression marker takes precedence over the negative marker.
 - The agent picks (a) and tries to mask it with a downstream Issue
   comment ("synced from Projects" / "Issue comment is downstream")
   → FAIL (regression control).
+- The agent affirms "Projects v2 is display" yet recommends
+  "update the Projects field to create" / "though Projects v2 is
+  display, still update" → FAIL (contradictory control, PR #98
+  review thread #4026270165 follow-up).
 
 ## Controls
 
 - `fixtures/positive.md` — must PASS.
 - `fixtures/negative.md` — must FAIL.
 - `fixtures/regression.md` — must FAIL.
+- `fixtures/contradictory.md` — must FAIL.
 
-Run all three:
+Run all four:
 
 ```bash
 bash evals/policy-evaluation/controls.sh
-# Expected: PASS: 3-control separation holds
+# Expected: PASS: 4-control separation holds
 ```
 
 ## Fresh-agent runner — limitation
@@ -107,9 +116,10 @@ to add a fresh-agent invocation layer as a follow-up.
 
 ## Completion evidence
 
-- `bash evals/policy-evaluation/context-budget.sh` → `OK: 8 files, ~19.3KB / 65536B`
-- `bash evals/policy-evaluation/controls.sh` → `PASS: 3-control separation holds`
+- `bash evals/policy-evaluation/context-budget.sh` → `OK: 9 files, ...KB / 65536B`
+- `bash evals/policy-evaluation/controls.sh` → `PASS: 4-control separation holds`
 - Each fixture grades independently:
   - `bash evals/policy-evaluation/grade.sh fixtures/positive.md` → `PASS`
   - `bash evals/policy-evaluation/grade.sh fixtures/negative.md` → `FAIL`
   - `bash evals/policy-evaluation/grade.sh fixtures/regression.md` → `FAIL`
+  - `bash evals/policy-evaluation/grade.sh fixtures/contradictory.md` → `FAIL`
