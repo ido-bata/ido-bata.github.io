@@ -22,7 +22,14 @@ export type Project = {
   status: string;
   featured?: boolean;
   links: readonly ProjectLink[];
-  relatedLinks?: readonly ProjectLink[];
+  /**
+   * Internal cross-references. Typed without `kind` so the
+   * "always render as outline" contract in `ProjectLink.kind`
+   * JSDoc is enforced at the type level — if a future content
+   * entry tries to set `kind` here, the build breaks instead of
+   * silently ignoring it.
+   */
+  relatedLinks?: readonly Omit<ProjectLink, "kind">[];
 };
 
 export const PROJECTS: readonly Project[] = [
@@ -92,11 +99,9 @@ export const FEATURED_PROJECTS: readonly Project[] = PROJECTS.filter(
 ).slice(0, 2);
 
 /**
- * Slug → project lookup. Built once from `PROJECTS` so `getProject`
- * and `generateStaticParams` share an O(1) read instead of each
- * render scanning the array. With only a handful of projects today
- * this is overkill, but the cost of precomputing is one Map and it
- * keeps the API shape stable as the directory grows.
+ * Slug → project lookup. Only `getProject` reads from it (called
+ * from `generateMetadata` and the page component);
+ * `generateStaticParams` maps over `PROJECTS` directly.
  */
 const PROJECT_BY_SLUG: ReadonlyMap<string, Project> = new Map(
   PROJECTS.map((project) => [project.slug, project] as const),

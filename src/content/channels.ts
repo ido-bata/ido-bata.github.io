@@ -137,13 +137,13 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     category: "作業",
   },
   {
-    name: "作業 (修羅場)",
+    name: "作業（修羅場）",
     description: "会話しながら集中して作業する音声チャンネル。",
     category: "作業",
     type: "voice",
   },
   {
-    name: "作業 (雑)",
+    name: "作業（雑）",
     description: "雑談を交えながら作業する音声チャンネル。",
     category: "作業",
     type: "voice",

@@ -84,6 +84,18 @@ const sidebarChannelIcon = css({
   textAlign: "center",
 });
 
+const sidebarChannelActive = css({
+  bg: "bg.subtle",
+  color: "fg.DEFAULT",
+  fontWeight: "semibold",
+});
+
+const SIDEBAR_CHANNELS: readonly { name: string; active?: boolean }[] = [
+  { name: "wip" },
+  { name: "ひとりごと", active: true },
+  { name: "世迷言" },
+];
+
 const channelName = css({
   overflow: "hidden",
   textOverflow: "ellipsis",
@@ -168,29 +180,17 @@ export function CommunityVisual() {
             >
               雑
             </p>
-            <span className={sidebarChannel}>
-              <span aria-hidden="true" className={sidebarChannelIcon}>
-                #
+            {SIDEBAR_CHANNELS.map((ch) => (
+              <span
+                key={ch.name}
+                className={cx(sidebarChannel, ch.active && sidebarChannelActive)}
+              >
+                <span aria-hidden="true" className={sidebarChannelIcon}>
+                  #
+                </span>
+                <span className={channelName}>{ch.name}</span>
               </span>
-              <span className={channelName}>wip</span>
-            </span>
-            <span
-              className={cx(
-                sidebarChannel,
-                css({ bg: "bg.subtle", color: "fg.DEFAULT", fontWeight: "semibold" }),
-              )}
-            >
-              <span aria-hidden="true" className={sidebarChannelIcon}>
-                #
-              </span>
-              <span className={channelName}>ひとりごと</span>
-            </span>
-            <span className={sidebarChannel}>
-              <span aria-hidden="true" className={sidebarChannelIcon}>
-                #
-              </span>
-              <span className={channelName}>世迷言</span>
-            </span>
+            ))}
           </div>
         </div>
 
