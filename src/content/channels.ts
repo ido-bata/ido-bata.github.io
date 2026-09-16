@@ -70,6 +70,14 @@ export interface Channel {
   category: ChannelCategory;
   /** Discord channel kind. */
   type: ChannelType;
+  /**
+   * If true, the channel is included in the Home Hero Discord preview.
+   * Drives selection via `getChannelPreviewByCategory()` so the preview
+   * stays in sync with `channels.ts` — retyping names in a separate
+   * preview list is what previously caused the Home / `/channels`
+   * drift flagged in Issue #109.
+   */
+  featured?: boolean;
 }
 
 type ChannelInput = Omit<Channel, "type"> & { type?: ChannelType };
@@ -122,10 +130,19 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     category: "話題",
     type: "forum",
   },
-
   // ───── PDCA ─────
-  { name: "Plan-計画", description: "やりたいことや目標を宣言する。", category: "PDCA" },
-  { name: "Do-実行", description: "試したことや制作の進み具合を共有する。", category: "PDCA" },
+  {
+    name: "Plan-計画",
+    description: "やりたいことや目標を宣言する。",
+    category: "PDCA",
+    featured: true,
+  },
+  {
+    name: "Do-実行",
+    description: "試したことや制作の進み具合を共有する。",
+    category: "PDCA",
+    featured: true,
+  },
   { name: "Check-評価", description: "制作物を見せて評価を受ける。", category: "PDCA" },
   { name: "Action-改善", description: "評価を受けて次に直すことを宣言する。", category: "PDCA" },
   {
@@ -133,15 +150,31 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     description: "評価対象への補足やフィードバックをまとめる。",
     category: "PDCA",
     type: "forum",
+    featured: true,
+  },
+  {
+    name: "素材・配布",
+    description: "制作に使える素材を共有・配布する。",
+    category: "共有",
+    featured: true,
   },
 
-  // ───── 共有 ─────
-  { name: "素材・配布", description: "制作に使える素材を共有・配布する。", category: "共有" },
+  // ───── 共有 (continued) ─────
   { name: "拡張機能・ツール", description: "便利な拡張機能やツールを共有する。", category: "共有" },
-  { name: "チートシート", description: "手元で参照できる資料を共有する。", category: "共有" },
+  {
+    name: "チートシート",
+    description: "手元で参照できる資料を共有する。",
+    category: "共有",
+    featured: true,
+  },
   { name: "チュートリアル", description: "手順や学習資料を共有する。", category: "共有" },
   { name: "ブログ・本", description: "記事や書籍を共有する。", category: "共有" },
-  { name: "宣伝・拡散希望", description: "公開した作品やツールを知らせる。", category: "共有" },
+  {
+    name: "宣伝・拡散希望",
+    description: "公開した作品やツールを知らせる。",
+    category: "共有",
+    featured: true,
+  },
   { name: "募集・告知", description: "協力者の募集やイベントを告知する。", category: "共有" },
   { name: "その他", description: "ほかの共有チャンネルに当てはまらない情報。", category: "共有" },
 
@@ -178,9 +211,13 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     category: "いど端 底力 タイム",
     type: "stage",
   },
-
   // ───── 作業 ─────
-  { name: "聞き専", description: "作業中の音声を聞く人向けのテキストチャンネル。", category: "作業" },
+  {
+    name: "聞き専",
+    description: "作業中の音声を聞く人向けのテキストチャンネル。",
+    category: "作業",
+    featured: true,
+  },
   {
     name: "作業（修羅場）",
     description: "会話しながら集中して作業する音声チャンネル。",
@@ -192,12 +229,14 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     description: "雑談を交えながら作業する音声チャンネル。",
     category: "作業",
     type: "voice",
+    featured: true,
   },
   {
     name: "作業（無言）",
     description: "会話せず同じ場所で作業する音声チャンネル。",
     category: "作業",
     type: "voice",
+    featured: true,
   },
 
   // ───── いど端LT会 ─────
@@ -250,41 +289,44 @@ export const CHANNELS: readonly Channel[] = CHANNEL_INPUTS.map((channel) => ({
 }));
 
 /**
+ * Categories the home-page Discord preview surfaces. Preview *policy*
+ * (which categories are representative of the server) stays here, but
+ * channel *selection* is driven by `Channel.featured` so the list is no
+ * longer retyped by hand inside this function — see Issue #109.
+ *
+ * Order matches the declared array order in `CHANNEL_CATEGORIES` so the
+ * preview keeps the same left-to-right cadence as `/channels`.
+ */
+const PREVIEW_PER_CATEGORY_LIMIT = 3;
+
+/**
  * Pick a few representative channels per category for the home-page
  * Discord preview. The home page shouldn't dump the whole server
  * tree (that's `/channels`'s job); it should let a visitor see the
  * shape of the place.
  *
+ * Selection is driven by `Channel.featured` so a rename / re-type
+ * upstream flows through automatically — the previous version kept a
+ * hand-curated `category -> channel name` map here that silently
+ * drifted out of sync with `channels.ts` and the `/channels` page.
+ *
  * Categories chosen to span text + forum + voice so the preview
- * hints at the medium, not just the topic. Channel entries are
- * looked up by name from `CHANNELS` so the preview stays in sync
- * with the canonical data — a rename / re-type upstream is
- * reflected here automatically, no parallel hand-curated list.
+ * hints at the medium, not just the topic. The featured flag is the
+ * single source of truth for which channels qualify; the per-category
+ * limit prevents the preview from collapsing into a single dominant
+ * category if many channels are flagged.
  */
 export function getChannelPreviewByCategory(): ReadonlyArray<{
   category: ChannelCategory;
   channels: ReadonlyArray<Channel>;
 }> {
-  const preview: Record<ChannelCategory, readonly string[]> = {
-    ご案内: [],
-    話題: [],
-    PDCA: ["Plan-計画", "Do-実行", "転送-補足"],
-    共有: ["素材・配布", "チートシート", "宣伝・拡散希望"],
-    参考: [],
-    雑: [],
-    "いど端 底力 タイム": [],
-    作業: ["作業（無言）", "作業（雑）", "聞き専"],
-    "いど端LT会": [],
-    LayerNote: [],
-    要望: [],
-    Legacy: [],
-  };
-  return (Object.entries(preview) as Array<[ChannelCategory, readonly string[]]>)
-    .filter(([, names]) => names.length > 0)
-    .map(([category, names]) => ({
-      category,
-      channels: names
-        .map((name) => CHANNELS.find((channel) => channel.name === name))
-        .filter((channel): channel is Channel => channel !== undefined),
-    }));
+  const featuredCategories = CHANNEL_CATEGORIES.filter((category) =>
+    CHANNELS.some((channel) => channel.category === category && channel.featured),
+  );
+  return featuredCategories.map((category) => ({
+    category,
+    channels: CHANNELS.filter(
+      (channel) => channel.category === category && channel.featured,
+    ).slice(0, PREVIEW_PER_CATEGORY_LIMIT),
+  }));
 }
