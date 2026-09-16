@@ -4,9 +4,13 @@
 
 ## [Unreleased]
 
-> `## [0.4.0] - <release merge date>` への rename は `release-0-4-0` → `main` の
-> release PR が merge された後に行う ([`docs/release.md`](./docs/release.md)
-> 参照)。merge 前の日付確定は release workflow invariant に違反するため。
+### Added
+
+### Fixed
+
+### Changed
+
+## [0.4.0] - 2026-09-16
 
 ### Added
 
@@ -76,7 +80,7 @@
 
 ### Fixed
 
-- Issue #109: `package.json` の `"version": "0.3.0"` を `"0.4.0"` に更新。CHANGELOG の `[Unreleased]` / `[0.4.0] - YYYY-MM-DD` 確定と `[0.4.0]` compare link 追記は release PR (`release-0-4-0` → `main`) merge 時に release workflow として実施する。`docs/release.md` 参照。merge 前の日付確定は release workflow invariant に違反するため、本時点では CHANGELOG の version / date 確定を行わず、release branch 内の `[Unreleased]` section に本エントリを残したまま merge を待つ。
+- Issue #109: `package.json` の `"version": "0.3.0"` を `"0.4.0"` に更新。CHANGELOG の version/date 確定と `[0.4.0]` compare link 追加は release PR merge 後の post-release metadata step に分離し、merge 前に未来の release date / tag を確定しない運用へ整理。
 - Issue #109: `src/content/rules.ts` の `meta` section を「行動規範に記載しています。」の anchor なし body から `links: [{ label: "行動規範", href: "..."code-of-conduct.md" }]` を含む形へ書き換え、body を「次の行動規範を参照してください。」に統一。`enforcement.body` も同 pattern に統一し、ページ末尾から code-of-conduct.md へ actual な導線が確保される状態へ。
 
 ### Changed
@@ -118,7 +122,8 @@
 
 - v0.3.0 のページ文言・告知・FAQ・チャネル一覧・サーバルールはオーナーの事実確認後に別途投入する。`src/content/*` は空配列 / minimal placeholder で merge した。
 
-[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.2.0...v0.3.0
 
 ## [0.2.0] - 2026-09-06
