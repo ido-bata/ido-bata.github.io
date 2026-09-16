@@ -2,25 +2,33 @@ import Link from "next/link";
 import Image from "next/image";
 import { DISCORD_INVITE } from "@/lib/env";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Button } from "@/components/ui/button";
-import { DiscordIcon } from "@/components/ui/DiscordIcon";
+import { DiscordJoinButton } from "@/components/DiscordJoinButton";
+import { PRIMARY_NAV_LINKS } from "@/content/nav";
 import { css, cx } from "@/styled-system/css";
 import { cluster, container } from "@/styles/recipes";
 
 /**
  * Site-wide header.
  *
- * Layout follows Linear's chrome pattern: a hairline separator on the
- * bottom and an end-justified action row. The rail uses
- * `container({ size: "content" })` so the header's inner edge aligns
- * with the page content below — using a wider container here made the
- * chrome read as a separate band instead of being part of the page.
+ * Layout follows Linear's chrome pattern: an end-justified action row
+ * and the rail uses `container({ size: "content" })` so the header's
+ * inner edge aligns with the page content below — using a wider
+ * container here made the chrome read as a separate band instead of
+ * being part of the page.
  *
- * The separator uses the `border.hairline` semantic token (low-alpha
- * neutral) instead of `border.subtle` so the chrome recedes into the
- * canvas even when the sticky header applies backdrop-blur. Previously
- * the dark-mode hairline (neutral.900) was bright enough to read as a
- * contrast line against the canvas.
+ * No bottom border — the chrome separates itself from the page via
+ * the sticky `backdropFilter: blur` + opaque `bg.canvas` background,
+ * not a hairline rule. At scroll position 0 there's nothing behind
+ * the header for the blur to grab onto, so on landing pages the
+ * header reads as a flat band until the user scrolls. The trade-off
+ * is intentional — the prior `border.hairline` separator read as a
+ * heavy contrast line, especially in dark mode.
+ *
+ * Mobile nav: the primary nav (`PRIMARY_NAV_LINKS`) is visible from
+ * `md` up; on phones the Footer carries the same routes, so nothing
+ * is unreachable from a small viewport. If we later add a hamburger
+ * menu / drawer, drop the breakpoint back to `lg` and route the
+ * trigger through the cluster.
  *
  * The home-link mark is the actual server icon (`/ido-bata-icon.jpg`)
  * rendered as a 32px circular avatar with a hairline border — the
@@ -42,21 +50,26 @@ import { cluster, container } from "@/styles/recipes";
  * it as a joinable user reads wrong. The CTA points at Discord; the
  * label describes that target.
  *
+ * When `DISCORD_INVITE` is unset (local dev, missing CI secret,
+ * freshly-cloned repo) the CTA is **not rendered** — we do not show a
+ * placeholder because a labelled "未設定" affordance reads as
+ * production content and confuses visitors. Missing invite is an
+ * operator concern (check the deploy log / repo variables), not a
+ * visitor-facing state. Set `NEXT_PUBLIC_DISCORD_INVITE` in
+ * `.env.local` or in repo Settings → Secrets and variables →
+ * Variables for deploy-time inlining.
+ *
  * See Issue #22 (theme), Issue #90 (Ark UI / Discord icon).
  */
 export function Header() {
-  const invite = DISCORD_INVITE;
-
   return (
     <header
       className={css({
         width: "100%",
         bg: "bg.canvas",
-        borderBottom: "1px solid",
-        borderColor: "border.hairline",
         position: "sticky",
         top: "0",
-        zIndex: "10",
+        zIndex: "100",
         backdropFilter: "saturate(180%) blur(8px)",
       })}
     >
@@ -102,53 +115,42 @@ export function Header() {
           <span className={css({ fontSize: "md" })}>ido-bata</span>
         </Link>
 
+        <nav
+          aria-label="主なページ"
+          className={css({
+            display: { base: "none", md: "flex" },
+            alignItems: "center",
+            gap: "4",
+            marginLeft: "auto",
+          })}
+        >
+          {PRIMARY_NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={css({
+                color: "fg.muted",
+                fontSize: "sm",
+                textDecoration: "none",
+                borderRadius: "sm",
+                _hover: { color: "fg.DEFAULT" },
+                _focusVisible: {
+                  outline: "2px solid",
+                  outlineColor: "accent.DEFAULT",
+                  outlineOffset: "2px",
+                },
+              })}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
         <div className={cx(cluster({ justify: "end" }))}>
           <ThemeToggle />
-          {invite ? (
-            <Button
-              asChild
-              variant="solid"
-              size="sm"
-              className={css({
-                // Brand colour override — Discord Blurple is not part
-                // of the theme palette, so we layer the brand colour
-                // on top of the recipe output instead of growing the
-                // Button API. The hover state uses the documented
-                // Blurple-darken so the interaction language stays
-                // recognisable.
-                background: "#5865f2",
-                _hover: { background: "#4752c4" },
-              })}
-            >
-              <a href={invite} target="_blank" rel="noopener noreferrer">
-                <DiscordIcon size={16} />
-                <span>Discord に参加</span>
-              </a>
-            </Button>
-          ) : (
-            // env 未設定時の placeholder — ビルドは壊さないが、デプロイ前に
-            // `.env` (または CI シークレット) で NEXT_PUBLIC_DISCORD_INVITE を設定すること。
-            <span
-              aria-label="Discord 招待リンク未設定"
-              className={css({
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "2",
-                height: "8",
-                px: "3",
-                borderRadius: "full",
-                fontSize: "xs",
-                fontWeight: "medium",
-                color: "fg.onAccent",
-                background: "rgba(88, 101, 242, 0.4)",
-                cursor: "not-allowed",
-                opacity: 0.6,
-              })}
-            >
-              <DiscordIcon size={14} />
-              <span>Discord に参加</span>
-            </span>
-          )}
+          {DISCORD_INVITE ? (
+            <DiscordJoinButton href={DISCORD_INVITE} label="Discord に参加" size="sm" />
+          ) : null}
         </div>
       </div>
     </header>

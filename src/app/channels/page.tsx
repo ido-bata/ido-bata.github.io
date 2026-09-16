@@ -2,10 +2,15 @@ import type { Metadata } from "next";
 import { css, cx } from "@/styled-system/css";
 import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { DiscordIcon } from "@/components/ui/DiscordIcon";
+import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
-import { CHANNELS, CHANNEL_CATEGORIES, type ChannelCategory } from "@/content/channels";
+import {
+  CHANNELS,
+  CHANNEL_CATEGORIES,
+  CHANNEL_SNAPSHOT_DATE,
+  CHANNEL_TYPE_LABELS,
+  type ChannelCategory,
+} from "@/content/channels";
 
 export const metadata: Metadata = {
   title: "チャネル一覧 | ido-bata",
@@ -34,7 +39,7 @@ function groupByCategory(): ReadonlyArray<{
  *   - per-category band with a 2-up grid (`grid({ cols: 2 })`) so the
  *     cards don't collapse into a single left-aligned column
  *
- * When `CHANNELS` is empty (the v0.3.0 placeholder state) the page
+ * When `CHANNELS` is empty the page
  * renders an empty-state paragraph instead of empty category headers.
  *
  * Refs:
@@ -85,16 +90,15 @@ export default function ChannelsPage() {
                 color: "fg.muted",
               })}
             >
-              チャネル一覧は準備中です。実在のチャネル構成は Discord サーバ側で参照できます。
+              井戸端色の Discord サーバの主要カテゴリ・チャネル構成です。
+              モデレーター専用チャネル（`#moderator-only`）は非公開のため除外しています。
+              並び順はサーバ表示順に基づきます。 各カテゴリの位置やチャネル一覧は
+              随時変動するため、 ここに掲載している数値・名前は {CHANNEL_SNAPSHOT_DATE}
+              時点の snapshot です。
             </p>
             {invite ? (
               <div className={cx(cluster({ gap: 3 }))}>
-                <Button asChild variant="solid" size="lg">
-                  <a href={invite} target="_blank" rel="noopener noreferrer">
-                    <DiscordIcon size={18} />
-                    <span>Discord サーバに参加</span>
-                  </a>
-                </Button>
+                <DiscordJoinButton href={invite} size="lg" />
               </div>
             ) : null}
           </div>
@@ -136,15 +140,15 @@ export default function ChannelsPage() {
                 fontSize: "sm",
               })}
             >
-              <dt className={css({ color: "fg.muted" })}>カテゴリ</dt>
+              <dt className={css({ color: "fg.muted" })}>カテゴリ (snapshot)</dt>
               <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>
                 {CHANNEL_CATEGORIES.length}
               </dd>
-              <dt className={css({ color: "fg.muted" })}>チャネル数</dt>
+              <dt className={css({ color: "fg.muted" })}>チャネル (snapshot)</dt>
               <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>{CHANNELS.length}</dd>
-              <dt className={css({ color: "fg.muted" })}>最終更新</dt>
+              <dt className={css({ color: "fg.muted" })}>取得日時</dt>
               <dd className={css({ color: "fg.DEFAULT", fontFamily: "mono", margin: 0 })}>
-                2026-09-13
+                {CHANNEL_SNAPSHOT_DATE}
               </dd>
             </dl>
           </aside>
@@ -155,11 +159,34 @@ export default function ChannelsPage() {
         <section aria-label="カテゴリ別チャネル" className={cx(section({ variant: "flow" }))}>
           {grouped.map(({ category, channels }) =>
             channels.length === 0 ? null : (
-              <div key={category} className={cx(stack({ gap: 4 }))}>
+              <div
+                key={category}
+                className={cx(
+                  stack({ gap: 4 }),
+                  // Each category is a flex child of the surrounding
+                  // `section({ variant: "flow" })` which sets
+                  // `align-items: flex-start`. Without an explicit
+                  // width the wrapper shrinks to its content width
+                  // (the 2-up card grid would then be ~700px instead
+                  // of the full content-area width ~1088px, breaking
+                  // the page-edge alignment with the header right rail).
+                  // Same root cause as the People / Reference section
+                  // fix in `recipes.ts` `grid.base.width: 100%` —
+                  // we apply the same `width: 100%` here because the
+                  // wrapper is a non-grid flex child that also needs
+                  // explicit width to stretch.
+                  css({ width: "100%" }),
+                )}
+              >
                 <div
                   className={cx(
                     cluster({ justify: "between" }),
-                    css({ pb: "2", borderBottom: "1px solid", borderColor: "border.subtle" }),
+                    css({
+                      width: "100%",
+                      pb: "2",
+                      borderBottom: "1px solid",
+                      borderColor: "border.subtle",
+                    }),
                   )}
                 >
                   <h2
@@ -181,12 +208,12 @@ export default function ChannelsPage() {
                 <ul
                   className={cx(
                     grid({ cols: 2, gap: 4 }),
-                    css({ listStyle: "none", margin: 0, padding: 0 }),
+                    css({ listStyle: "none", margin: 0, padding: 0, width: "100%" }),
                   )}
                 >
                   {channels.map((channel) => (
                     <li
-                      key={channel.name}
+                      key={`${channel.category}::${channel.name}`}
                       className={cx(
                         css({
                           display: "flex",
@@ -200,18 +227,38 @@ export default function ChannelsPage() {
                         }),
                       )}
                     >
-                      <div className={cx(cluster(), css({ fontFamily: "mono" }))}>
-                        <span aria-hidden="true" className={css({ color: "fg.subtle" })}>
-                          #
+                      <div className={cx(cluster({ justify: "between" }), css({ width: "100%" }))}>
+                        <span
+                          className={cx(
+                            cluster({ gap: 1 }),
+                            css({ fontFamily: "mono", color: "fg.DEFAULT" }),
+                          )}
+                        >
+                          <span aria-hidden="true" className={css({ color: "fg.subtle" })}>
+                            #
+                          </span>
+                          <span
+                            className={css({
+                              fontSize: "md",
+                              fontWeight: "semibold",
+                              color: "fg.DEFAULT",
+                            })}
+                          >
+                            {channel.name}
+                          </span>
                         </span>
                         <span
                           className={css({
-                            fontSize: "md",
-                            fontWeight: "semibold",
-                            color: "fg.DEFAULT",
+                            px: "2",
+                            py: "1",
+                            borderRadius: "full",
+                            bg: "bg.subtle",
+                            color: "fg.subtle",
+                            fontSize: "xs",
+                            whiteSpace: "nowrap",
                           })}
                         >
-                          {channel.name}
+                          {CHANNEL_TYPE_LABELS[channel.type]}
                         </span>
                       </div>
                       <p
@@ -240,7 +287,7 @@ export default function ChannelsPage() {
               textAlign: "center",
             })}
           >
-            現在、掲載中のチャネルはありません。
+            チャネル情報はまだ登録されていません。
           </p>
         </section>
       )}

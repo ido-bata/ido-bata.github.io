@@ -3,7 +3,6 @@ import { css } from "@/styled-system/css";
 import { cx } from "@/styled-system/css";
 import { container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
 import { rules, type ChannelRule, type RuleSection } from "@/content/rules";
 
 /**
@@ -13,10 +12,20 @@ import { rules, type ChannelRule, type RuleSection } from "@/content/rules";
  * `section` / `stack`) so the page-edge alignment matches the home
  * page. Page-opening band is a left-aligned 12-col split (left rail:
  * eyebrow → h1 → lede; right rail: page metadata surface) instead of
- * a centred hero. Section dividers come from the project-wide
- * `Separator` primitive (Ark UI styled). Reading rhythm stays
- * comfortable because the inner prose is capped via the
- * `<Section>` card width inside the long-form sub-flow.
+ * a centred hero. Reading rhythm stays comfortable because the inner
+ * prose is capped via the `<Section>` card width inside the
+ * long-form sub-flow.
+ *
+ * Cards and the metadata surface use `bg.subtle` + padding for
+ * separation instead of `borderColor` rules. The earlier
+ * `border` / `border.subtle` hairlines read as prominent lines on
+ * the page (especially in dark mode where `border.subtle` resolves
+ * to neutral.900) and clashed with the project-wide hairline
+ * rhythm; a soft background gives the same grouping without the
+ * visual weight. Section rhythm between the header and the rules
+ * body comes from the section / stack recipes' vertical padding,
+ * not from `<Separator />` rules — so the page reads as one
+ * continuous band rather than a series of boxed regions.
  *
  * Page copy lives in `src/content/rules.ts`. UI and data are kept
  * separate so additions / reordering stay in the data file.
@@ -45,7 +54,7 @@ function Section({ section }: { section: RuleSection }) {
       >
         {section.title}
       </h2>
-      {section.body ? (
+      {section.body || (section.links && section.links.length > 0) ? (
         <p
           className={css({
             fontSize: "md",
@@ -54,6 +63,25 @@ function Section({ section }: { section: RuleSection }) {
           })}
         >
           {section.body}
+          {section.body && section.links && section.links.length > 0 ? " " : null}
+          {section.links?.map((link, index) => (
+            <span key={link.href}>
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={css({
+                  color: "accent.DEFAULT",
+                  fontWeight: "semibold",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "2px",
+                })}
+              >
+                {link.label}
+              </a>
+              {index < (section.links?.length ?? 0) - 1 ? " / " : ""}
+            </span>
+          ))}
         </p>
       ) : null}
       {section.bullets && section.bullets.length > 0 ? (
@@ -83,9 +111,7 @@ function ChannelCard({ channel }: { channel: ChannelRule }) {
     <article
       className={cx(
         css({
-          bg: "bg.canvas",
-          border: "1px solid",
-          borderColor: "border",
+          bg: "bg.subtle",
           borderRadius: "lg",
           p: { base: "4", md: "5" },
           display: "flex",
@@ -184,8 +210,7 @@ export default function CommunityRulesPage() {
                 maxW: "48ch",
               })}
             >
-              本ページは行動規範 (Code of Conduct)
-              と整合する形で段階的に整えていきます。具体的な理念・推奨・禁止行為・チャネル別運用は、オーナーの正本化後に掲載します。
+              サーバーを制作や開発に使い続けるための、基本的なふるまいと運用をまとめています。
             </p>
           </div>
 
@@ -198,8 +223,6 @@ export default function CommunityRulesPage() {
                 bg: "bg.subtle",
                 borderRadius: "lg",
                 padding: { base: "5", md: "6" },
-                border: "1px solid",
-                borderColor: "border.subtle",
                 alignSelf: "stretch",
               }),
             )}
@@ -236,48 +259,72 @@ export default function CommunityRulesPage() {
         </div>
       </header>
 
-      <Separator />
+      {/*
+        Body — wrapped in a 12-col grid that puts ~1/6 of the page
+        width into the left rail as deliberate negative space. Without
+        this the long-form rules stretched across the full 1152px
+        content area and the reading rhythm flattened (lines wrapping
+        late, channels cards stacked edge-to-edge). Anchoring the body
+        at cols 3–12 gives an 10/12 (≈83%) reading rail — left margin
+        at 1/6 keeps the page visibly anchored to the design system
+        without crowding the long-form copy. The inner 2-col grid for
+        channel cards uses the same coordinate primitive, so each card
+        is half the reading rail.
+      */}
+      <section className={cx(section({ variant: "flow" }))}>
+        <div className={cx(grid({ cols: 12, gap: 8 }))}>
+          <div
+            className={cx(
+              stack({ gap: 12 }),
+              css({ gridColumn: { base: "1", md: "3 / span 10" } }),
+            )}
+          >
+            <Section section={rules.philosophy} />
+            <Section section={rules.recommended} />
+            <Section section={rules.prohibited} />
 
-      <div className={cx(section({ variant: "flow" }), stack({ gap: 12 }))}>
-        <Section section={rules.philosophy} />
-        <Section section={rules.recommended} />
-        <Section section={rules.prohibited} />
+            {rules.channels.items.length > 0 ? (
+              <section id="channels" className={cx(stack({ gap: 4 }))}>
+                <h2
+                  className={css({
+                    fontSize: { base: "xl", md: "2xl" },
+                    fontWeight: "semibold",
+                    color: "fg.DEFAULT",
+                    lineHeight: "tight",
+                    letterSpacing: "-0.01em",
+                  })}
+                >
+                  チャネル別運用ルール
+                </h2>
+                <p
+                  className={css({
+                    fontSize: "md",
+                    color: "fg.muted",
+                    lineHeight: "relaxed",
+                  })}
+                >
+                  {rules.channels.intro}
+                </p>
+                <ul
+                  className={cx(
+                    grid({ cols: 2, gap: 4 }),
+                    css({ listStyle: "none", padding: 0, margin: 0, width: "100%" }),
+                  )}
+                >
+                  {rules.channels.items.map((channel) => (
+                    <li key={channel.name}>
+                      <ChannelCard channel={channel} />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
 
-        {rules.channels.items.length > 0 ? (
-          <section id="channels" className={cx(stack({ gap: 4 }))}>
-            <h2
-              className={css({
-                fontSize: { base: "xl", md: "2xl" },
-                fontWeight: "semibold",
-                color: "fg.DEFAULT",
-                lineHeight: "tight",
-                letterSpacing: "-0.01em",
-              })}
-            >
-              チャネル別運用ルール
-            </h2>
-            <p
-              className={css({
-                fontSize: "md",
-                color: "fg.muted",
-                lineHeight: "relaxed",
-              })}
-            >
-              {rules.channels.intro}
-            </p>
-            <div className={cx(stack({ gap: 4 }))}>
-              {rules.channels.items.map((channel) => (
-                <ChannelCard key={channel.name} channel={channel} />
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        <Section section={rules.enforcement} />
-        <Section section={rules.meta} />
-      </div>
-
-      <Separator />
+            <Section section={rules.enforcement} />
+            <Section section={rules.meta} />
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

@@ -121,6 +121,7 @@ export default defineConfig({
           mono: { value: "var(--font-geist-mono), ui-monospace, monospace" },
         },
         fontSizes: {
+          "2xs": { value: "0.625rem" },
           xs: { value: "0.75rem" },
           sm: { value: "0.875rem" },
           md: { value: "1rem" },
@@ -306,12 +307,57 @@ export default defineConfig({
     // New variable so every page heading shares a consistent
     // geometric display voice. Weight / size / letter-spacing are
     // set per-call via Panda recipes so callers stay in control.
+    //
+    // Heading rhythm: `margin-block-end` gives h1–h6 its own
+    // breathing room before the content that follows — without
+    // a margin, headings (especially h2 + body) read as visually
+    // fused because Panda's preflight resets all heading margins.
+    // `margin-block-start` is intentionally 0 because in this
+    // codebase every heading lives inside a `stack({ gap: N })`,
+    // and adding `margin-block-start` on top of the eyebrow + h2
+    // pattern (which uses `gap: 2`) would break the visual grouping
+    // — turning 8px into 24px and floating the heading away from
+    // its label.
+    //
+    // Edge case: `:last-child` resets `margin-block-end` so a
+    // heading that has no content after it (e.g. a section that
+    // ends with a heading) doesn't push extra space into the
+    // section's own bottom padding.
     "h1, h2, h3, h4, h5, h6": {
       fontFamily: "display",
       fontWeight: "bold",
       letterSpacing: "-0.02em",
       lineHeight: "tight",
     },
+    h1: {
+      // Page title. Sits at the top of the page; the bottom margin
+      // gives breathing room before the lede (composes with the
+      // surrounding stack gap).
+      marginBlockEnd: "1rem",
+    },
+    h2: {
+      // Section heading. Bottom margin separates from the body
+      // paragraph that follows — composes with the surrounding
+      // stack gap so `gap: 4` → 24px and `gap: 3` → 20px below.
+      marginBlockEnd: "0.5rem",
+    },
+    h3: {
+      // Sub-heading inside a section.
+      marginBlockEnd: "0.5rem",
+    },
+    h4: {
+      marginBlockEnd: "0.25rem",
+    },
+    h5: {
+      // Sub-sub-heading. Same rhythm as h4 so deep hierarchies
+      // stay visually consistent (h1 > h2 > h3 > h4/h5/h6).
+      marginBlockEnd: "0.25rem",
+    },
+    h6: {
+      marginBlockEnd: "0.25rem",
+    },
+    "h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child":
+      { marginBlockEnd: "0" },
     // Material Icons ligature class. The font is loaded via
     // `next/font/google` (Material_Icons) and registered as a CSS
     // variable in `src/app/layout.tsx`. Components render icons by

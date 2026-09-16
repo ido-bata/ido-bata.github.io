@@ -3,8 +3,7 @@ import { css, cx } from "@/styled-system/css";
 import { container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Accordion, AccordionItem } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { DiscordIcon } from "@/components/ui/DiscordIcon";
+import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
 import { FAQ_ITEMS } from "@/content/faq";
 
@@ -75,7 +74,8 @@ export default function FaqPage() {
                 maxW: "48ch",
               })}
             >
-              コミュニティへのよくある質問を準備しています。具体的な質問と回答はオーナーの正本化後に掲載します。
+              コミュニティの運営方針・サーバルール・参加方法など、運営や参加者から頻出する質問と回答を順次掲載しています。
+              新しい Q&A はサーバ運営の中で合意が取れたものを追加していきます。
             </p>
           </div>
 
@@ -118,7 +118,7 @@ export default function FaqPage() {
               <dt className={css({ color: "fg.muted" })}>件数</dt>
               <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>{FAQ_ITEMS.length}</dd>
               <dt className={css({ color: "fg.muted" })}>並び順</dt>
-              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>正本化順</dd>
+              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>参加前の疑問から</dd>
             </dl>
           </aside>
         </div>
@@ -133,7 +133,7 @@ export default function FaqPage() {
               lineHeight: "relaxed",
             })}
           >
-            現在、掲載中の質問はありません。
+            質問はまだ登録されていません。
           </p>
         </section>
       ) : (
@@ -170,12 +170,7 @@ export default function FaqPage() {
               Discord サーバで活動しています。
             </p>
             <div>
-              <Button asChild variant="solid" size="lg">
-                <a href={invite} target="_blank" rel="noopener noreferrer">
-                  <DiscordIcon size={18} />
-                  <span>Discord サーバに参加</span>
-                </a>
-              </Button>
+              <DiscordJoinButton href={invite} size="lg" />
             </div>
           </div>
         </section>

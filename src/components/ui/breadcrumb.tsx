@@ -21,6 +21,21 @@ export type BreadcrumbItem = { href?: string; label: string };
  * a single-click path back to `/` and to intermediate sections on
  * deeper pages (e.g. `/community/rules`).
  *
+ * The strip is `position: sticky` directly under the Header
+ * (`top` matches the Header's resolved height — py:3 + content 32px
+ * = ~56px). Previously the breadcrumb scrolled out of view on long
+ * pages, forcing users to scroll back to the top to navigate out
+ * of a deep section; the sticky treatment keeps it pinned as long
+ * as the page header is visible and then docks under it.
+ *
+ * Background + `backdrop-filter: blur` — exactly the same chrome
+ * treatment the Header uses. Without a backdrop, content scrolling
+ * under a sticky strip overlaps the breadcrumb text and makes it
+ * unreadable; with a backdrop, the strip stays legible without
+ * pulling the visual weight a solid `bg.muted` (or a hairline
+ * border) would. The breadcrumb now reads as a continuation of the
+ * sticky header chrome rather than its own surface.
+ *
  * The outer `<nav aria-label="パンくずリスト">` plus `<ol> > <li>`
  * exposes the structure to assistive tech without extra ARIA
  * plumbing. Separator is a Material Icons `chevron_right` ligature
@@ -38,9 +53,27 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
       aria-label="パンくずリスト"
       className={css({
         width: "100%",
+        position: "sticky",
+        // Header chrome height is registered as `--chrome-height` in
+        // `src/app/layout.tsx` (py:3 + content 32px = 56px). Reference
+        // the variable instead of inlining a magic number so Header
+        // and Breadcrumb stay docked in lockstep if either changes.
+        // If you tune the Header's vertical padding, update the
+        // `--chrome-height` declaration rather than this top value.
+        top: "var(--chrome-height)",
+        // Below Header (100) so any page-level sticky sibling slots in
+        // predictably between the docked chrome and the page content.
+        zIndex: "90",
         paddingBlock: "3",
+        bg: "bg.canvas",
+        // Hairline border keeps a visible bottom edge even when the
+        // strip sits over a section that uses the same `bg.canvas`
+        // token — `backdrop-filter` only produces an edge against
+        // content actively scrolling underneath, so at rest we still
+        // need a static separator.
         borderBottom: "1px solid",
         borderColor: "border.hairline",
+        backdropFilter: "saturate(180%) blur(8px)",
       })}
     >
       <ol

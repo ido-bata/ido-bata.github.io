@@ -1,0 +1,57 @@
+name: release-source-check
+
+# required status check として main への PR が以下を同時に満たすことを enforce する:
+#   1. head repository === base repository (fork PR を排除)
+#   2. head.ref が `release-*` pattern に一致
+# branch protection だけでは PR head pattern と同一-repo 起点を制約できないため、
+# required status check で代替する。
+# 詳細は docs/adr/0003-release-branch-stack-protection.md を参照。
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-head:
+    name: release-source-check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Inspect PR head repo and ref
+        id: head
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.event.pull_request.base.repo.full_name }}
+        run: |
+          # 1. Same-repo check — reject fork PRs that name themselves
+          #    `release-*` to bypass the pattern check. ADR-0003
+          #    Section 2 requires the PR to originate from the same
+          #    repository (i.e. an in-repo `release-*` branch).
+          if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            echo "::error::PR head repo '${HEAD_REPO}' は base repo '${BASE_REPO}' と一致しません (fork PR)。release-source-check は同一 repository 内の release branch からのみ merge を許可します。"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          # 2. head ref presence — defensive against malformed payloads.
+          if [ -z "$HEAD_REF" ]; then
+            echo "::error::head ref が見つかりません"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          # 3. Pattern check — head ref must be `release-*`.
+          if [[ "$HEAD_REF" == release-* ]]; then
+            echo "head ref '${HEAD_REF}' は release-* pattern に一致 (repo=${HEAD_REPO})"
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::head ref '${HEAD_REF}' は release-* pattern に一致しません。main への PR は release branch からのみ merge できます。"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi

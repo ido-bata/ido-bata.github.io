@@ -7,6 +7,13 @@
  *     looks for before extracting atomic styles and the semantic-token CSS
  *     variables (including the dark/light theme ones from Issue #22)
  *   - third-party font face declarations (added here when needed)
+ *   - layout primitives that don't fit Panda's token model
+ *
+ * `--chrome-height` is the docked header's resolved height (py:3 +
+ * content 32px = 56px). The breadcrumb sticky strip reads this
+ * variable to dock directly under the header. If the header's vertical
+ * padding or content height ever changes, update this value (and the
+ * Header's `py` token) in lockstep.
  *
  * Refs:
  *   - panda.config.mjs
@@ -14,3 +21,7 @@
  */
 
 @layer reset, base, tokens, recipes, utilities;
+
+:root {
+  --chrome-height: 3.5rem;
+}

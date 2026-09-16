@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { css, cx } from "@/styled-system/css";
-import { container, grid, section, stack } from "@/styles/recipes";
+import { container, grid, section, stack, surface } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { getNewsSortedByDateDesc } from "@/content/news";
@@ -83,7 +83,7 @@ export default function NewsPage() {
                 maxW: "48ch",
               })}
             >
-              コミュニティからの告知や更新情報を掲載します。具体的な告知はオーナーの正本化後に追加されます。
+              サイト、活動、公開ツールに関する更新を掲載します。
             </p>
           </div>
 
@@ -153,38 +153,29 @@ export default function NewsPage() {
         <section className={cx(section({ variant: "flow" }))}>
           <ol
             className={css({
-              display: "flex",
-              flexDirection: "column",
-              gap: { base: "5", md: "6" },
               margin: 0,
               padding: 0,
               listStyleType: "none",
+              display: "flex",
+              flexDirection: "column",
+              gap: { base: "5", md: "8" },
             })}
           >
             {items.map((item, index) => (
               <li key={`${item.date}-${item.title}`}>
                 <article
                   className={cx(
+                    grid({ cols: 12, gap: 6 }),
+                    surface({ elevation: "flat" }),
                     css({
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4",
                       padding: { base: "5", md: "6" },
-                      borderRadius: "lg",
-                      border: "1px solid",
-                      borderColor: "border",
-                      bg: "bg.canvas",
                     }),
                   )}
                 >
                   <div
                     className={cx(
-                      css({
-                        display: "flex",
-                        flexWrap: "wrap",
-                        alignItems: "center",
-                        gap: "3",
-                      }),
+                      stack({ gap: 2 }),
+                      css({ gridColumn: { base: "1", md: "span 3" } }),
                     )}
                   >
                     <time
@@ -230,17 +221,24 @@ export default function NewsPage() {
                       </ul>
                     ) : null}
                   </div>
-                  <h2
-                    className={css({
-                      margin: 0,
-                      fontSize: { base: "xl", md: "2xl" },
-                      fontWeight: "semibold",
-                      lineHeight: "tight",
-                    })}
+                  <div
+                    className={cx(
+                      stack({ gap: 3 }),
+                      css({ gridColumn: { base: "1", md: "span 9" }, minW: 0 }),
+                    )}
                   >
-                    {item.title}
-                  </h2>
-                  <MarkdownBody source={item.body} />
+                    <h2
+                      className={css({
+                        margin: 0,
+                        fontSize: { base: "xl", md: "2xl" },
+                        fontWeight: "semibold",
+                        lineHeight: "tight",
+                      })}
+                    >
+                      {item.title}
+                    </h2>
+                    <MarkdownBody source={item.body} />
+                  </div>
                 </article>
                 {index < items.length - 1 ? <Separator className={css({ mt: "5" })} /> : null}
               </li>

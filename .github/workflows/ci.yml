@@ -1,8 +1,10 @@
 name: ci
 
 on:
+  # PR trigger は base branch 制限なし (stacked PR: <issue-number> -> <predecessor-issue-number>
+  # でも CI が走る)。push は main / release-* のみ (ticket branch 直 push は PR 経由が canonical)。
+  # 詳細は docs/adr/0003-release-branch-stack-protection.md を参照。
   pull_request:
-    branches: [main, "release-*"]
   push:
     branches: [main, "release-*"]
 
@@ -15,10 +17,16 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# 検証ステップは必ず canonical gate entry point (scripts/quality-gate.sh
+# 経由 / package.json `gate:*` scripts) を呼ぶ。個別の lint /
+# typecheck / test:unit / build / test:e2e を CI から直接呼ばない。
+# canonical profile は quality/profile.yaml、driver は
+# .agents/skills/quality-gate/SKILL.md §4。
+
 jobs:
   quality:
     name: Quality gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -37,17 +45,10 @@ jobs:
       - name: Generate Next.js types
         run: bunx next typegen
 
-      - name: Lint
-        run: bun run lint
-
-      - name: Typecheck
-        run: bun run typecheck
-
-      - name: Unit tests
-        run: bun run test:unit
-
-      - name: Build (smoke)
-        run: bun run build
+      # Canonical integration gate (lint + typecheck + test:unit + build)。
+      # CI から個別 lint / typecheck / test / build を直接呼ばない。
+      - name: Run canonical gate:integration
+        run: bun run gate:integration
         env:
           NEXT_TELEMETRY_DISABLED: "1"
 
@@ -64,11 +65,11 @@ jobs:
   e2e:
     name: E2E gate (Playwright)
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
-    # E2E は quality gate (build を含む) の後に走らせたいので
-    # build 成果物 (`./out`) を再利用せずジョブを分離し、
-    # このジョブ側で build + Playwright を完結させる。
+    # E2E は quality gate の後に走らせ、`gate:e2e` を canonical 入口として
+    # このジョブ内で build + Playwright を完結させる (Playwright は ./out
+    # を fresh build 前提で serve するため)。
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -84,16 +85,13 @@ jobs:
       - name: Generate Next.js types
         run: bunx next typegen
 
-      - name: Build static export
-        run: bun run build
-        env:
-          NEXT_TELEMETRY_DISABLED: "1"
-
+      # Canonical e2e gate (build + Playwright)。CI から個別 build /
+      # test:e2e / test:e2e:install を直接呼ばない (test:e2e:install は
+      # gate:e2e 内の test:e2e script が暗黙で必要とする)。
       - name: Install Playwright browsers
         run: bun run test:e2e:install
 
-      - name: Run E2E
-        # `bun run test` (= unit + E2E) と挙動を揃えるため、明示的に
-        # `test:e2e` を起動する。Playwright 設定は `python3 -m http.server`
-        # で `./out` を serve する。
-        run: bun run test:e2e
+      - name: Run canonical gate:e2e
+        run: bun run gate:e2e
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"

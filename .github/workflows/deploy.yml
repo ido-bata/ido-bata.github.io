@@ -19,10 +19,14 @@ concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: false
 
+# deploy も canonical gate entry point を経由する。個別 lint /
+# typecheck / build を直接呼ばない (canonical profile: quality/profile.yaml、
+# driver: .agents/skills/quality-gate/SKILL.md §4)。
+
 jobs:
   build:
     name: Build static export
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -36,26 +40,21 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # 静的書き出しで typed routes 用の型を先に生成してから lint / typecheck を流す。
+      # 静的書き出しで typed routes 用の型を先に生成してから canonical gate を流す。
       - name: Generate Next.js types
         run: bunx next typegen
 
-      - name: Run quality gate (lint / typecheck)
-        run: |
-          bun run lint
-          bun run typecheck
-
-      - name: Build static export
-        run: bun run build
+      # Canonical integration gate (lint + typecheck + test:unit + build)。
+      # NEXT_PUBLIC_DISCORD_INVITE は build 時に bundle へ焼き込む
+      # (`output: "export"` 環境では runtime 差し替え不可)。
+      # repo-level variables (Settings → Secrets and variables → Variables) で
+      # `NEXT_PUBLIC_DISCORD_INVITE` を設定する。未設定なら `src/lib/env.ts` が
+      # undefined として扱い、Header / Footer / Home / 404 の CTA は
+      # プレースホルダ表示に退避するので build は壊れない。
+      - name: Run canonical gate:integration
+        run: bun run gate:integration
         env:
-          # CI 用に固定値（GitHub Actions から渡ってくる値があれば優先）
           NEXT_TELEMETRY_DISABLED: "1"
-          # Pages deploy で Discord 招待 URL をバンドルへ焼き込む。
-          # `output: "export"` 環境では runtime 差し替え不可なので、build 時に必ず渡す。
-          # repo-level variables (Settings → Secrets and variables → Variables) で
-          # `NEXT_PUBLIC_DISCORD_INVITE` を設定する。未設定なら `src/lib/env.ts` が
-          # undefined として扱い、Header / Footer / Home / 404 の CTA は
-          # プレースホルダ表示に退避するので build は壊れない。
           NEXT_PUBLIC_DISCORD_INVITE: ${{ vars.NEXT_PUBLIC_DISCORD_INVITE }}
 
       - name: Setup Pages
@@ -69,7 +68,7 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     # deploy は他ブランチの in-progress deploy および他の同時実行と衝突させない。
     environment:

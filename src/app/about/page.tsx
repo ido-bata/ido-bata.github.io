@@ -1,131 +1,206 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { css, cx } from "@/styled-system/css";
-import { container, grid, section, stack } from "@/styles/recipes";
+import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { DiscordIcon } from "@/components/ui/DiscordIcon";
-import { DISCORD_INVITE } from "@/lib/env";
+import { ABOUT_SECTIONS, ADMINISTRATOR } from "@/content/community";
 
 export const metadata: Metadata = {
   title: "About | ido-bata",
-  description: "ido-bata コミュニティの紹介ページ。",
+  description: "いど端 Discord サーバーの運営スタンス、 管理者、 このサイトへの貢献方法。",
 };
 
-/**
- * About ページ。
- *
- * Layout:
- *   - breadcrumb strip (Home / About) at the top of `<main>` so the
- *     user always has a single-click path back to `/`
- *   - page-opening band on `container({ size: "content" })` (same
- *     width as the home page so the page-edge alignment is held
- *     across the site): left rail (eyebrow → h1 → lede) plus right
- *     rail (CTA surface). Left-aligned grid composition — no centred
- *     hero band.
- *
- * The CTA uses the project-wide `Button` primitive plus the inline
- * `DiscordIcon` SVG so the icon inherits the brand-coloured button
- * text.
- *
- * NOTE: For v0.3.0 the page is a minimal placeholder. Operator identity,
- * philosophy, and operating-principle copy are populated by the community
- * owner in a follow-up issue.
- *
- * Refs:
- *   - Issue #14
- *   - .agents/skills/layout-system
- */
-export default function AboutPage() {
-  const invite = DISCORD_INVITE;
+const eyebrow = css({
+  fontSize: "xs",
+  fontWeight: "medium",
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+  color: "fg.muted",
+});
 
+const ledeParagraph = css({
+  fontSize: { base: "md", md: "lg" },
+  color: "fg.muted",
+  lineHeight: "relaxed",
+});
+
+const roleStyle = css({
+  color: "fg.muted",
+  lineHeight: "relaxed",
+});
+
+const contributionLink = css({
+  display: "flex",
+  flexDirection: "column",
+  gap: "1",
+  color: "fg.DEFAULT",
+  textDecoration: "none",
+  _hover: { color: "accent.DEFAULT" },
+  _focusVisible: { outline: "2px solid", outlineColor: "accent.DEFAULT", outlineOffset: "2px" },
+});
+
+const contributionLinkHeading = css({
+  display: "inline-flex",
+  alignItems: "baseline",
+  gap: "2",
+  width: "fit-content",
+});
+
+const contributionLinkArrow = css({
+  color: "fg.subtle",
+  fontSize: "sm",
+});
+
+function sectionNumber(index: number): string {
+  return String(index + 1).padStart(2, "0");
+}
+
+export default function AboutPage() {
   return (
     <main className={cx(container({ size: "content" }))}>
       <Breadcrumb items={[{ href: "/", label: "ホーム" }, { label: "About" }]} />
 
-      <section aria-labelledby="about-hero-title" className={cx(section({ variant: "flow" }))}>
-        <div className={cx(grid({ cols: 12, gap: 6 }))}>
-          <div className={cx(stack({ gap: 5 }), css({ gridColumn: { base: "1", md: "span 7" } }))}>
-            <p
-              className={css({
-                fontSize: "xs",
-                fontWeight: "medium",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "fg.muted",
-              })}
-            >
-              About
-            </p>
+      <section aria-labelledby="about-title" className={cx(section({ variant: "flow" }))}>
+        <div className={cx(grid({ cols: 12, gap: 6 }), css({ alignItems: "end" }))}>
+          <div className={cx(stack({ gap: 5 }), css({ gridColumn: { base: "1", md: "span 5" } }))}>
+            <p className={eyebrow}>About ido-bata</p>
             <h1
-              id="about-hero-title"
+              id="about-title"
               className={css({
-                fontSize: { base: "4xl", md: "5xl" },
+                fontSize: { base: "3xl", md: "5xl" },
                 fontWeight: "bold",
                 lineHeight: "tight",
                 letterSpacing: "-0.03em",
                 color: "fg.DEFAULT",
               })}
             >
-              ido-bata
+              いど端について
             </h1>
-            <p
-              className={css({
-                fontSize: { base: "md", md: "lg" },
-                color: "fg.muted",
-                lineHeight: "relaxed",
-                maxW: "48ch",
-              })}
-            >
-              コミュニティ紹介・理念・運営体制などの詳細は準備中です。
-            </p>
+            <div className={cx(stack({ gap: 4 }), css({ maxW: "52ch" }))}>
+              <p className={ledeParagraph}>
+                クリエイターやエンジニアが、制作や開発を実際に進めるためのDiscordサーバーです。
+              </p>
+            </div>
           </div>
-
           <aside
-            aria-label="参加する"
+            aria-label="管理者"
             className={cx(
-              stack({ gap: 4 }),
+              stack({ gap: 5 }),
               css({
-                gridColumn: { base: "1", md: "span 5" },
+                gridColumn: { base: "1", md: "6 / span 7" },
+                display: "grid",
+                gridTemplateColumns: { base: "1fr", sm: "auto 1fr" },
+                alignItems: "center",
+                padding: { base: "5", md: "7" },
                 bg: "bg.subtle",
-                borderRadius: "lg",
-                padding: { base: "5", md: "6" },
-                border: "1px solid",
-                borderColor: "border.subtle",
-                alignSelf: "stretch",
+                borderRadius: "xl",
               }),
             )}
           >
-            <p
+            <Image
+              src={ADMINISTRATOR.profileImageUrl}
+              alt={`${ADMINISTRATOR.name}のプロフィール写真`}
+              width={112}
+              height={112}
               className={css({
-                fontSize: "xs",
-                fontWeight: "medium",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "fg.subtle",
+                width: { base: "20", md: "28" },
+                height: { base: "20", md: "28" },
+                borderRadius: "full",
+                objectFit: "cover",
               })}
-            >
-              参加する
-            </p>
-            <p
-              className={css({
-                fontSize: "md",
-                color: "fg.DEFAULT",
-                lineHeight: "relaxed",
-              })}
-            >
-              招待リンクから Discord サーバに参加できます。
-            </p>
-            {invite ? (
-              <Button asChild variant="solid" size="lg">
-                <a href={invite} target="_blank" rel="noopener noreferrer">
-                  <DiscordIcon size={18} />
-                  <span>Discord サーバに参加</span>
-                </a>
-              </Button>
-            ) : null}
+            />
+            <div className={cx(stack({ gap: 3 }))}>
+              <p className={eyebrow}>Administrator</p>
+              <div>
+                <h2 className={css({ fontSize: "2xl", fontWeight: "bold", color: "fg.DEFAULT" })}>
+                  {ADMINISTRATOR.name}
+                </h2>
+                <p className={roleStyle}>{ADMINISTRATOR.role}</p>
+              </div>
+              <p className={css({ color: "fg.muted", lineHeight: "relaxed" })}>
+                {ADMINISTRATOR.summary}
+              </p>
+              <a
+                href={ADMINISTRATOR.xUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={css({
+                  color: "accent.DEFAULT",
+                  fontWeight: "semibold",
+                  width: "fit-content",
+                })}
+              >
+                X {ADMINISTRATOR.xHandle} ↗
+              </a>
+            </div>
           </aside>
         </div>
       </section>
+
+      {ABOUT_SECTIONS.map((item, index) => (
+        <section
+          key={item.kind}
+          aria-labelledby={`about-${item.kind.toLowerCase()}`}
+          className={cx(
+            section({ variant: "flow" }),
+            css({ borderTop: "1px solid", borderColor: "border.hairline" }),
+          )}
+        >
+          <div className={cx(grid({ cols: 12, gap: 6 }))}>
+            <p className={cx(eyebrow, css({ gridColumn: { base: "1", md: "span 4" } }))}>
+              {sectionNumber(index)} / {item.kind}
+            </p>
+            <div
+              className={cx(
+                stack({ gap: 4 }),
+                css({ gridColumn: { base: "1", md: "span 8" }, maxW: "64ch" }),
+              )}
+            >
+              <h2
+                id={`about-${item.kind.toLowerCase()}`}
+                className={css({
+                  fontSize: { base: "2xl", md: "3xl" },
+                  fontWeight: "bold",
+                  color: "fg.DEFAULT",
+                })}
+              >
+                {item.title}
+              </h2>
+              <p
+                className={css({
+                  fontSize: { base: "md", md: "lg" },
+                  color: "fg.muted",
+                  lineHeight: "relaxed",
+                })}
+              >
+                {item.body}
+              </p>
+              {item.links ? (
+                <div className={cx(cluster({ gap: 5 }))}>
+                  {item.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={contributionLink}
+                    >
+                      <span className={contributionLinkHeading}>
+                        <strong className={css({ fontSize: "lg", fontWeight: "semibold" })}>
+                          {link.label}
+                        </strong>
+                        <span aria-hidden="true" className={contributionLinkArrow}>
+                          ↗
+                        </span>
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      ))}
     </main>
   );
 }
