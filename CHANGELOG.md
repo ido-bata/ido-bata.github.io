@@ -76,7 +76,7 @@
 
 ### Fixed
 
-- Issue #109: `package.json` の `"version": "0.3.0"` を `"0.4.0"` に更新、CHANGELOG の `[Unreleased]` を `[0.4.0] - 2026-09-16` に確定、新 `[Unreleased]` section を追加、compare link `[0.4.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...v0.4.0` を追記。PR #98 の merge-ready 状態に入るため release metadata を release PR の title と一致させた。
+- Issue #109: `package.json` の `"version": "0.3.0"` を `"0.4.0"` に更新。CHANGELOG の `[Unreleased]` / `[0.4.0] - YYYY-MM-DD` 確定と `[0.4.0]` compare link 追記は release PR (`release-0-4-0` → `main`) merge 時に release workflow として実施する。`docs/release.md` 参照。merge 前の日付確定は release workflow invariant に違反するため、本時点では CHANGELOG の version / date 確定を行わず、release branch 内の `[Unreleased]` section に本エントリを残したまま merge を待つ。
 - Issue #109: `src/content/rules.ts` の `meta` section を「行動規範に記載しています。」の anchor なし body から `links: [{ label: "行動規範", href: "..."code-of-conduct.md" }]` を含む形へ書き換え、body を「次の行動規範を参照してください。」に統一。`enforcement.body` も同 pattern に統一し、ページ末尾から code-of-conduct.md へ actual な導線が確保される状態へ。
 
 ### Changed
