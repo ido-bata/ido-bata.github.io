@@ -22,6 +22,10 @@ next-env.d.ts
 .claude/**
 .agents/**
 
+# 直前のセッションの `bunx skills add --all` で誤って生成されたローカル作業ディレクトリ。
+# git 管理外 (untracked) で、 別 Issue で正式に `.agents/skills/` へ移設する想定。
+agent.stash.tmp/**
+
 # lockfile は Prettier の対象としない（依存解決の再現性を担保）
 package-lock.json
 bun.lock

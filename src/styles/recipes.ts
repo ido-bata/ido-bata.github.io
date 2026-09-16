@@ -147,6 +147,12 @@ export const container = cva({
  * Variants:
  *   - flow:   default — left-aligned with generous vertical room.
  *             Page-opening band, channel cards, news list, sub-sections.
+ *             Adjacent `flow` sections sit with ~112px (base) / ~192px
+ *             (md) of total breathing room between them — wide enough
+ *             for the page to read as a sequence of deliberate bands
+ *             rather than a single tall sheet (2026-09-16 bump from
+ *             80/128 so /channels / /community/rules stop reading as
+ *             cramped).
  *             Use with `grid({ cols: 12 })` for asymmetric compositions
  *             (left rail for copy / actions, right rail for an accent
  *             surface) rather than centering — the design system
@@ -167,12 +173,12 @@ export const section = cva({
       flow: {
         alignItems: "flex-start",
         gap: { base: "6", md: "8" },
-        py: { base: "10", md: "16" },
+        py: { base: "14", md: "24" },
       },
       prose: {
         alignItems: "flex-start",
         gap: { base: "5", md: "6" },
-        py: { base: "10", md: "12" },
+        py: { base: "12", md: "16" },
       },
       tight: {
         alignItems: "flex-start",
@@ -276,6 +282,7 @@ export const cluster = cva({
 export const grid = cva({
   base: {
     display: "grid",
+    width: "100%",
     gap: { base: "4", md: "6" },
     gridTemplateColumns: { base: "1fr", md: "repeat(12, minmax(0, 1fr))" },
   },
@@ -285,6 +292,7 @@ export const grid = cva({
       2: { gridTemplateColumns: { base: "1fr", md: "repeat(2, minmax(0, 1fr))" } },
       3: { gridTemplateColumns: { base: "1fr", md: "repeat(3, minmax(0, 1fr))" } },
       4: { gridTemplateColumns: { base: "1fr", md: "repeat(4, minmax(0, 1fr))" } },
+      5: { gridTemplateColumns: { base: "1fr", md: "repeat(5, minmax(0, 1fr))" } },
       6: { gridTemplateColumns: { base: "1fr", md: "repeat(6, minmax(0, 1fr))" } },
       12: {},
     },

@@ -21,6 +21,21 @@ export type BreadcrumbItem = { href?: string; label: string };
  * a single-click path back to `/` and to intermediate sections on
  * deeper pages (e.g. `/community/rules`).
  *
+ * The strip is `position: sticky` directly under the Header
+ * (`top` matches the Header's resolved height — py:3 + content 32px
+ * = ~56px). Previously the breadcrumb scrolled out of view on long
+ * pages, forcing users to scroll back to the top to navigate out
+ * of a deep section; the sticky treatment keeps it pinned as long
+ * as the page header is visible and then docks under it.
+ *
+ * Background + `backdrop-filter: blur` — exactly the same chrome
+ * treatment the Header uses. Without a backdrop, content scrolling
+ * under a sticky strip overlaps the breadcrumb text and makes it
+ * unreadable; with a backdrop, the strip stays legible without
+ * pulling the visual weight a solid `bg.muted` (or a hairline
+ * border) would. The breadcrumb now reads as a continuation of the
+ * sticky header chrome rather than its own surface.
+ *
  * The outer `<nav aria-label="パンくずリスト">` plus `<ol> > <li>`
  * exposes the structure to assistive tech without extra ARIA
  * plumbing. Separator is a Material Icons `chevron_right` ligature
@@ -38,9 +53,15 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
       aria-label="パンくずリスト"
       className={css({
         width: "100%",
+        position: "sticky",
+        // Header height: py:3 (12px × 2) + content 32px = 56px.
+        // Header も同じ 56px 分スクロールで上に隠れるので、
+        // ちょうど Header の直下に docked する位置で止める。
+        top: "14",
+        zIndex: "5",
         paddingBlock: "3",
-        borderBottom: "1px solid",
-        borderColor: "border.hairline",
+        bg: "bg.canvas",
+        backdropFilter: "saturate(180%) blur(8px)",
       })}
     >
       <ol

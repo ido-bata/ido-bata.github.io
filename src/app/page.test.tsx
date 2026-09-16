@@ -3,23 +3,35 @@ import { render, screen } from "@testing-library/react";
 import Home from "./page";
 
 describe("Home page", () => {
-  it("renders the ido-bata portal landing with hero, about, and key links", () => {
+  it("renders site navigation before newcomer guidance", () => {
     render(<Home />);
 
-    // Hero h1 carries the brand tagline. "ido-bata" itself appears in
-    // the eyebrow + link rail — keep the assertion on the heading.
-    expect(screen.getByRole("heading", { level: 1 })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1, name: /いど端/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "使えるもの" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /LayerNote/ }).getAttribute("href")).toBe(
+      "/projects/layer-note",
+    );
+    expect(screen.getByRole("link", { name: /ido-bata-server-bot/ }).getAttribute("href")).toBe(
+      "/projects/server-bot",
+    );
+    expect(screen.getAllByRole("link", { name: /いど端 底力 タイム/ }).length).toBeGreaterThan(0);
+    expect(
+      screen.getByRole("link", { name: "すべてのプロジェクトを見る" }).getAttribute("href"),
+    ).toBe("/projects");
+    // CommunityVisual now also renders "samuido" as a chat author,
+    // so the administrator name appears twice on the page — once in
+    // the activity mockup, once in the People & source card. Check
+    // presence rather than uniqueness.
+    expect(screen.getAllByText("samuido").length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: /GitHubリポジトリ/ })).toBeTruthy();
 
-    // Section headings expose the page's information architecture.
-    expect(screen.getByRole("heading", { level: 2, name: /何を大切にする場所か/ })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: /関連リンク/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "チャネルから探す" })).toBeTruthy();
 
-    // Related links must cover the routes owned by #14/#18/#19/#20/#21
-    // (and the docs pages owned by other issues). Each label may now
-    // appear more than once (footer nav + in-page card / CTA), so use
-    // `getAllByRole` and assert at least one matching link exists.
-    const links = ["About", "FAQ", "Rules", "Channels", "News"];
-    for (const label of links) {
+    expect(screen.getByRole("heading", { level: 2, name: /最新の動き/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: /ルール・ガイドライン/ })).toBeTruthy();
+
+    const labels = ["初めての方へ", "すべてのチャネルを見る"];
+    for (const label of labels) {
       const matches = screen.getAllByRole("link", { name: new RegExp(label) });
       expect(matches.length).toBeGreaterThanOrEqual(1);
     }
