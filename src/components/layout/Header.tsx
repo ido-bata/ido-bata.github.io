@@ -101,11 +101,39 @@ export function Header() {
           <span className={css({ fontSize: "md" })}>ido-bata</span>
         </Link>
 
+        <nav
+          aria-label="主なページ"
+          className={css({
+            display: { base: "none", lg: "flex" },
+            alignItems: "center",
+            gap: "4",
+            marginLeft: "auto",
+          })}
+        >
+          {[
+            { href: "/activities/idobata-time", label: "底力タイム" },
+            { href: "/projects/layer-note", label: "LayerNote" },
+            { href: "/projects/server-bot", label: "Server Bot" },
+            { href: "/channels", label: "チャネル" },
+          ].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={css({
+                color: "fg.muted",
+                fontSize: "sm",
+                textDecoration: "none",
+                _hover: { color: "fg.DEFAULT" },
+              })}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
         <div className={cx(cluster({ justify: "end" }))}>
           <ThemeToggle />
-          {invite ? (
-            <DiscordJoinButton href={invite} label="Discord に参加" size="sm" />
-          ) : null}
+          {invite ? <DiscordJoinButton href={invite} label="Discord に参加" size="sm" /> : null}
         </div>
       </div>
     </header>

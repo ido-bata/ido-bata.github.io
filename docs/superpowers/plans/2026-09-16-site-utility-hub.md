@@ -24,6 +24,7 @@
 ### Task 1: Discord参加ボタンの共通化
 
 **Files:**
+
 - Create: `src/components/DiscordJoinButton.tsx`
 - Create: `src/components/DiscordJoinButton.test.tsx`
 - Modify: `src/components/layout/Header.tsx`
@@ -34,6 +35,7 @@
 - Modify: `src/app/not-found.tsx`
 
 **Interfaces:**
+
 - Consumes: `Button`, `DiscordIcon`, `DISCORD_INVITE`
 - Produces: `DiscordJoinButton({ label?, size?, className? })`
 
@@ -113,11 +115,13 @@ git commit -m "fix(ui): unify Discord join actions"
 ### Task 2: 全種別のチャンネルディレクトリ
 
 **Files:**
+
 - Modify: `src/content/channels.ts`
 - Modify: `src/content/channels.test.ts`
 - Modify: `src/app/channels/page.tsx`
 
 **Interfaces:**
+
 - Produces: `ChannelType = "text" | "announcement" | "forum" | "voice" | "stage"`
 - Produces: `Channel.type: ChannelType`
 - Produces: `CHANNEL_TYPE_LABELS: Readonly<Record<ChannelType, string>>`
@@ -170,12 +174,14 @@ git commit -m "feat(channels): include voice and stage channels"
 ### Task 3: 活動・プロジェクトデータ
 
 **Files:**
+
 - Create: `src/content/activities.ts`
 - Create: `src/content/activities.test.ts`
 - Create: `src/content/projects.ts`
 - Create: `src/content/projects.test.ts`
 
 **Interfaces:**
+
 - Produces: `Activity`, `IDOBATA_TIME`
 - Produces: `Project`, `PROJECTS`, `getProject(slug)`
 
@@ -220,6 +226,7 @@ git commit -m "feat(content): add activities and projects"
 ### Task 4: 底力タイム・プロジェクト詳細ページ
 
 **Files:**
+
 - Create: `src/app/activities/idobata-time/page.tsx`
 - Create: `src/app/activities/idobata-time/page.test.tsx`
 - Create: `src/app/projects/layer-note/page.tsx`
@@ -227,6 +234,7 @@ git commit -m "feat(content): add activities and projects"
 - Create: `src/app/projects/projects.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `IDOBATA_TIME`, `PROJECTS`, `DiscordJoinButton`
 - Produces routes: `/activities/idobata-time`, `/projects/layer-note`, `/projects/server-bot`
 
@@ -272,10 +280,12 @@ git commit -m "feat(site): add activity and project pages"
 ### Task 5: Homeを実利ハブへ再構成
 
 **Files:**
+
 - Modify: `src/app/page.tsx`
 - Modify: `src/app/page.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `IDOBATA_TIME`, `PROJECTS`, `CHANNELS`, `CHANNEL_CATEGORIES`
 
 - [ ] **Step 1: Update Home tests first**
@@ -314,6 +324,7 @@ git commit -m "feat(home): surface activities and projects"
 ### Task 6: FAQ・Rules・Newsの空内容を解消
 
 **Files:**
+
 - Modify: `src/content/faq.ts`
 - Create: `src/content/faq.test.ts`
 - Modify: `src/content/rules.ts`
@@ -325,6 +336,7 @@ git commit -m "feat(home): surface activities and projects"
 - Modify: `src/app/news/page.tsx`
 
 **Interfaces:**
+
 - Produces populated `FAQ_ITEMS`, `rules`, and `NEWS_ITEMS`
 
 - [ ] **Step 1: Write failing content assertions**
@@ -373,12 +385,14 @@ git commit -m "feat(content): replace empty information pages"
 ### Task 7: ナビゲーションと変更履歴
 
 **Files:**
+
 - Modify: `src/components/layout/Footer.tsx`
 - Modify: `src/components/layout/Header.tsx`
 - Modify: `CHANGELOG.md`
 - Modify: `tests/e2e/home.spec.ts`
 
 **Interfaces:**
+
 - Consumes the new routes from Tasks 4–6.
 
 - [ ] **Step 1: Add E2E expectations**
@@ -414,9 +428,11 @@ git commit -m "docs: align navigation and changelog"
 ### Task 8: 完全検証とPR更新
 
 **Files:**
+
 - Modify only files required by discovered verification failures.
 
 **Interfaces:**
+
 - Validates every route and artifact created by Tasks 1–7.
 
 - [ ] **Step 1: Scan preparation-state language**

@@ -21,8 +21,7 @@ export const IDOBATA_TIME: Activity = {
   slug: "idobata-time",
   name: "いど端 底力 タイム",
   path: "/activities/idobata-time",
-  summary:
-    "仕事以外の何かに集中するため、毎日決まった時間に開いている作業時間です。",
+  summary: "仕事以外の何かに集中するため、毎日決まった時間に開いている作業時間です。",
   time: "21:00–22:40",
   channel: "いど底-ステージ",
   participation:

@@ -250,6 +250,9 @@ function FooterNavEntry({ entry }: { entry: FooterEntry }) {
 }
 
 const SITE_LINKS: ReadonlyArray<FooterLink> = [
+  { href: "/activities/idobata-time", label: "いど端 底力 タイム", icon: "timer" },
+  { href: "/projects/layer-note", label: "LayerNote", icon: "layers" },
+  { href: "/projects/server-bot", label: "Server Bot", icon: "smart_toy" },
   { href: "/welcome", label: "初めての方へ", icon: "waving_hand" },
   { href: "/channels", label: "Channels", icon: "tag" },
   { href: "/news", label: "News", icon: "campaign" },

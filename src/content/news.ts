@@ -25,8 +25,7 @@ export const newsItems: NewsItem[] = [
   {
     date: "2026-09-16",
     title: "活動とツールの案内を追加しました",
-    body:
-      "トップページから、いど端 底力 タイム、LayerNote、ido-bata-server-botの案内を確認できるようになりました。\n\nチャネル一覧には、現在使われている音声・ステージチャネルも掲載しています。",
+    body: "トップページから、いど端 底力 タイム、LayerNote、ido-bata-server-botの案内を確認できるようになりました。\n\nチャネル一覧には、現在使われている音声・ステージチャネルも掲載しています。",
     tags: ["サイト更新"],
   },
 ];

@@ -23,8 +23,7 @@ export const PROJECTS: readonly Project[] = [
     name: "LayerNote",
     path: "/projects/layer-note",
     eyebrow: "After Effects extension",
-    summary:
-      "After Effectsのレイヤーにメモを残し、プロジェクトの中で管理できる拡張機能です。",
+    summary: "After Effectsのレイヤーにメモを残し、プロジェクトの中で管理できる拡張機能です。",
     features: [
       "レイヤーごとのメモをプロジェクト内に保存し、あとから編集できる",
       "プロパティやエクスプレッションを一覧で確認・編集できる",

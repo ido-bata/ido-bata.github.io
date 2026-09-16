@@ -87,7 +87,10 @@ export const rules: RulesContent = {
       {
         name: "technical-critique",
         purpose: "技術面の相談や批評を扱います。",
-        rules: ["対象と困っている点を具体的に書いてください", "人ではなく成果物や実装を扱ってください"],
+        rules: [
+          "対象と困っている点を具体的に書いてください",
+          "人ではなく成果物や実装を扱ってください",
+        ],
       },
       {
         name: "宣伝・共有",
