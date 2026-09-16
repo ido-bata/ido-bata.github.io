@@ -1,8 +1,10 @@
 name: ci
 
 on:
+  # PR trigger は base branch 制限なし (stacked PR: <issue-number> -> <predecessor-issue-number>
+  # でも CI が走る)。push は main / release-* のみ (ticket branch 直 push は PR 経由が canonical)。
+  # 詳細は docs/adr/0003-release-branch-stack-protection.md を参照。
   pull_request:
-    branches: [main, "release-*"]
   push:
     branches: [main, "release-*"]
 

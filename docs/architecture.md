@@ -225,9 +225,17 @@ Ark UI の anatomy は zag-js の `createAnatomy()` が `data-scope="<kebab-name
 
 - [ADR-0001: GitHub Pages (organization page) + Next.js output: "export" で配信する](./adr/0001-static-export-github-pages.md)
 - [ADR-0002: Ark UI をヘッドレス UI プリミティブ層として採用する](./adr/0002-headless-ui-ark.md)
+- [ADR-0003: release branching / stacked PR / main protection 契約](./adr/0003-release-branch-stack-protection.md)
 
 ## アーキテクチャ変更時の手順
 
 1. Issue を起票し、影響範囲と ADR 候補かを明示する
 2. 大きな決定は `docs/architecture.md` か `docs/adr/` 配下に ADR を残す
 3. 関連ドキュメント（`README.md`, `docs/development.md` 等）を同じ PR で更新する
+
+## 関連ドキュメント
+
+- [`docs/release.md`](./release.md) — release branching / sprint cadence / stacked PR / release gate
+- [`docs/agent-collaboration.md`](./agent-collaboration.md) — fresh agent / recovery / parent-child / side-effect
+- [`docs/security.md`](./security.md) — advisory 対応 / Dependabot / secret 管理
+- [`docs/troubleshooting.md`](./troubleshooting.md) — よくあるエラーと復旧手順
