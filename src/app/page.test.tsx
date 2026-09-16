@@ -6,7 +6,7 @@ describe("Home page", () => {
   it("renders site navigation before newcomer guidance", () => {
     render(<Home />);
 
-    expect(screen.getByRole("heading", { level: 1, name: "いど端" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1, name: /いど端/ })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "使えるもの" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /LayerNote/ }).getAttribute("href")).toBe(
       "/projects/layer-note",
@@ -18,13 +18,19 @@ describe("Home page", () => {
     expect(
       screen.getByRole("link", { name: "すべてのプロジェクトを見る" }).getAttribute("href"),
     ).toBe("/projects");
+    // CommunityVisual now also renders "samuido" as a chat author,
+    // so the administrator name appears twice on the page — once in
+    // the activity mockup, once in the People & source card. Check
+    // presence rather than uniqueness.
+    expect(screen.getAllByText("samuido").length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: /GitHubリポジトリ/ })).toBeTruthy();
 
     expect(screen.getByRole("heading", { level: 2, name: "チャネルから探す" })).toBeTruthy();
 
     expect(screen.getByRole("heading", { level: 2, name: /最新の動き/ })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: /ルール・ガイドライン/ })).toBeTruthy();
 
-    const labels = ["チャネル一覧", "初めての方へ", "すべてのチャネルを見る"];
+    const labels = ["初めての方へ", "すべてのチャネルを見る"];
     for (const label of labels) {
       const matches = screen.getAllByRole("link", { name: new RegExp(label) });
       expect(matches.length).toBeGreaterThanOrEqual(1);

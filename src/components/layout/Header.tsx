@@ -9,17 +9,18 @@ import { cluster, container } from "@/styles/recipes";
 /**
  * Site-wide header.
  *
- * Layout follows Linear's chrome pattern: a hairline separator on the
- * bottom and an end-justified action row. The rail uses
- * `container({ size: "content" })` so the header's inner edge aligns
- * with the page content below — using a wider container here made the
- * chrome read as a separate band instead of being part of the page.
+ * Layout follows Linear's chrome pattern: an end-justified action row
+ * and the rail uses `container({ size: "content" })` so the header's
+ * inner edge aligns with the page content below — using a wider
+ * container here made the chrome read as a separate band instead of
+ * being part of the page.
  *
- * The separator uses the `border.hairline` semantic token (low-alpha
- * neutral) instead of `border.subtle` so the chrome recedes into the
- * canvas even when the sticky header applies backdrop-blur. Previously
- * the dark-mode hairline (neutral.900) was bright enough to read as a
- * contrast line against the canvas.
+ * No bottom border — the chrome separates itself from the page via
+ * the sticky `backdropFilter: blur` + opaque `bg.canvas` background,
+ * not a hairline rule. Previously the `border.hairline` separator
+ * read as a prominent contrast line (especially in dark mode) and
+ * clashed with the page rhythm; relying on the blur layer keeps the
+ * same functional separation without the visual weight.
  *
  * The home-link mark is the actual server icon (`/ido-bata-icon.jpg`)
  * rendered as a 32px circular avatar with a hairline border — the
@@ -51,8 +52,6 @@ export function Header() {
       className={css({
         width: "100%",
         bg: "bg.canvas",
-        borderBottom: "1px solid",
-        borderColor: "border.hairline",
         position: "sticky",
         top: "0",
         zIndex: "10",

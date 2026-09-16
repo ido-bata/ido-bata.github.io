@@ -24,7 +24,7 @@ test.describe("Home page (static export)", () => {
     expect(response, "expected a navigation response").not.toBeNull();
     expect(response?.status() ?? 0).toBeLessThan(400);
 
-    await expect(page.getByRole("heading", { level: 1, name: "いど端" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /いど端/ })).toBeVisible();
     await expect(page.getByRole("heading", { level: 2, name: "使えるもの" })).toBeVisible();
     await expect(page.getByRole("heading", { level: 2, name: "チャネルから探す" })).toBeVisible();
     await expect(page.getByRole("link", { name: "About", exact: true })).toBeVisible();

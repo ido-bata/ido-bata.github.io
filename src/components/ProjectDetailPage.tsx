@@ -111,14 +111,13 @@ export function ProjectDetailPage({ project }: { project: Project }) {
           できること
         </h2>
         <ul
-          className={css({
-            display: "grid",
-            gridTemplateColumns: { base: "1fr", md: "repeat(3, 1fr)" },
-            gap: "4",
-            listStyle: "none",
-            padding: 0,
-            margin: 0,
-          })}
+          className={cx(
+            // 3-up feature grid using the shared `grid({})` recipe
+            // so each cell uses `minmax(0, 1fr)` and the row never
+            // overflows the container on long feature copy.
+            grid({ cols: 3, gap: 4 }),
+            css({ listStyle: "none", padding: 0, margin: 0 }),
+          )}
         >
           {project.features.map((feature) => (
             <li

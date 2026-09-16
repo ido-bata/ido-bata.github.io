@@ -94,14 +94,16 @@ export default function IdobataTimePage() {
           進行
         </h2>
         <ol
-          className={css({
-            display: "grid",
-            gridTemplateColumns: { base: "1fr", md: "repeat(5, 1fr)" },
-            gap: "3",
-            listStyle: "none",
-            padding: 0,
-            margin: 0,
-          })}
+          className={cx(
+            // 5-up schedule on the same coordinate system the rest of
+            // the site uses (`minmax(0, 1fr)` from the grid recipe).
+            // Previously this was an inline `display: grid` with
+            // `repeat(5, 1fr)` which has no `minmax(0, …)` wrapper —
+            // long phase labels could push the row wider than the
+            // container.
+            grid({ cols: 5, gap: 3 }),
+            css({ listStyle: "none", padding: 0, margin: 0 }),
+          )}
         >
           {IDOBATA_TIME.schedule.map((phase) => (
             <li

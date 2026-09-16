@@ -153,22 +153,28 @@ export default function NewsPage() {
         <section className={cx(section({ variant: "flow" }))}>
           <ol
             className={css({
-              display: "flex",
-              flexDirection: "column",
-              gap: { base: "5", md: "6" },
               margin: 0,
               padding: 0,
               listStyleType: "none",
+              display: "flex",
+              flexDirection: "column",
+              gap: { base: "5", md: "8" },
             })}
           >
             {items.map((item, index) => (
               <li key={`${item.date}-${item.title}`}>
                 <article
                   className={cx(
+                    // Each news entry uses the same 12-col coordinate
+                    // system as the rest of the site: left rail
+                    // (span 3) for date + tag metadata, right rail
+                    // (span 9) for title + body. Previously the article
+                    // was a single full-width card with no rail split,
+                    // so long bodies pushed everything to the right
+                    // edge instead of aligning to the same content
+                    // column as the page header / section copy.
+                    grid({ cols: 12, gap: 6 }),
                     css({
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4",
                       padding: { base: "5", md: "6" },
                       borderRadius: "lg",
                       border: "1px solid",
@@ -179,12 +185,8 @@ export default function NewsPage() {
                 >
                   <div
                     className={cx(
-                      css({
-                        display: "flex",
-                        flexWrap: "wrap",
-                        alignItems: "center",
-                        gap: "3",
-                      }),
+                      stack({ gap: 2 }),
+                      css({ gridColumn: { base: "1", md: "span 3" } }),
                     )}
                   >
                     <time
@@ -200,14 +202,16 @@ export default function NewsPage() {
                     {item.tags && item.tags.length > 0 ? (
                       <ul
                         aria-label="タグ"
-                        className={css({
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "2",
-                          margin: 0,
-                          padding: 0,
-                          listStyleType: "none",
-                        })}
+                        className={cx(
+                          css({
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: "2",
+                            margin: 0,
+                            padding: 0,
+                            listStyleType: "none",
+                          }),
+                        )}
                       >
                         {item.tags.map((tag) => (
                           <li
@@ -230,17 +234,24 @@ export default function NewsPage() {
                       </ul>
                     ) : null}
                   </div>
-                  <h2
-                    className={css({
-                      margin: 0,
-                      fontSize: { base: "xl", md: "2xl" },
-                      fontWeight: "semibold",
-                      lineHeight: "tight",
-                    })}
+                  <div
+                    className={cx(
+                      stack({ gap: 3 }),
+                      css({ gridColumn: { base: "1", md: "span 9" }, minW: 0 }),
+                    )}
                   >
-                    {item.title}
-                  </h2>
-                  <MarkdownBody source={item.body} />
+                    <h2
+                      className={css({
+                        margin: 0,
+                        fontSize: { base: "xl", md: "2xl" },
+                        fontWeight: "semibold",
+                        lineHeight: "tight",
+                      })}
+                    >
+                      {item.title}
+                    </h2>
+                    <MarkdownBody source={item.body} />
+                  </div>
                 </article>
                 {index < items.length - 1 ? <Separator className={css({ mt: "5" })} /> : null}
               </li>

@@ -154,11 +154,34 @@ export default function ChannelsPage() {
         <section aria-label="カテゴリ別チャネル" className={cx(section({ variant: "flow" }))}>
           {grouped.map(({ category, channels }) =>
             channels.length === 0 ? null : (
-              <div key={category} className={cx(stack({ gap: 4 }))}>
+              <div
+                key={category}
+                className={cx(
+                  stack({ gap: 4 }),
+                  // Each category is a flex child of the surrounding
+                  // `section({ variant: "flow" })` which sets
+                  // `align-items: flex-start`. Without an explicit
+                  // width the wrapper shrinks to its content width
+                  // (the 2-up card grid would then be ~700px instead
+                  // of the full content-area width ~1088px, breaking
+                  // the page-edge alignment with the header right rail).
+                  // Same root cause as the People / Reference section
+                  // fix in `recipes.ts` `grid.base.width: 100%` —
+                  // we apply the same `width: 100%` here because the
+                  // wrapper is a non-grid flex child that also needs
+                  // explicit width to stretch.
+                  css({ width: "100%" }),
+                )}
+              >
                 <div
                   className={cx(
                     cluster({ justify: "between" }),
-                    css({ pb: "2", borderBottom: "1px solid", borderColor: "border.subtle" }),
+                    css({
+                      width: "100%",
+                      pb: "2",
+                      borderBottom: "1px solid",
+                      borderColor: "border.subtle",
+                    }),
                   )}
                 >
                   <h2
@@ -180,7 +203,7 @@ export default function ChannelsPage() {
                 <ul
                   className={cx(
                     grid({ cols: 2, gap: 4 }),
-                    css({ listStyle: "none", margin: 0, padding: 0 }),
+                    css({ listStyle: "none", margin: 0, padding: 0, width: "100%" }),
                   )}
                 >
                   {channels.map((channel) => (
