@@ -6,6 +6,16 @@
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Note
+
+## [0.4.0] - 2026-09-16
+
+### Added
+
 - Issue #103: 新規 `/welcome` ページを追加。Discord への参加導線と、参加後に使えるチャンネル群を簡潔に案内する。
 - Issue #106: v0.3.0 公開後の review follow-up (1 HIGH + 39 MEDIUM) を統合。Panda `fontSize` に `2xs` token を追加し、eyebrow / metadata 表記を 12px へ揃え; カテゴリ別チャネル preview を `getChannelPreviewByCategory()` で `channels.ts` から派生させ Home と `/channels` の二重 hand-curated list を解消; `FEATURED_POST` / `ABOUT_SECTIONS` を `community.ts` に切り出し Hero の Discord window mockup と `/about` の contribution 導線を data-driven 化; `PRIMARY_NAV_LINKS` / `SITE_LINKS` を `src/content/nav.ts` に集約し Header / Footer の hand-rolled nav 配列を単一 source of truth へ; `START_GUIDE` / `RELATED_LINKS` を `src/content/welcome.ts` に集約し `/welcome` の lede + リンク重複を解消; `HOMEPAGE_FEATURED_PROJECTS_LIMIT` で `/` の featured 件数 (2) を content module から参照可能に; RuleSection に `links?: RuleLink[]` を追加し `docs/code-of-conduct.md` への参照を plain text から actual `<a>` へ。
 - Issue #106: chrome と layout の a11y / focus 可視性を底上げ。Header / Footer の nav link と `viewAllLink` / `contributionLink` / not-found の nav card に `_focusVisible` で 2px accent outline を付与; Header の primary nav を `display: { base: "none", md: "flex" }` で md 以上のみ表示 (mobile では CTA ボタンへ集約); breadcrumb を `position: sticky; top: var(--chrome-height)` + zIndex 90 で Header 直下に固定し、`:root` に `--chrome-height: 3.5rem` を定義; Footer の nav ラベルを `<p>` から `<h3>` へ格上げし見出し階層を整備; すべての外部 anchor (`target="_blank"`) に `rel="noopener noreferrer"` を付与 (Footer の X / Discord / Issues / Guide / repo の 5 link と `/about` の X / contribution link)。
@@ -108,7 +118,8 @@
 
 - v0.3.0 のページ文言・告知・FAQ・チャネル一覧・サーバルールはオーナーの事実確認後に別途投入する。`src/content/*` は空配列 / minimal placeholder で merge した。
 
-[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.2.0...v0.3.0
 
 ## [0.2.0] - 2026-09-06
