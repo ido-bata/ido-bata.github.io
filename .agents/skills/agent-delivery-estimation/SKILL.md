@@ -98,7 +98,8 @@ unknownを「安全側に2倍」等の任意倍率で補完しない。
 id:
 description:
 type:
-weight: # positive number (> 0)
+weight: # positive number (> 0) — WU 定義時に producer が保存する canonical field
+original_WU: # positive number (> 0) — `weight === original_WU` を初期値として producer が同時生成する。sampled rework 反映の計算過程でだけ分岐する。bootstrap 入力・rework 比率計算の canonical input。
 dependencies: []
 parallelizable: true
 human_required: false
@@ -663,23 +664,86 @@ Human review capacity:
 Main bottleneck:
 
 ## Forecast
-Status:
+
+`Status` に応じて P50 / P80 / P95 の `provenance` と `value` を必ず分岐する。template は次の 3 形を Status ごとに切り替える。
+
+### Status: complete (全 quantile が evidence-backed)
+
+~~~yaml
+Status: complete
 P50:
-  value:
+  value: 2026-09-23
   unit: calendar-duration
   provenance: derived
   evidence_ref:
+    - forecast-input-snapshot: 2026-09-16
+    - bootstrap-run: 2026-09-16T18:00Z
 P80:
-  value:
+  value: 2026-09-30
   unit: calendar-duration
   provenance: derived
   evidence_ref:
+    - forecast-input-snapshot: 2026-09-16
+    - bootstrap-run: 2026-09-16T18:00Z
 P95:
-  value:
+  value: 2026-10-07
   unit: calendar-duration
   provenance: derived
   evidence_ref:
-Evidence confidence:
+    - forecast-input-snapshot: 2026-09-16
+    - bootstrap-run: 2026-09-16T18:00Z
+~~~
+
+### Status: conditional (sample policy 上、利用できない quantile がある)
+
+~~~yaml
+Status: conditional
+P50:
+  value: 2026-09-25
+  unit: calendar-duration
+  provenance: provisional
+  evidence_ref:
+    - forecast-input-snapshot: 2026-09-16
+    - bootstrap-run: 2026-09-16T18:00Z
+P80:
+  value: unavailable
+  unit: calendar-duration
+  provenance: provisional
+  evidence_ref:
+    - reason: P80 bootstrap が sample policy 上算出不可
+P95:
+  value: unavailable
+  unit: calendar-duration
+  provenance: provisional
+  evidence_ref:
+    - reason: P95 bootstrap が sample policy 上算出不可
+~~~
+
+### Status: unavailable (forecast 全体を decision-grade に出せない)
+
+~~~yaml
+Status: unavailable
+P50:
+  value: unavailable
+  unit: calendar-duration
+  provenance: unknown
+  evidence_ref:
+    - reason: forecast input の capacity 数値が provisional のまま
+P80:
+  value: unavailable
+  unit: calendar-duration
+  provenance: unknown
+  evidence_ref:
+    - reason: forecast input の capacity 数値が provisional のまま
+P95:
+  value: unavailable
+  unit: calendar-duration
+  provenance: unknown
+  evidence_ref:
+    - reason: forecast input の capacity 数値が provisional のまま
+~~~
+
+decision-grade data として保存する前に必ず `Status` を見て上の template を分岐する。`Status: conditional` / `Status: unavailable` の quantile を `provenance: derived` として保存しない。
 
 ## Evidence fallbacks
 ...
@@ -694,13 +758,6 @@ Evidence confidence:
 ...
 ~~~
 
-P50 / P80 / P95の各`evidence_ref`は、少なくともforecast input snapshotとbootstrap / simulation runを個別に参照する。WU calibration、throughput、agent count、human capacity等、forecastへ入るcapacity数値にも同じrecord形式を適用する。
-
-sample policy上利用できないquantileは、値を捏造せずunavailable / provisionalと表示する。
-
-`Status` に応じて quantile template の `provenance` を分岐する。上の template は `Status: complete` を前提に P50 / P80 / P95 を `provenance: derived` とするが、`Status: conditional` の場合は `provenance: provisional` に書き換え、`Status: unavailable` の場合は値そのものを `value: unavailable` / `provenance: unknown` に置き換える。decision-grade data として保存する前に必ず `Status` を見て template を分岐し、conditional / unavailable を decision-grade として保存しない。
-
-Acceleration candidateへ数値効果を付ける場合もobserved evidenceまたはsimulationを必要とする。
 
 ---
 

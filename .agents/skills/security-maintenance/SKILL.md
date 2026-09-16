@@ -74,10 +74,10 @@ meaningful advisoryを検出したら:
 5. 脆弱性詳細 (affected version / exploit / fix) は **GitHub Security Advisory** または組織内の security contact へ非公開で送る。公開 Issue には disclosure 後の sanitized tracking data だけを記載し、詳細手順・再現 PoC・修正 commit 情報は載せない。
 6. GitHub Issue を日本語で作成 / 更新 (5. の sanitized summary のみ)
 7. target releaseを決定
-7. isolated ticket branchで修正
-8. focused + integration security verification
-9.必要ならrelease gateへ追加
-10. advisory sourceと判断根拠をIssue/ADRへ残す
+8. isolated ticket branchで修正
+9. focused + integration security verification
+10. 必要ならrelease gateへ追加
+11. advisory sourceと判断根拠をIssue/ADRへ残す
 
 緊急patchでは `release-x-y-z` のpatch versionを切ることを許可する。
 

@@ -29,7 +29,17 @@ evals/policy-evaluation/
 ```bash
 bash evals/policy-evaluation/context-budget.sh
 bash evals/policy-evaluation/controls.sh
-bash evals/policy-evaluation/grade.sh
+bash evals/policy-evaluation/grade.sh path/to/fixture.md
 ```
 
 `controls.sh` は negative / regression / positive を順に実行し、negative と regression が FAIL、positive が PASS することを assert する。
+
+## Grader の semantic 性
+
+`grade.sh` は Skill §4 ("grader が answer key の表面形だけを数える状態を許容しない") を満たすため、fixture の `> **Answer:**` ブロック本文から 3 つの policy-invariant signature を抽出し、positive / negative / regression を判別する:
+
+- `canonical_surface_marker` — "read-only projection" / "Issue metadata is canonical" / "Projects v2 is display" 等、canonical 関係を肯定する phrase
+- `projects_first_marker` — "edit the Projects field" を主たる write path として推奨する phrase
+- `regression_marker` — "synced from Projects" / "Issue comment is downstream" 等、表面 shape は正しくても canonical 順序が逆転している phrase
+
+採点対象は fixture メタデータ ("Why this must FAIL" / "Grader check" 等) ではなく、`**Answer:**` ブロックのみ。これにより positive / negative / regression のシグナルが分離される (Skill §4 negative / regression / positive control の hard-fail 分離要件)。

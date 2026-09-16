@@ -20,6 +20,7 @@
     "test:e2e:install": "playwright install --with-deps chromium",
     "gate:worker": "bash scripts/quality-gate.sh worker",
     "gate:integration": "bash scripts/quality-gate.sh integration",
+    "gate:e2e": "bash scripts/quality-gate.sh e2e",
     "gate:release": "bash scripts/quality-gate.sh release"
   },
   "dependencies": {
