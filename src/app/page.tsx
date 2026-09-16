@@ -5,327 +5,92 @@ import { Button } from "@/components/ui/button";
 import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
 import { CHANNELS, CHANNEL_CATEGORIES } from "@/content/channels";
+import { IDOBATA_TIME } from "@/content/activities";
+import { PROJECTS } from "@/content/projects";
 
-/**
- * Home page for finding the site's working information.
- *
- * Layout follows the project's "left-aligned grid composition"
- * principle — the page-opening band uses the shared 12-col grid (left
- * rail with the functional hero, right rail with a server-context
- * card) instead of a centred hero. Below the fold:
- *   - Channels index (primary utility surface, inline from
- *     `src/content/channels.ts`) — categories as compact rows with
- *     channel counts and a 3-channel preview; full detail lives at
- *     /channels
- *   - News / Rules surfaces
- *
- * Refs: Issue #103, .agents/skills/layout-system
- */
+const cardStyle = css({
+  display: "flex", flexDirection: "column", gap: "3",
+  padding: { base: "5", md: "6" }, border: "1px solid",
+  borderColor: "border.subtle", borderRadius: "lg", bg: "bg.surface",
+  color: "fg.DEFAULT", textDecoration: "none",
+  transition: "border-color 150ms ease, transform 150ms ease",
+  _hover: { borderColor: "border.strong", transform: "translateY(-2px)" },
+  _focusVisible: { outline: "2px solid", outlineColor: "accent.default", outlineOffset: "2px" },
+});
+
 export default function Home() {
-  const invite = DISCORD_INVITE;
-
-  const grouped = CHANNEL_CATEGORIES.map((category) => ({
-    category,
-    channels: CHANNELS.filter((channel) => channel.category === category),
-  }));
+  const voiceChannels = CHANNELS.filter(({ type }) => type === "voice" || type === "stage");
+  const textChannels = CHANNELS.length - voiceChannels.length;
 
   return (
     <main className={cx(container({ size: "content" }))}>
-      {/* ───── Page-opening band ───── */}
       <section aria-labelledby="hero-heading" className={cx(section({ variant: "flow" }))}>
         <div className={cx(grid({ cols: 12, gap: 6 }))}>
           <div className={cx(stack({ gap: 5 }), css({ gridColumn: { base: "1", md: "span 7" } }))}>
-            <p
-              className={css({
-                fontSize: "xs",
-                fontWeight: "medium",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "fg.muted",
-              })}
-            >
-              ido-bata
-            </p>
-            <h1
-              id="hero-heading"
-              className={css({
-                fontSize: { base: "3xl", md: "4xl" },
-                fontWeight: "bold",
-                lineHeight: "tight",
-                letterSpacing: "-0.02em",
-                color: "fg.DEFAULT",
-                maxW: "18ch",
-              })}
-            >
-              いど端
-            </h1>
-            <p
-              className={css({
-                fontSize: { base: "md", md: "lg" },
-                color: "fg.muted",
-                lineHeight: "relaxed",
-                maxW: "44ch",
-              })}
-            >
-              クリエイターやエンジニアが、制作・開発・情報共有に使う Discord サーバーです。
-            </p>
+            <p className={css({ fontSize: "xs", fontWeight: "medium", letterSpacing: "0.08em", textTransform: "uppercase", color: "fg.muted" })}>Creator / Engineer community</p>
+            <h1 id="hero-heading" className={css({ fontSize: { base: "4xl", md: "5xl" }, fontWeight: "bold", lineHeight: "tight", letterSpacing: "-0.03em", color: "fg.DEFAULT" })}>いど端</h1>
+            <p className={css({ fontSize: { base: "md", md: "lg" }, lineHeight: "relaxed", color: "fg.muted", maxW: "42ch" })}>制作や開発を進める人が、作業途中のものや知見を持ち寄るDiscordサーバーです。</p>
             <div className={cx(cluster({ gap: 3 }))}>
-              {invite ? (
-                <DiscordJoinButton href={invite} label="Discord に参加" size="lg" />
-              ) : null}
-              <Button asChild variant="outline" size="lg">
-                <Link href="/channels">チャネル一覧</Link>
-              </Button>
-              <Button asChild variant="ghost" size="lg">
-                <Link href="/welcome">初めての方へ</Link>
-              </Button>
+              {DISCORD_INVITE ? <DiscordJoinButton href={DISCORD_INVITE} label="Discordに参加" size="lg" /> : null}
+              <Button asChild variant="outline" size="lg"><Link href="/channels">チャネル一覧</Link></Button>
+              <Button asChild variant="ghost" size="lg"><Link href="/welcome">初めての方へ</Link></Button>
             </div>
           </div>
-
-          <aside
-            aria-label="掲載内容"
-            className={cx(
-              stack({ gap: 3 }),
-              css({
-                gridColumn: { base: "1", md: "span 5" },
-                bg: "bg.subtle",
-                borderRadius: "lg",
-                padding: { base: "5", md: "6" },
-                border: "1px solid",
-                borderColor: "border.subtle",
-                alignSelf: "stretch",
-              }),
-            )}
-          >
-            <p
-              className={css({
-                fontSize: "xs",
-                fontWeight: "medium",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "fg.subtle",
-              })}
-            >
-              Directory
-            </p>
-            <dl
-              className={css({
-                display: "grid",
-                gridTemplateColumns: "auto 1fr",
-                columnGap: "4",
-                rowGap: "3",
-                margin: 0,
-                fontSize: "sm",
-              })}
-            >
-              <dt className={css({ color: "fg.muted" })}>使い方</dt>
-              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>必要なページを探す</dd>
-              <dt className={css({ color: "fg.muted" })}>更新対象</dt>
-              <dd className={css({ color: "fg.DEFAULT", margin: 0 })}>チャネル・告知・ルール</dd>
-              <dt className={css({ color: "fg.muted" })}>カテゴリ</dt>
-              <dd className={css({ color: "fg.DEFAULT", margin: 0, fontFamily: "mono" })}>
-                {CHANNEL_CATEGORIES.length}
-              </dd>
-              <dt className={css({ color: "fg.muted" })}>チャネル</dt>
-              <dd className={css({ color: "fg.DEFAULT", margin: 0, fontFamily: "mono" })}>
-                {CHANNELS.length}
-              </dd>
-            </dl>
+          <aside aria-label="今日使えるもの" className={cx(stack({ gap: 3 }), css({ gridColumn: { base: "1", md: "span 5" }, bg: "bg.subtle", border: "1px solid", borderColor: "border.subtle", borderRadius: "lg", padding: { base: "5", md: "6" } }))}>
+            <p className={css({ fontSize: "xs", color: "fg.muted", letterSpacing: "0.08em" })}>TODAY</p>
+            <p className={css({ fontSize: "xl", fontWeight: "bold", color: "fg.DEFAULT" })}>{IDOBATA_TIME.name}</p>
+            <p className={css({ color: "fg.muted" })}>毎日 {IDOBATA_TIME.time} · {IDOBATA_TIME.channel}</p>
+            <Link href={IDOBATA_TIME.path} className={css({ color: "accent.default", fontWeight: "semibold", width: "fit-content" })}>時間割と参加方法を見る →</Link>
           </aside>
         </div>
       </section>
 
-      {/* ───── Channels index (primary utility surface) ───── */}
-      <section aria-labelledby="channels-heading" className={cx(section({ variant: "flow" }))}>
-        <div
-          className={cx(
-            cluster({ justify: "between" }),
-            css({ width: "100%", alignItems: "baseline", gap: "3" }),
-          )}
-        >
-          <h2
-            id="channels-heading"
-            className={css({
-              fontSize: { base: "xl", md: "2xl" },
-              fontWeight: "semibold",
-              letterSpacing: "-0.01em",
-              color: "fg.DEFAULT",
-            })}
-          >
-            チャネルから探す
-          </h2>
-          <Link
-            href="/channels"
-            className={css({
-              fontSize: "sm",
-              fontWeight: "medium",
-              color: "accent.DEFAULT",
-              textDecoration: "none",
-              _hover: { textDecoration: "underline" },
-            })}
-          >
-            すべてのチャネルを見る →
-          </Link>
+      <section aria-labelledby="utility-heading" className={cx(section({ variant: "flow" }), stack({ gap: 6 }))}>
+        <div className={cx(stack({ gap: 2 }))}>
+          <p className={css({ fontSize: "xs", color: "fg.muted", letterSpacing: "0.08em" })}>TOOLS &amp; ACTIVITIES</p>
+          <h2 id="utility-heading" className={css({ fontSize: { base: "2xl", md: "3xl" }, fontWeight: "bold", color: "fg.DEFAULT" })}>使えるもの</h2>
+          <p className={css({ color: "fg.muted" })}>いど端で運用・開発している活動とツールです。</p>
         </div>
-        <ul
-          className={cx(
-            grid({ cols: 3, gap: 3 }),
-            css({ listStyle: "none", margin: 0, padding: 0 }),
-          )}
-        >
-          {grouped.map(({ category, channels }) =>
-            channels.length === 0 ? null : (
-              <li
-                key={category}
-                className={cx(
-                  stack({ gap: 2 }),
-                  css({
-                    p: "4",
-                    borderRadius: "lg",
-                    border: "1px solid",
-                    borderColor: "border",
-                    bg: "bg.canvas",
-                  }),
-                )}
-              >
-                <div className={cx(cluster({ justify: "between" }))}>
-                  <span
-                    className={css({
-                      fontSize: "md",
-                      fontWeight: "semibold",
-                      color: "fg.DEFAULT",
-                      letterSpacing: "-0.01em",
-                    })}
-                  >
-                    {category}
-                  </span>
-                  <span
-                    className={css({
-                      fontSize: "xs",
-                      color: "fg.subtle",
-                      fontFamily: "mono",
-                    })}
-                  >
-                    {channels.length}
-                  </span>
-                </div>
-                <p
-                  className={css({
-                    fontSize: "xs",
-                    color: "fg.muted",
-                    fontFamily: "mono",
-                    lineHeight: "relaxed",
-                  })}
-                >
-                  {channels
-                    .slice(0, 3)
-                    .map((c) => `#${c.name}`)
-                    .join("  /  ")}
-                  {channels.length > 3 ? "  …" : ""}
-                </p>
-              </li>
-            ),
-          )}
-        </ul>
+        <div className={cx(grid({ cols: 3, gap: 4 }))}>
+          <Link href={IDOBATA_TIME.path} className={cardStyle}>
+            <span className={css({ fontSize: "xs", color: "fg.muted" })}>毎日の作業時間</span>
+            <strong className={css({ fontSize: "xl" })}>{IDOBATA_TIME.name}</strong>
+            <span className={css({ color: "fg.muted", lineHeight: "relaxed" })}>{IDOBATA_TIME.summary}</span>
+          </Link>
+          {PROJECTS.map((project) => (
+            <Link key={project.slug} href={project.path} className={cardStyle}>
+              <span className={css({ fontSize: "xs", color: "fg.muted" })}>{project.eyebrow}</span>
+              <strong className={css({ fontSize: "xl" })}>{project.name}</strong>
+              <span className={css({ color: "fg.muted", lineHeight: "relaxed" })}>{project.summary}</span>
+            </Link>
+          ))}
+        </div>
       </section>
 
-      {/* ───── News / Rules (empty-state utility surfaces) ───── */}
-      <section aria-label="最新の動きとルール" className={cx(section({ variant: "flow" }))}>
-        <div className={cx(grid({ cols: 12, gap: 4 }))}>
-          <div
-            className={cx(
-              stack({ gap: 3 }),
-              css({
-                gridColumn: { base: "1", md: "span 6" },
-                p: "5",
-                borderRadius: "lg",
-                border: "1px solid",
-                borderColor: "border",
-                bg: "bg.subtle",
-              }),
-            )}
-          >
-            <div className={cx(cluster({ justify: "between" }))}>
-              <h2
-                className={css({
-                  fontSize: "xl",
-                  fontWeight: "semibold",
-                  color: "fg.DEFAULT",
-                  letterSpacing: "-0.01em",
-                })}
-              >
-                最新の動き
-              </h2>
-              <Link
-                href="/news"
-                className={css({
-                  fontSize: "sm",
-                  fontWeight: "medium",
-                  color: "accent.DEFAULT",
-                  textDecoration: "none",
-                  _hover: { textDecoration: "underline" },
-                })}
-              >
-                News →
-              </Link>
-            </div>
-            <p
-              className={css({
-                fontSize: "sm",
-                color: "fg.muted",
-                lineHeight: "relaxed",
-              })}
-            >
-              現在、サイトに掲載している告知はありません。
-            </p>
+      <section aria-labelledby="channels-heading" className={cx(section({ variant: "flow" }), stack({ gap: 6 }))}>
+        <div className={cx(cluster({ gap: 4 }), css({ justifyContent: "space-between", alignItems: "end" }))}>
+          <div className={cx(stack({ gap: 2 }))}>
+            <h2 id="channels-heading" className={css({ fontSize: { base: "2xl", md: "3xl" }, fontWeight: "bold", color: "fg.DEFAULT" })}>チャネルから探す</h2>
+            <p className={css({ color: "fg.muted" })}>{CHANNEL_CATEGORIES.length}カテゴリ、{CHANNELS.length}チャネルを掲載しています。</p>
           </div>
-          <div
-            className={cx(
-              stack({ gap: 3 }),
-              css({
-                gridColumn: { base: "1", md: "span 6" },
-                p: "5",
-                borderRadius: "lg",
-                border: "1px solid",
-                borderColor: "border",
-                bg: "bg.subtle",
-              }),
-            )}
-          >
-            <div className={cx(cluster({ justify: "between" }))}>
-              <h2
-                className={css({
-                  fontSize: "xl",
-                  fontWeight: "semibold",
-                  color: "fg.DEFAULT",
-                  letterSpacing: "-0.01em",
-                })}
-              >
-                ルール・ガイドライン
-              </h2>
-              <Link
-                href="/community/rules"
-                className={css({
-                  fontSize: "sm",
-                  fontWeight: "medium",
-                  color: "accent.DEFAULT",
-                  textDecoration: "none",
-                  _hover: { textDecoration: "underline" },
-                })}
-              >
-                Rules →
-              </Link>
-            </div>
-            <p
-              className={css({
-                fontSize: "sm",
-                color: "fg.muted",
-                lineHeight: "relaxed",
-              })}
-            >
-              サーバーを利用するときの基本事項を確認できます。
-            </p>
+          <Button asChild variant="outline"><Link href="/channels">すべてのチャネルを見る</Link></Button>
+        </div>
+        <div className={cx(grid({ cols: 2, gap: 4 }))}>
+          <div className={cx(stack({ gap: 3 }), css({ padding: "5", borderRadius: "lg", bg: "bg.subtle" }))}>
+            <h3 className={css({ fontSize: "lg", fontWeight: "semibold", color: "fg.DEFAULT" })}>テキスト・フォーラム</h3>
+            <p className={css({ color: "fg.muted" })}>{textChannels}チャネル。相談、制作途中の共有、告知など。</p>
           </div>
+          <div className={cx(stack({ gap: 3 }), css({ padding: "5", borderRadius: "lg", bg: "bg.subtle" }))}>
+            <h3 className={css({ fontSize: "lg", fontWeight: "semibold", color: "fg.DEFAULT" })}>音声・ステージ</h3>
+            <p className={css({ color: "fg.muted" })}>{voiceChannels.length}チャネル。作業、LT、底力タイムに利用できます。</p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-label="案内" className={cx(section({ variant: "flow" }))}>
+        <div className={cx(grid({ cols: 2, gap: 4 }))}>
+          <Link href="/news" className={cardStyle}><span className={css({ fontSize: "xs", color: "fg.muted" })}>NEWS</span><h2 className={css({ fontSize: "xl", fontWeight: "bold" })}>最新の動き</h2><span className={css({ color: "fg.muted" })}>サイトとサーバーに関する更新を確認する</span></Link>
+          <Link href="/community/rules" className={cardStyle}><span className={css({ fontSize: "xs", color: "fg.muted" })}>GUIDE</span><h2 className={css({ fontSize: "xl", fontWeight: "bold" })}>ルール・ガイドライン</h2><span className={css({ color: "fg.muted" })}>参加前に確認しておきたいことを読む</span></Link>
         </div>
       </section>
     </main>

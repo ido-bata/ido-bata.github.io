@@ -7,10 +7,17 @@ describe("Home page", () => {
     render(<Home />);
 
     expect(screen.getByRole("heading", { level: 1, name: "いど端" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "使えるもの" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /LayerNote/ }).getAttribute("href")).toBe(
+      "/projects/layer-note",
+    );
+    expect(screen.getByRole("link", { name: /ido-bata-server-bot/ }).getAttribute("href")).toBe(
+      "/projects/server-bot",
+    );
+    expect(screen.getAllByRole("link", { name: /いど端 底力 タイム/ }).length).toBeGreaterThan(0);
 
     expect(screen.getByRole("heading", { level: 2, name: "チャネルから探す" })).toBeTruthy();
 
-    // Secondary utility surfaces: News + Rules empty-state cards.
     expect(screen.getByRole("heading", { level: 2, name: /最新の動き/ })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: /ルール・ガイドライン/ })).toBeTruthy();
 
