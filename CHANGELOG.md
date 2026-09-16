@@ -76,12 +76,18 @@
 - Issue #103: Home Hero のキャッチコピー `CREATOR / ENGINEER COMMUNITY` + `つくる途中を、持ち寄る。` + 説明的 lede を撤廃し、`samuido の実利サーバー` (eyebrow) + `いど端` (h1) + `Discord 上で、制作と開発を前に進めるための小さなコミュニティ。` (短文 lede) に置換。Hero は decorative な slogan で開かず identity を直接提示する形になり、コミュニティの "褒めない wip / 実利" 方針と整合。右の Discord window visual が「どんな場所か」の情報を担い、左 text rail は場所を特定する identity のみという役割分担を明確化。page test と e2e の h1 expectation も `いど端` に追従して更新。
 - Issue #103: Home Hero の Discord window mockup (`CommunityVisual`) を `#ひとりごと` channel の実投稿ベースに置換。channel を `WORK > # WIP` から `雑 > # ひとりごと` へ移設（channels.ts の category 構造に準拠）、sidebar も `雑` の `wip / ひとりごと / 世迷言` に更新し ひとりごと を active 強調。header の `# WIP / 制作途中のものを持ち寄る` も `# ひとりごと / 作業中に考えたことを気軽に書く。` に差し替え。message body は samuido が 2026/03/21 に `#ひとりごと` に投稿した実 content (VSCode UX / 認知負荷 / 高み / この世のUIすべてがVSCodeになってほしい) を verbatim 採用し、`(唐突)` や段落間の空行もそのまま保持。空行は `<p>` boundary + `margin-block-start` で paragraph spacing として表現し、同一段落内の改行は `<br />`。wip / GitHub link embed / wai 二番目 message / scheduled event card は `#ひとりごと` の low-noise 文脈から外れるため撤廃し、`defaultAvatar` 定義も同時に除去。`CommunityVisual.test.tsx` も新 content に合わせて更新。
 
-### Note
+### Security
 
-- Discord 招待の fetch / API 統合は build-time / runtime には持ち込まない。 `.tmp/fetch-discord-snapshot.ts` / `.tmp/discord-snapshot.json` / `.tmp/discord-atmosphere.json` / `.tmp/fetch-discord-messages.ts` は git 管理外。
-- メンバー数・カテゴリ数・チャネル数・活動時期のような数値・日付は変動するため、 サイトの事実記述には使わない方針（snapshot が必要な場合は channels.ts 経由かつ `取得日時` ラベル付きで提示）。
-- `src/content/rules.ts` の philosophy / recommended / prohibited / channels.items / enforcement セクションは Discord サーバ上で公開されている実ルールのみを採用する方針のため、 本 Issue では更新していない（オーナーの Discord サーバ上の正本化待ち）。
-- `src/content/news.ts` / `src/content/faq.ts` の具体エントリ（告知・Q&A）もオーナーの確定待ち。 該当ページは空状態（"現在、掲載中の X はありません" 系）を維持。
+- Issue #109: `.github/workflows/release-source-check.yml` に head repository と base repository の `full_name` 一致チェックを追加。`head.ref` 名の文字列だけを見ていた従来実装では fork 側で `release-*` branch を名乗れば同一 repository からの release PR と区別できなかったため、ADR-0003 の「同一 repository の release branch → main」契約を required status check で enforce できるよう修正。`docs/adr/0003-release-branch-stack-protection.md` Section 2 に新しい 3 条件 (同一 repo / head ref 存在 / `release-*` pattern) を明文化。
+
+### Fixed
+
+- Issue #109: `package.json` の `"version": "0.3.0"` を `"0.4.0"` に更新、CHANGELOG の `[Unreleased]` を `[0.4.0] - 2026-09-16` に確定、新 `[Unreleased]` section を追加、compare link `[0.4.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...v0.4.0` を追記。PR #98 の merge-ready 状態に入るため release metadata を release PR の title と一致させた。
+- Issue #109: `src/content/rules.ts` の `meta` section を「行動規範に記載しています。」の anchor なし body から `links: [{ label: "行動規範", href: "..."code-of-conduct.md" }]` を含む形へ書き換え、body を「次の行動規範を参照してください。」に統一。`enforcement.body` も同 pattern に統一し、ページ末尾から code-of-conduct.md へ actual な導線が確保される状態へ。
+
+### Changed
+
+- Issue #109: `src/content/channels.ts` の `Channel` interface に `featured?: boolean` を追加し、Home Hero の Discord preview で露出する 9 channel (PDCA: `Plan-計画` / `Do-実行` / `転送-補足`、共有: `素材・配布` / `チートシート` / `宣伝・拡散希望`、作業: `作業（無言）` / `作業（雑）` / `聞き専`) に `featured: true` を付与。`getChannelPreviewByCategory()` は hand-curated な `category -> channel name` map を持つ二重管理 implementation から、`CHANNELS.filter(channel => channel.featured)` ベースの data-driven 実装に書き換え、各 category 3 件 (`PREVIEW_PER_CATEGORY_LIMIT`) を上限に固定。preview policy (どの category を代表表示するか) と channel selection (どの channel が代表か) を分離し、次回 Discord snapshot 更新時に Home と `/channels` が静かに乖離する経路を断った。
 
 ## [0.3.0] - 2026-09-13
 
