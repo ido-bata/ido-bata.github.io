@@ -17,7 +17,11 @@
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:install": "playwright install --with-deps chromium"
+    "test:e2e:install": "playwright install --with-deps chromium",
+    "gate:worker": "bash scripts/quality-gate.sh worker",
+    "gate:integration": "bash scripts/quality-gate.sh integration",
+    "gate:e2e": "bash scripts/quality-gate.sh e2e",
+    "gate:release": "bash scripts/quality-gate.sh release"
   },
   "dependencies": {
     "@ark-ui/react": "^5.39.1",

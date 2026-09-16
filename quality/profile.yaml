@@ -1,0 +1,184 @@
+# Canonical quality profile
+#
+# This file is the single source of truth for "what verification is
+# required" that agent, CI, and release must share. The
+# `.agents/skills/quality-gate/SKILL.md` §4 mandates that every project
+# maintain a `quality/profile.*` (or equivalent machine-readable
+# profile) in repository-controlled state.
+#
+# Profile is consumed by:
+#   - local agents: see `scripts/quality-gate.sh`
+#   - CI workflows: `.github/workflows/ci.yml` / `deploy.yml`
+#   - release gate: same canonical entry points, no parallel scripts
+
+schema_version: 1
+profile_version: 0.4.0
+updated_at: 2026-09-16
+source_revision: see CHANGELOG [0.4.0] entry
+
+# Detected framework / runtime / SDK versions (snapshot at v0.4.0).
+# CI re-verifies on each `pull_request` / `push` against `main` and
+# rejects drift > 1 minor version without an explicit profile update.
+framework:
+  next: "16.3.4"
+  react: "19.3.0"
+  typescript: "6"
+  eslint: "9"
+  panda_css: "1.12.1"
+  playwright: "1.49.1"
+  bun: "1.4.2"
+
+# Official guidance references used to compile this profile.
+# Each entry records the source and the date it was last confirmed
+# against the canonical upstream (per AGENTS.md Decision precedence
+# rule 4: Next.js official docs must be consulted via
+# `node_modules/next/dist/docs/`).
+guidance_sources:
+  - id: next-docs
+    source: "node_modules/next/dist/docs/"
+    confirmed_at: 2026-09-13
+  - id: panda-css-recipes
+    source: "@pandacss/dev cva recipes"
+    confirmed_at: 2026-09-13
+  - id: github-projects-v2
+    source: "GitHub Projects v2 API"
+    confirmed_at: 2026-09-13
+
+# Test taxonomy: what kinds of tests exist and where they live.
+test_taxonomy:
+  - kind: unit
+    runner: vitest
+    command: "bun run test:unit"
+    coverage_required: false
+  - kind: e2e
+    runner: playwright
+    command: "bun run test:e2e"
+    coverage_required: false
+  - kind: build
+    runner: next build
+    command: "bun run build"
+    coverage_required: false
+
+# Change-type → required verification mapping. Composed from
+# `.agents/skills/quality-gate/SKILL.md` §3 default table and project
+# policy (CONTRIBUTING.md / docs/development.md).
+change_type_verification:
+  pure_domain_logic: [unit]
+  api_service_behavior: [unit, e2e]
+  db_query_schema_migration: [unit, e2e, build]
+  runtime_env_di_network_wiring: [unit, e2e, build]
+  frontend_component_local: [unit]
+  user_journey_navigation_auth: [unit, e2e]
+  external_api_adapter: [unit, e2e]
+  build_package_container: [build]
+  release_branch: [unit, e2e, build]
+  security_fix: [unit, e2e, build]
+
+# Three gates that every worker / integration / release surface must
+# share. They call the canonical entry points below — never the
+# individual commands directly.
+gates:
+  worker:
+    purpose: "fast feedback inside the worker loop"
+    command: "bun run gate:worker"
+    timeout_seconds: 300
+    triggers: [pull_request, push_to_release_branch]
+  integration:
+    purpose: "ticket-level integration before merge to release branch"
+    command: "bun run gate:integration"
+    timeout_seconds: 900
+    triggers: [pull_request]
+  e2e:
+    purpose: "ticket-level E2E (Playwright), build + playwright を 1 ジョブで完結"
+    command: "bun run gate:e2e"
+    timeout_seconds: 1200
+    triggers: [pull_request]
+  release:
+    purpose: "release-→-main gate"
+    command: "bun run gate:release"
+    timeout_seconds: 1800
+    triggers: [release_pull_request]
+
+# Stack reconciliation policy: stacked PR head SHA changes whenever
+# predecessor is rebased. Affected validations must be re-run on the
+# new SHA; stale green must not be reused.
+stack_reconciliation:
+  revalidation_required: true
+  policy: "re-run gate:integration on the post-rebase head SHA"
+
+# Canonical validation entry points (stable, deterministic).
+# Every agent / CI / release step MUST call one of these instead of
+# re-deriving the command list. The keys are referenced from
+# `package.json` `scripts` and from `.github/workflows/*.yml`.
+canonical_entry_points:
+  worker: "bun run gate:worker"
+  integration: "bun run gate:integration"
+  e2e: "bun run gate:e2e"
+  release: "bun run gate:release"
+
+# Required CI checks. The `release-source-check` is enforced by
+# `.github/workflows/release-source-check.yml` per ADR-0003 and is
+# NOT redeclared here.
+required_ci_checks:
+  - lint
+  - typecheck
+  - unit
+  - build
+  - e2e
+  - release-source-check
+
+# Coverage policy. We do not enforce a numeric threshold at v0.4.0
+# (project is small; tests are focused). Threshold can be added when
+# the project grows beyond a documented inflection point.
+coverage_policy:
+  enforced: false
+  threshold_percent: null
+
+# Browser / device / OS / architecture matrix for E2E.
+e2e_matrix:
+  browser: [chromium]
+  device: [desktop]
+  os: [linux]
+  architecture: [x64]
+
+# CI trigger semantics.
+ci_triggers:
+  pull_request: { required: true, target_branches: ["main", "release-*"] }
+  push: { required: true, branches: ["main", "release-*"] }
+  schedule: { required: false }
+  workflow_dispatch: { required: true }
+
+# Runner policy: pinned runner images, no self-hosted runners for
+# v0.4.0.
+runner_policy:
+  default: "ubuntu-latest"
+  self_hosted_allowed: false
+
+# Expensive / native / platform-specific gates — only when triggered.
+expensive_gates:
+  enabled_when: ["manual_dispatch", "release_pull_request"]
+
+# Concurrency / cancellation / timeout policy.
+concurrency:
+  cancel_in_progress: true
+  timeout_minutes: 30
+
+# Artifact / report paths and retention.
+artifacts:
+  paths:
+    - "out/"
+    - "playwright-report/"
+    - "test-results/"
+  retention_days: 14
+
+# Repository visibility / usage / billing model.
+repository_visibility: public
+ci_billing_model: github_actions_free_tier
+resource_policy: "stay within free-tier minutes; pin runner images"
+
+# Failure policy: never bypass required checks. CI must not be
+# rerun-on-failure by direct commit; fix forward in a follow-up PR.
+failure_policy:
+  bypass_required_checks: forbidden
+  rerun_on_failure_without_fix: forbidden
+  follow_up: "open a follow-up PR and re-run the canonical entry point"

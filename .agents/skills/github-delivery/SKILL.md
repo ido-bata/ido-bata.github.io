@@ -139,7 +139,7 @@ GitHub Projectsを使う場合の最低限のStatus:
 - Size
 - Target Version
 - Area / Component
-- Blocked / dependency
+- Blocked / dependency (read-only projection from the GitHub Issue dependency graph; Projects v2 は display surface であり write path ではない。必ず Issue metadata 側を編集する)
 
 WIPを無制限に増やさない。
 Readyかつdependency条件を満たすticketからcapacity内で起動する。

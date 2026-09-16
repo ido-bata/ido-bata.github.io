@@ -47,7 +47,7 @@
   - welcome メッセージ・入退会儀式は設けず、 入退会の自由・投稿の匿名性を基本とする
   - ひとりごと・wip は反応より書くことを優先するチャネル
   - 想定読者は新規参加者ではなくサーバーメンバー中心のため、 説明口調を operator の内輪向けポジション表明に絞る
-- Issue #101: Tooling — `bunx skills add rebuildup/project-init` で 14 件の project-local Skills を導入し `skills-lock.json` を更新。 `interaction-discipline` は upstream SKILL.md frontmatter の YAML parse error により skip（次回復旧時に再評価）。
+- Issue #101: Tooling — `bunx skills add rebuildup/project-init` で 15 件の project-local Skills を導入し `skills-lock.json` を更新。 `interaction-discipline` は upstream SKILL.md frontmatter の YAML parse error により skip（次回復旧時に再評価）。
 - Issue #103: Home をチャネル一覧を中心とするサイト内索引へ変更。Discord、チャネル、告知、ルールへの導線をまとめた。
 - Issue #103: Discord の公開チャンネル構成を `/channels` と Home に反映。
 - Issue #103: `/about` に、制作や開発を前に進めるための実利を重視する方針を掲載。

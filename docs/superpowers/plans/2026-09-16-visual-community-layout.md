@@ -16,7 +16,7 @@
 - Add no Discord UI or runtime dependency.
 - Use the shared 12-column grid and existing layout recipes.
 - Identify the administrator as samuido and X as @361do_sleep.
-- Do not invent or quote Discord messages from real users.
+- Do not invent or quote Discord messages from third-party real users. The maintainer / owner (= samuido, who is also a contributor) may have their own posts quoted verbatim in the Hero visual as consented illustrative material; do not fabricate or paraphrase their words.
 
 ---
 
