@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { css, cx } from "@/styled-system/css";
-import { container, grid, section, stack } from "@/styles/recipes";
+import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import type { Project } from "@/content/projects";
@@ -44,7 +44,7 @@ export function ProjectDetailPage({ project }: { project: Project }) {
             >
               {project.summary}
             </p>
-            <div className={css({ display: "flex", flexWrap: "wrap", gap: "3" })}>
+            <div className={cx(cluster({ gap: 3 }))}>
               {project.links.map((link) => (
                 <Button
                   key={link.href}
@@ -58,17 +58,21 @@ export function ProjectDetailPage({ project }: { project: Project }) {
                 </Button>
               ))}
             </div>
-            {project.relatedLinks?.map((link) => (
-              <Button
-                key={link.href}
-                asChild
-                variant="outline"
-                size="lg"
-                className={css({ width: "fit-content" })}
-              >
-                <Link href={link.href}>{link.label}</Link>
-              </Button>
-            ))}
+            {project.relatedLinks?.length ? (
+              <div className={cx(cluster({ gap: 3 }))}>
+                {project.relatedLinks.map((link) => (
+                  <Button
+                    key={link.href}
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className={css({ width: "fit-content" })}
+                  >
+                    <Link href={link.href}>{link.label}</Link>
+                  </Button>
+                ))}
+              </div>
+            ) : null}
           </div>
           <aside
             aria-labelledby="project-status-heading"

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { DISCORD_INVITE } from "@/lib/env";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { DiscordJoinButton } from "@/components/DiscordJoinButton";
+import { PRIMARY_NAV_LINKS } from "@/content/nav";
 import { css, cx } from "@/styled-system/css";
 import { cluster, container } from "@/styles/recipes";
 
@@ -17,10 +18,17 @@ import { cluster, container } from "@/styles/recipes";
  *
  * No bottom border — the chrome separates itself from the page via
  * the sticky `backdropFilter: blur` + opaque `bg.canvas` background,
- * not a hairline rule. Previously the `border.hairline` separator
- * read as a prominent contrast line (especially in dark mode) and
- * clashed with the page rhythm; relying on the blur layer keeps the
- * same functional separation without the visual weight.
+ * not a hairline rule. At scroll position 0 there's nothing behind
+ * the header for the blur to grab onto, so on landing pages the
+ * header reads as a flat band until the user scrolls. The trade-off
+ * is intentional — the prior `border.hairline` separator read as a
+ * heavy contrast line, especially in dark mode.
+ *
+ * Mobile nav: the primary nav (`PRIMARY_NAV_LINKS`) is visible from
+ * `md` up; on phones the Footer carries the same routes, so nothing
+ * is unreachable from a small viewport. If we later add a hamburger
+ * menu / drawer, drop the breakpoint back to `lg` and route the
+ * trigger through the cluster.
  *
  * The home-link mark is the actual server icon (`/ido-bata-icon.jpg`)
  * rendered as a 32px circular avatar with a hairline border — the
@@ -42,11 +50,15 @@ import { cluster, container } from "@/styles/recipes";
  * it as a joinable user reads wrong. The CTA points at Discord; the
  * label describes that target.
  *
+ * When `DISCORD_INVITE` is unset (local dev, missing CI secret,
+ * freshly-cloned repo) the CTA is replaced by a non-interactive
+ * labelled placeholder so the missing env var is visible rather
+ * than silently disappearing from the DOM. Set
+ * `NEXT_PUBLIC_DISCORD_INVITE` in `.env.local`.
+ *
  * See Issue #22 (theme), Issue #90 (Ark UI / Discord icon).
  */
 export function Header() {
-  const invite = DISCORD_INVITE;
-
   return (
     <header
       className={css({
@@ -54,7 +66,7 @@ export function Header() {
         bg: "bg.canvas",
         position: "sticky",
         top: "0",
-        zIndex: "10",
+        zIndex: "100",
         backdropFilter: "saturate(180%) blur(8px)",
       })}
     >
@@ -103,17 +115,13 @@ export function Header() {
         <nav
           aria-label="主なページ"
           className={css({
-            display: { base: "none", lg: "flex" },
+            display: { base: "none", md: "flex" },
             alignItems: "center",
             gap: "4",
             marginLeft: "auto",
           })}
         >
-          {[
-            { href: "/activities/idobata-time", label: "底力タイム" },
-            { href: "/projects", label: "プロジェクト" },
-            { href: "/channels", label: "チャネル" },
-          ].map((link) => (
+          {PRIMARY_NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -121,7 +129,13 @@ export function Header() {
                 color: "fg.muted",
                 fontSize: "sm",
                 textDecoration: "none",
+                borderRadius: "sm",
                 _hover: { color: "fg.DEFAULT" },
+                _focusVisible: {
+                  outline: "2px solid",
+                  outlineColor: "accent.DEFAULT",
+                  outlineOffset: "2px",
+                },
               })}
             >
               {link.label}
@@ -131,7 +145,24 @@ export function Header() {
 
         <div className={cx(cluster({ justify: "end" }))}>
           <ThemeToggle />
-          {invite ? <DiscordJoinButton href={invite} label="Discord に参加" size="sm" /> : null}
+          {DISCORD_INVITE ? (
+            <DiscordJoinButton href={DISCORD_INVITE} label="Discord に参加" size="sm" />
+          ) : (
+            <span
+              aria-label="Discord 招待リンク未設定"
+              className={css({
+                fontSize: "xs",
+                color: "fg.subtle",
+                paddingX: "3",
+                paddingY: "2",
+                border: "1px dashed",
+                borderColor: "border.subtle",
+                borderRadius: "full",
+              })}
+            >
+              Discord 招待リンク未設定
+            </span>
+          )}
         </div>
       </div>
     </header>

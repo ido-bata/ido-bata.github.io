@@ -6,7 +6,30 @@
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Note
+
+## [0.4.0] - 2026-09-16
+
+### Added
+
 - Issue #103: 新規 `/welcome` ページを追加。Discord への参加導線と、参加後に使えるチャンネル群を簡潔に案内する。
+- Issue #106: v0.3.0 公開後の review follow-up (1 HIGH + 39 MEDIUM) を統合。Panda `fontSize` に `2xs` token を追加し、eyebrow / metadata 表記を 12px へ揃え; カテゴリ別チャネル preview を `getChannelPreviewByCategory()` で `channels.ts` から派生させ Home と `/channels` の二重 hand-curated list を解消; `FEATURED_POST` / `ABOUT_SECTIONS` を `community.ts` に切り出し Hero の Discord window mockup と `/about` の contribution 導線を data-driven 化; `PRIMARY_NAV_LINKS` / `SITE_LINKS` を `src/content/nav.ts` に集約し Header / Footer の hand-rolled nav 配列を単一 source of truth へ; `START_GUIDE` / `RELATED_LINKS` を `src/content/welcome.ts` に集約し `/welcome` の lede + リンク重複を解消; `HOMEPAGE_FEATURED_PROJECTS_LIMIT` で `/` の featured 件数 (2) を content module から参照可能に; RuleSection に `links?: RuleLink[]` を追加し `docs/code-of-conduct.md` への参照を plain text から actual `<a>` へ。
+- Issue #106: chrome と layout の a11y / focus 可視性を底上げ。Header / Footer の nav link と `viewAllLink` / `contributionLink` / not-found の nav card に `_focusVisible` で 2px accent outline を付与; Header の primary nav を `display: { base: "none", md: "flex" }` で md 以上のみ表示 (mobile では CTA ボタンへ集約); breadcrumb を `position: sticky; top: var(--chrome-height)` + zIndex 90 で Header 直下に固定し、`:root` に `--chrome-height: 3.5rem` を定義; Footer の nav ラベルを `<p>` から `<h3>` へ格上げし見出し階層を整備; すべての外部 anchor (`target="_blank"`) に `rel="noopener noreferrer"` を付与 (Footer の X / Discord / Issues / Guide / repo の 5 link と `/about` の X / contribution link)。
+
+### Fixed
+
+- Issue #106: `src/content/channels.ts` のカテゴリ名から Latin Extended-D の `Ä` / `Ç` を撤去し ASCII 互換の `Web開発・UI` / `音楽・DTM` / `AI` / `Plan-計画` / `Do-実行` / `Check-評価` / `Action-改善` / `参考-Web` に統一 (Home / `/channels` の両方で同じ name を参照していた不整合を解消); `作業（修羅場）` → `作業（雑）` typo 修正; `channels.ts` の circular type dependency (`CHANNEL_CATEGORIES: readonly ChannelCategory[]` が type を forward reference していた) を `const ... as const` → `type = (typeof ...)[number]` の順序へ解消; `/welcome` の start-guide card を `grid({ cols: 2 })` から壊れた `cols: 3` recipe 呼び出し (実体は 1-col 化していた) を recipe 経由へ戻し layout を復旧; `CommunityVisual` の sidebar が `雑` category の channel 0 件しか出さなくなっていた不具合 (channel `name === "雑"` で `find` を取ろうとしていた誤った guard) を category filter に置換して `wip / ひとりごと / 世迷言` を正しく表示; `/projects` の一覧 link に `_hover` と `_focusVisible` の affordance を追加 (他の一覧と挙動が揃っていなかった); `panda.config.mjs` の preflight で 0 にされていた heading margin を `margin-block-end` で h1–h6 すべてに復元、h2 直下の `& :last-child` は 0 へ reset (stack recipe の eyebrow + h2 グルーピングを壊さない)。
+- Issue #106: `ChannelCategory` を `readonly ChannelCategory[]` 経由ではなく `(typeof CHANNEL_CATEGORIES)[number]` で派生させ channels.ts の add 時に array ↔ type が必ず同期するように; Reference section の card heading を h2 → h3 に下げ Home の見出し階層を `page h1 → section h2 → reference card h3` の三段へ整理; not-found の未使用 `Button` import を撤去 (lint warning を解消)。
+
+### Changed
+
+- Issue #106: Home の People & source section の左右比を `5fr 4fr` に調整、avatar (96px) と X CTA を 1 つの stack にまとめて profile block の視線誘導を整理; Home の Discord セクションを右 rail の 3-col grid へ揃え、`bg.subtle` + `borderRadius: "lg"` の soft surface で区切り hairline を減らして rhythm を軽く; Home の Reference section を右 rail を `grid({ cols: 3 })` の 3-up にして News / Welcome / Guide を同列に; Home のチャネルプレビューを `grid({ cols: 3 })` の 3 カテゴリカードに揃え、サイドバーと同形の `1rem minmax(0, 1fr)` 行で `# / ◉` glyph + name + description を縦積み表示; `/community/rules` の `<Section>` を `body` 省略 / `links` のみ / `body + links` の各パターンで表示できるよう data-driven に再構築; `/news` の article を `surface({ elevation: "flat" })` + `padding { base: 5, md: 6 }` で他のカード一覧と同じ visual family へ; `ProjectDetailPage` の tag list を inline `<div style={{display:flex}}>` から shared `cluster` recipe へ置換; `CommunityVisual` を全面書き直し — `#ひとりごと` channel + 雑 category の sidebar + `<time dateTime>` + `<ul><li>` で Discord window として standalone に; `/about` を全面書き直し — 12-col grid の page-opening band (5+7 split) + Administrator aside + `01 / 02 / 03` 番号付きの section 列; `FAQ_ITEMS` のボイス channel 必須 / `IDOBATA_TIME` 説明を `IDOBATA_TIME.name` / `.time` 経由の template literal にして activity 名・時刻が 1 箇所で管理されるように; `channels.ts` に `CHANNEL_SNAPSHOT_DATE = "2026-09-13"` を追加し `/channels` の最終更新日を hardcode から module import へ; `/channels` の channel 行 key を `${channel.category}::${channel.name}` の composite key に変更し同名の別カテゴリ channel が将来追加されても衝突しないように; `Footer` の brand subtitle を `<div>` から `stack({ gap: 1 })` 経由へ、brand name を `<p>` から `<span>` へ、subtitle を "Discord community · 井戸端色の実験場" に更新; Header の `DISCORD_INVITE` 未設定時に aria-label "Discord 招待リンク未設定" 付きの placeholder span を表示し、未設定状態でも layout が崩れないように。
+- Issue #106: Home の `viewAllLink` に `transition: "color 150ms ease"` + `_focusVisible` を、contribution link にも `_focusVisible` を追加して hover / focus の affordance を全 section で統一; `CHANNEL_SNAPSHOT_DATE` を 1 箇所で管理; ProjectDetailPage の関連リンクを `cluster` で wrap して rule / `<br />` 直書きを recipe へ。
+
 - Issue #103: 「いど端 底力 タイム」、LayerNote、ido-bata-server-bot の説明ページを追加。
 - Issue #103: FAQ、サーバールール、サイト更新のお知らせを実際の内容で掲載。
 
@@ -53,12 +76,18 @@
 - Issue #103: Home Hero のキャッチコピー `CREATOR / ENGINEER COMMUNITY` + `つくる途中を、持ち寄る。` + 説明的 lede を撤廃し、`samuido の実利サーバー` (eyebrow) + `いど端` (h1) + `Discord 上で、制作と開発を前に進めるための小さなコミュニティ。` (短文 lede) に置換。Hero は decorative な slogan で開かず identity を直接提示する形になり、コミュニティの "褒めない wip / 実利" 方針と整合。右の Discord window visual が「どんな場所か」の情報を担い、左 text rail は場所を特定する identity のみという役割分担を明確化。page test と e2e の h1 expectation も `いど端` に追従して更新。
 - Issue #103: Home Hero の Discord window mockup (`CommunityVisual`) を `#ひとりごと` channel の実投稿ベースに置換。channel を `WORK > # WIP` から `雑 > # ひとりごと` へ移設（channels.ts の category 構造に準拠）、sidebar も `雑` の `wip / ひとりごと / 世迷言` に更新し ひとりごと を active 強調。header の `# WIP / 制作途中のものを持ち寄る` も `# ひとりごと / 作業中に考えたことを気軽に書く。` に差し替え。message body は samuido が 2026/03/21 に `#ひとりごと` に投稿した実 content (VSCode UX / 認知負荷 / 高み / この世のUIすべてがVSCodeになってほしい) を verbatim 採用し、`(唐突)` や段落間の空行もそのまま保持。空行は `<p>` boundary + `margin-block-start` で paragraph spacing として表現し、同一段落内の改行は `<br />`。wip / GitHub link embed / wai 二番目 message / scheduled event card は `#ひとりごと` の low-noise 文脈から外れるため撤廃し、`defaultAvatar` 定義も同時に除去。`CommunityVisual.test.tsx` も新 content に合わせて更新。
 
-### Note
+### Security
 
-- Discord 招待の fetch / API 統合は build-time / runtime には持ち込まない。 `.tmp/fetch-discord-snapshot.ts` / `.tmp/discord-snapshot.json` / `.tmp/discord-atmosphere.json` / `.tmp/fetch-discord-messages.ts` は git 管理外。
-- メンバー数・カテゴリ数・チャネル数・活動時期のような数値・日付は変動するため、 サイトの事実記述には使わない方針（snapshot が必要な場合は channels.ts 経由かつ `取得日時` ラベル付きで提示）。
-- `src/content/rules.ts` の philosophy / recommended / prohibited / channels.items / enforcement セクションは Discord サーバ上で公開されている実ルールのみを採用する方針のため、 本 Issue では更新していない（オーナーの Discord サーバ上の正本化待ち）。
-- `src/content/news.ts` / `src/content/faq.ts` の具体エントリ（告知・Q&A）もオーナーの確定待ち。 該当ページは空状態（"現在、掲載中の X はありません" 系）を維持。
+- Issue #109: `.github/workflows/release-source-check.yml` に head repository と base repository の `full_name` 一致チェックを追加。`head.ref` 名の文字列だけを見ていた従来実装では fork 側で `release-*` branch を名乗れば同一 repository からの release PR と区別できなかったため、ADR-0003 の「同一 repository の release branch → main」契約を required status check で enforce できるよう修正。`docs/adr/0003-release-branch-stack-protection.md` Section 2 に新しい 3 条件 (同一 repo / head ref 存在 / `release-*` pattern) を明文化。
+
+### Fixed
+
+- Issue #109: `package.json` の `"version": "0.3.0"` を `"0.4.0"` に更新、CHANGELOG の `[Unreleased]` を `[0.4.0] - 2026-09-16` に確定、新 `[Unreleased]` section を追加、compare link `[0.4.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...v0.4.0` を追記。PR #98 の merge-ready 状態に入るため release metadata を release PR の title と一致させた。
+- Issue #109: `src/content/rules.ts` の `meta` section を「行動規範に記載しています。」の anchor なし body から `links: [{ label: "行動規範", href: "..."code-of-conduct.md" }]` を含む形へ書き換え、body を「次の行動規範を参照してください。」に統一。`enforcement.body` も同 pattern に統一し、ページ末尾から code-of-conduct.md へ actual な導線が確保される状態へ。
+
+### Changed
+
+- Issue #109: `src/content/channels.ts` の `Channel` interface に `featured?: boolean` を追加し、Home Hero の Discord preview で露出する 9 channel (PDCA: `Plan-計画` / `Do-実行` / `転送-補足`、共有: `素材・配布` / `チートシート` / `宣伝・拡散希望`、作業: `作業（無言）` / `作業（雑）` / `聞き専`) に `featured: true` を付与。`getChannelPreviewByCategory()` は hand-curated な `category -> channel name` map を持つ二重管理 implementation から、`CHANNELS.filter(channel => channel.featured)` ベースの data-driven 実装に書き換え、各 category 3 件 (`PREVIEW_PER_CATEGORY_LIMIT`) を上限に固定。preview policy (どの category を代表表示するか) と channel selection (どの channel が代表か) を分離し、次回 Discord snapshot 更新時に Home と `/channels` が静かに乖離する経路を断った。
 
 ## [0.3.0] - 2026-09-13
 
@@ -95,7 +124,8 @@
 
 - v0.3.0 のページ文言・告知・FAQ・チャネル一覧・サーバルールはオーナーの事実確認後に別途投入する。`src/content/*` は空配列 / minimal placeholder で merge した。
 
-[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ido-bata/ido-bata.github.io/compare/v0.2.0...v0.3.0
 
 ## [0.2.0] - 2026-09-06

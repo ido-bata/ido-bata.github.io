@@ -54,7 +54,7 @@ function Section({ section }: { section: RuleSection }) {
       >
         {section.title}
       </h2>
-      {section.body ? (
+      {section.body || (section.links && section.links.length > 0) ? (
         <p
           className={css({
             fontSize: "md",
@@ -63,6 +63,25 @@ function Section({ section }: { section: RuleSection }) {
           })}
         >
           {section.body}
+          {section.body && section.links && section.links.length > 0 ? " " : null}
+          {section.links?.map((link, index) => (
+            <span key={link.href}>
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={css({
+                  color: "accent.DEFAULT",
+                  fontWeight: "semibold",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "2px",
+                })}
+              >
+                {link.label}
+              </a>
+              {index < (section.links?.length ?? 0) - 1 ? " / " : ""}
+            </span>
+          ))}
         </p>
       ) : null}
       {section.bullets && section.bullets.length > 0 ? (
@@ -251,22 +270,13 @@ export default function CommunityRulesPage() {
         without crowding the long-form copy. The inner 2-col grid for
         channel cards uses the same coordinate primitive, so each card
         is half the reading rail.
-
-        Tuning history: the page first shipped with `gridColumn: "4 /
-        span 9"` (25% left margin) which read as over-anchored for a
-        short page — reduced to 1/6 (cols 3–12, span 10) on
-        2026-09-16 after user feedback that the wider margin felt
-        disproportionate on a doc-light rule set.
       */}
       <section className={cx(section({ variant: "flow" }))}>
         <div className={cx(grid({ cols: 12, gap: 8 }))}>
           <div
             className={cx(
               stack({ gap: 12 }),
-              css({
-                width: "100%",
-                gridColumn: { base: "1", md: "3 / span 10" },
-              }),
+              css({ gridColumn: { base: "1", md: "3 / span 10" } }),
             )}
           >
             <Section section={rules.philosophy} />

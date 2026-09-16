@@ -60,9 +60,16 @@ main                 released source (protected)
 | `required_status_checks`   | `ci / quality`, `ci / e2e`, `release-source-check` (strict)        |
 
 `release-source-check` は `.github/workflows/release-source-check.yml` で実装し、
-`base == main` かつ `head_ref` が `release-*` pattern に一致する場合のみ success を返す。
-これにより branch protection だけでは表現できない "PR head は release-* のみ" を
-required status check として enforce する。
+次の 3 条件を同時に満たす場合のみ success を返す:
+
+1. `head.repo.full_name == base.repo.full_name` — fork PR を排除する。
+   外部 fork 側で `release-foo` branch を名乗っても同一 repository 内
+   release branch とは認めない (Issue #109 follow-up で明示)。
+2. `head.ref` が空でない — 不正 payload への防御。
+3. `head.ref` が `release-*` pattern に一致 — branch 名制約。
+
+branch protection だけでは PR head の `release-*` 制約と同一-repo 起点を
+同時に表現できないため、required status check で enforce する。
 
 ## 3. Active durable ticket branch の contract
 

@@ -121,6 +121,7 @@ export default defineConfig({
           mono: { value: "var(--font-geist-mono), ui-monospace, monospace" },
         },
         fontSizes: {
+          "2xs": { value: "0.625rem" },
           xs: { value: "0.75rem" },
           sm: { value: "0.875rem" },
           md: { value: "1rem" },
@@ -307,8 +308,8 @@ export default defineConfig({
     // geometric display voice. Weight / size / letter-spacing are
     // set per-call via Panda recipes so callers stay in control.
     //
-    // Heading rhythm: `margin-block-end` gives every heading its
-    // own breathing room before the content that follows — without
+    // Heading rhythm: `margin-block-end` gives h1–h6 its own
+    // breathing room before the content that follows — without
     // a margin, headings (especially h2 + body) read as visually
     // fused because Panda's preflight resets all heading margins.
     // `margin-block-start` is intentionally 0 because in this
@@ -347,7 +348,15 @@ export default defineConfig({
     h4: {
       marginBlockEnd: "0.25rem",
     },
-    "h1:last-child, h2:last-child, h3:last-child, h4:last-child":
+    h5: {
+      // Sub-sub-heading. Same rhythm as h4 so deep hierarchies
+      // stay visually consistent (h1 > h2 > h3 > h4/h5/h6).
+      marginBlockEnd: "0.25rem",
+    },
+    h6: {
+      marginBlockEnd: "0.25rem",
+    },
+    "h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child":
       { marginBlockEnd: "0" },
     // Material Icons ligature class. The font is loaded via
     // `next/font/google` (Material_Icons) and registered as a CSS

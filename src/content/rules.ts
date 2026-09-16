@@ -16,6 +16,13 @@ export type ChannelRule = {
   rules: string[];
 };
 
+export type RuleLink = {
+  /** Visible label for the link (Japanese). */
+  label: string;
+  /** Target href — relative for in-site pages, absolute for external docs. */
+  href: string;
+};
+
 export type RuleSection = {
   /** Heading anchor (slug). */
   id: string;
@@ -23,6 +30,10 @@ export type RuleSection = {
   title: string;
   /** Body paragraph (optional). */
   body?: string;
+  /** Inline links rendered at the end of `body` (optional). When
+   *  present, the page renders them as anchor tags instead of leaving
+   *  plain-text references like "see docs/code-of-conduct.md §3". */
+  links?: readonly RuleLink[];
   /** Bullets (optional). Empty array allowed. */
   bullets?: string[];
 };
@@ -72,7 +83,13 @@ export const rules: RulesContent = {
     id: "prohibited",
     title: "禁止行為",
     body:
-      "禁止行為の全体は `docs/code-of-conduct.md` §3 を参照してください。主なものは次の通りです。",
+      "禁止行為の全体は次の行動規範を参照してください。主なものは次の通りです。",
+    links: [
+      {
+        label: "行動規範",
+        href: "https://github.com/ido-bata/ido-bata.github.io/blob/main/docs/code-of-conduct.md",
+      },
+    ],
     bullets: [
       "個人攻撃・差別・ハラスメント・脅迫・性的な嫌がらせ",
       "業務上・私生活上の機密情報、PII、認証情報 (token / API key / パスワード等) の投稿",
@@ -110,12 +127,24 @@ export const rules: RulesContent = {
   enforcement: {
     id: "enforcement",
     title: "違反時の対応",
-    body: "運営は内容を確認し、必要に応じて投稿の削除、警告、一時停止、追放などを判断します。報告方法は行動規範に記載しています。",
+    body: "運営は内容を確認し、必要に応じて投稿の削除、警告、一時停止、追放などを判断します。報告方法は次の行動規範を参照してください。",
+    links: [
+      {
+        label: "行動規範 (報告方法)",
+        href: "https://github.com/ido-bata/ido-bata.github.io/blob/main/docs/code-of-conduct.md",
+      },
+    ],
   },
 
   meta: {
     id: "meta",
     title: "改定・問い合わせ",
-    body: "運用に合わせて内容を更新します。違反の報告や問い合わせ窓口は行動規範に記載しています。",
+    body: "運用に合わせて内容を更新します。違反の報告や問い合わせ窓口は次の行動規範を参照してください。",
+    links: [
+      {
+        label: "行動規範",
+        href: "https://github.com/ido-bata/ido-bata.github.io/blob/main/docs/code-of-conduct.md",
+      },
+    ],
   },
 };

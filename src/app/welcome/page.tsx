@@ -5,11 +5,18 @@ import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
+import { RELATED_LINKS, START_GUIDE } from "@/content/welcome";
 
 export const metadata: Metadata = {
   title: "初めての方へ | ido-bata",
   description: "いど端 Discord サーバーへの参加案内。",
 };
+
+const ledeParagraph = css({
+  fontSize: { base: "md", md: "lg" },
+  color: "fg.muted",
+  lineHeight: "relaxed",
+});
 
 /**
  * /welcome — a short entry point for people who have not joined yet.
@@ -23,8 +30,6 @@ export const metadata: Metadata = {
  * Refs: Issue #103
  */
 export default function WelcomePage() {
-  const invite = DISCORD_INVITE;
-
   return (
     <main className={cx(container({ size: "content" }))}>
       <Breadcrumb items={[{ href: "/", label: "ホーム" }, { label: "初めての方へ" }]} />
@@ -56,29 +61,17 @@ export default function WelcomePage() {
               いど端に参加する
             </h1>
             <div className={cx(stack({ gap: 4 }), css({ maxW: "52ch" }))}>
-              <p
-                className={css({
-                  fontSize: { base: "md", md: "lg" },
-                  color: "fg.muted",
-                  lineHeight: "relaxed",
-                })}
-              >
+              <p className={ledeParagraph}>
                 いど端は、クリエイターやエンジニアが制作・開発を進めるための Discord
                 サーバーです。専門分野の話、制作途中の共有、作業の記録などに使われています。
               </p>
-              <p
-                className={css({
-                  fontSize: { base: "md", md: "lg" },
-                  color: "fg.muted",
-                  lineHeight: "relaxed",
-                })}
-              >
+              <p className={ledeParagraph}>
                 参加後は、興味のある分野や使っているツールのロールを選び、必要なチャンネルから使ってください。
               </p>
             </div>
-            {invite ? (
+            {DISCORD_INVITE ? (
               <div className={cx(cluster({ gap: 3 }))}>
-                <DiscordJoinButton href={invite} size="lg" />
+                <DiscordJoinButton href={DISCORD_INVITE} size="lg" />
               </div>
             ) : null}
           </div>
@@ -109,18 +102,14 @@ export default function WelcomePage() {
               参加したら
             </h2>
             <ul
-              className={css({
-                display: "flex",
-                flexDirection: "column",
-                gap: "3",
-                listStyle: "none",
-                margin: 0,
-                padding: 0,
-              })}
+              className={cx(
+                stack({ gap: 3 }),
+                css({ listStyle: "none", margin: 0, padding: 0 }),
+              )}
             >
               {START_GUIDE.map((item) => (
                 <li
-                  key={item.title}
+                  key={item.category}
                   className={css({
                     fontSize: "sm",
                     lineHeight: "relaxed",
@@ -135,7 +124,7 @@ export default function WelcomePage() {
                       mb: "1",
                     })}
                   >
-                    {item.title}
+                    {item.category}
                   </span>
                   {item.body}
                 </li>
@@ -162,20 +151,17 @@ export default function WelcomePage() {
         </h2>
         <ul
           className={cx(
-            grid({ cols: 3, gap: 4 }),
+            grid({ cols: 2, gap: 4 }),
             css({ listStyle: "none", margin: 0, padding: 0 }),
           )}
         >
-          {RELATED.map((link) => (
+          {RELATED_LINKS.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
                 className={cx(
                   stack({ gap: 2 }),
                   css({
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "2",
                     p: "5",
                     borderRadius: "lg",
                     border: "1px solid",
@@ -215,29 +201,3 @@ export default function WelcomePage() {
     </main>
   );
 }
-
-const START_GUIDE = [
-  {
-    title: "話題",
-    body: "専門分野の質問や会話をする場所です。分野をまたぐ話題にも専用のチャンネルがあります。",
-  },
-  {
-    title: "共有",
-    body: "素材、ツール、資料、作品の公開や募集に使います。",
-  },
-  {
-    title: "雑",
-    body: "雑談、制作途中のもの、まとまる前の考えを書けます。",
-  },
-  {
-    title: "PDCA",
-    body: "やることを宣言し、進捗や評価、次の改善を記録する場所です。",
-  },
-] as const;
-
-const RELATED = [
-  { href: "/channels", label: "チャネル一覧", hint: "カテゴリ別のチャネル構成" },
-  { href: "/community/rules", label: "サーバルール", hint: "推奨・禁止・運用方針" },
-  { href: "/about", label: "About", hint: "サーバーの考え方" },
-  { href: "/faq", label: "FAQ", hint: "よくある質問" },
-] as const;

@@ -28,7 +28,34 @@
  *     (top-to-bottom in the server's sidebar).
  */
 
-export type ChannelCategory = string;
+/**
+ * Date the channel listing was last refreshed from the Discord server.
+ * Bump this every time `CHANNEL_INPUTS` is edited so the page's
+ * "最終更新" date stays in sync with the data — and so visitors can
+ * judge how stale the listing is at a glance.
+ */
+export const CHANNEL_SNAPSHOT_DATE = "2026-09-13";
+
+/**
+ * Display order is controlled by declaration order. Categories appear in the
+ * order they are listed here.
+ */
+export const CHANNEL_CATEGORIES = [
+  "ご案内",
+  "話題",
+  "PDCA",
+  "共有",
+  "参考",
+  "雑",
+  "いど端 底力 タイム",
+  "作業",
+  "いど端LT会",
+  "LayerNote",
+  "要望",
+  "Legacy",
+] as const;
+
+export type ChannelCategory = (typeof CHANNEL_CATEGORIES)[number];
 export type ChannelType = "text" | "announcement" | "forum" | "voice" | "stage";
 
 export interface Channel {
@@ -43,6 +70,14 @@ export interface Channel {
   category: ChannelCategory;
   /** Discord channel kind. */
   type: ChannelType;
+  /**
+   * If true, the channel is included in the Home Hero Discord preview.
+   * Drives selection via `getChannelPreviewByCategory()` so the preview
+   * stays in sync with `channels.ts` — retyping names in a separate
+   * preview list is what previously caused the Home / `/channels`
+   * drift flagged in Issue #109.
+   */
+  featured?: boolean;
 }
 
 type ChannelInput = Omit<Channel, "type"> & { type?: ChannelType };
@@ -54,26 +89,6 @@ export const CHANNEL_TYPE_LABELS: Readonly<Record<ChannelType, string>> = {
   voice: "音声",
   stage: "ステージ",
 };
-
-/**
- * Display order is controlled by declaration order. Categories appear in the
- * order they are listed here.
- */
-export const CHANNEL_CATEGORIES: readonly ChannelCategory[] = [
-  "ご案内",
-  "話題",
-  "PDCA",
-  "共有",
-  "参考",
-  "雑",
-  "いど端 底力 タイム",
-  "作業",
-  "いど端LT会",
-  "LayerNote",
-  "要望",
-  "Legacy",
-];
-
 const CHANNEL_INPUTS: readonly ChannelInput[] = [
   // ───── ご案内 (top-level public welcome channels) ─────
   { name: "ようこそ", description: "", category: "ご案内" },
@@ -87,7 +102,7 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     category: "話題",
   },
   { name: "プログラミング", description: "プログラミング全般の質問や情報交換。", category: "話題" },
-  { name: "ꓪeb開発・ꓴꓲ", description: "Web開発とUIに関する話題。", category: "話題" },
+  { name: "Web開発・UI", description: "Web開発とUIに関する話題。", category: "話題" },
   {
     name: "ツール開発",
     description: "プラグイン、拡張機能、制作支援ツールの開発。",
@@ -103,8 +118,8 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     description: "デザイン、イラストなど静止画表現の話題。",
     category: "話題",
   },
-  { name: "音楽・ꓓꓔꓟ", description: "音楽制作やDTMの話題。", category: "話題" },
-  { name: "ꓮꓲ", description: "AIの技術、サービス、制作への利用について。", category: "話題" },
+  { name: "音楽・DTM", description: "音楽制作やDTMの話題。", category: "話題" },
+  { name: "AI", description: "AIの技術、サービス、制作への利用について。", category: "話題" },
   { name: "技術・工学", description: "科学技術、機械、工学の話題。", category: "話題" },
   { name: "文化・社会", description: "文化や社会に関する話題。", category: "話題" },
   { name: "専門交錯（１）", description: "複数の専門分野にまたがる話題。", category: "話題" },
@@ -115,26 +130,51 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     category: "話題",
     type: "forum",
   },
-
   // ───── PDCA ─────
-  { name: "ꓑlan-計画", description: "やりたいことや目標を宣言する。", category: "PDCA" },
-  { name: "ꓓo-実行", description: "試したことや制作の進み具合を共有する。", category: "PDCA" },
-  { name: "ꓚheck-評価", description: "制作物を見せて評価を受ける。", category: "PDCA" },
-  { name: "ꓮction-改善", description: "評価を受けて次に直すことを宣言する。", category: "PDCA" },
+  {
+    name: "Plan-計画",
+    description: "やりたいことや目標を宣言する。",
+    category: "PDCA",
+    featured: true,
+  },
+  {
+    name: "Do-実行",
+    description: "試したことや制作の進み具合を共有する。",
+    category: "PDCA",
+    featured: true,
+  },
+  { name: "Check-評価", description: "制作物を見せて評価を受ける。", category: "PDCA" },
+  { name: "Action-改善", description: "評価を受けて次に直すことを宣言する。", category: "PDCA" },
   {
     name: "転送-補足",
     description: "評価対象への補足やフィードバックをまとめる。",
     category: "PDCA",
     type: "forum",
+    featured: true,
+  },
+  {
+    name: "素材・配布",
+    description: "制作に使える素材を共有・配布する。",
+    category: "共有",
+    featured: true,
   },
 
-  // ───── 共有 ─────
-  { name: "素材・配布", description: "制作に使える素材を共有・配布する。", category: "共有" },
+  // ───── 共有 (continued) ─────
   { name: "拡張機能・ツール", description: "便利な拡張機能やツールを共有する。", category: "共有" },
-  { name: "チートシート", description: "手元で参照できる資料を共有する。", category: "共有" },
+  {
+    name: "チートシート",
+    description: "手元で参照できる資料を共有する。",
+    category: "共有",
+    featured: true,
+  },
   { name: "チュートリアル", description: "手順や学習資料を共有する。", category: "共有" },
   { name: "ブログ・本", description: "記事や書籍を共有する。", category: "共有" },
-  { name: "宣伝・拡散希望", description: "公開した作品やツールを知らせる。", category: "共有" },
+  {
+    name: "宣伝・拡散希望",
+    description: "公開した作品やツールを知らせる。",
+    category: "共有",
+    featured: true,
+  },
   { name: "募集・告知", description: "協力者の募集やイベントを告知する。", category: "共有" },
   { name: "その他", description: "ほかの共有チャンネルに当てはまらない情報。", category: "共有" },
 
@@ -142,7 +182,7 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
   { name: "参考-映像", description: "映像制作の参考作品。", category: "参考" },
   { name: "参考-技術", description: "技術面で参考になる制作物や資料。", category: "参考" },
   { name: "参考-表現", description: "表現や演出の参考。", category: "参考" },
-  { name: "参考-ꓪeb", description: "WebサイトやWeb表現の参考。", category: "参考" },
+  { name: "参考-Web", description: "WebサイトやWeb表現の参考。", category: "参考" },
   { name: "参考-楽曲", description: "楽曲制作の参考。", category: "参考" },
   { name: "参考-その他", description: "分類を決めにくい参考資料。", category: "参考" },
 
@@ -171,9 +211,13 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     category: "いど端 底力 タイム",
     type: "stage",
   },
-
   // ───── 作業 ─────
-  { name: "聞き専", description: "作業中の音声を聞く人向けのテキストチャンネル。", category: "作業" },
+  {
+    name: "聞き専",
+    description: "作業中の音声を聞く人向けのテキストチャンネル。",
+    category: "作業",
+    featured: true,
+  },
   {
     name: "作業（修羅場）",
     description: "会話しながら集中して作業する音声チャンネル。",
@@ -185,12 +229,14 @@ const CHANNEL_INPUTS: readonly ChannelInput[] = [
     description: "雑談を交えながら作業する音声チャンネル。",
     category: "作業",
     type: "voice",
+    featured: true,
   },
   {
     name: "作業（無言）",
     description: "会話せず同じ場所で作業する音声チャンネル。",
     category: "作業",
     type: "voice",
+    featured: true,
   },
 
   // ───── いど端LT会 ─────
@@ -241,3 +287,46 @@ export const CHANNELS: readonly Channel[] = CHANNEL_INPUTS.map((channel) => ({
   ...channel,
   type: channel.type ?? "text",
 }));
+
+/**
+ * Categories the home-page Discord preview surfaces. Preview *policy*
+ * (which categories are representative of the server) stays here, but
+ * channel *selection* is driven by `Channel.featured` so the list is no
+ * longer retyped by hand inside this function — see Issue #109.
+ *
+ * Order matches the declared array order in `CHANNEL_CATEGORIES` so the
+ * preview keeps the same left-to-right cadence as `/channels`.
+ */
+const PREVIEW_PER_CATEGORY_LIMIT = 3;
+
+/**
+ * Pick a few representative channels per category for the home-page
+ * Discord preview. The home page shouldn't dump the whole server
+ * tree (that's `/channels`'s job); it should let a visitor see the
+ * shape of the place.
+ *
+ * Selection is driven by `Channel.featured` so a rename / re-type
+ * upstream flows through automatically — the previous version kept a
+ * hand-curated `category -> channel name` map here that silently
+ * drifted out of sync with `channels.ts` and the `/channels` page.
+ *
+ * Categories chosen to span text + forum + voice so the preview
+ * hints at the medium, not just the topic. The featured flag is the
+ * single source of truth for which channels qualify; the per-category
+ * limit prevents the preview from collapsing into a single dominant
+ * category if many channels are flagged.
+ */
+export function getChannelPreviewByCategory(): ReadonlyArray<{
+  category: ChannelCategory;
+  channels: ReadonlyArray<Channel>;
+}> {
+  const featuredCategories = CHANNEL_CATEGORIES.filter((category) =>
+    CHANNELS.some((channel) => channel.category === category && channel.featured),
+  );
+  return featuredCategories.map((category) => ({
+    category,
+    channels: CHANNELS.filter(
+      (channel) => channel.category === category && channel.featured,
+    ).slice(0, PREVIEW_PER_CATEGORY_LIMIT),
+  }));
+}

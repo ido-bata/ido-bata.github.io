@@ -6,85 +6,12 @@ import { Button } from "@/components/ui/button";
 import { CommunityVisual } from "@/components/CommunityVisual";
 import { DiscordJoinButton } from "@/components/DiscordJoinButton";
 import { DISCORD_INVITE } from "@/lib/env";
-import { CHANNELS, CHANNEL_CATEGORIES } from "@/content/channels";
+import { CHANNELS, CHANNEL_CATEGORIES, getChannelPreviewByCategory } from "@/content/channels";
 import { IDOBATA_TIME } from "@/content/activities";
 import { FEATURED_PROJECTS, getProjectPath } from "@/content/projects";
 import { ADMINISTRATOR, CONTRIBUTION_LINKS } from "@/content/community";
 
-/**
- * Pick a few representative channels per category for the home-page
- * Discord preview. The home page shouldn't dump the whole server
- * tree (that's `/channels`'s job); it should let a visitor see the
- * shape of the place.
- *
- * Categories chosen to span text + forum + voice so the preview
- * hints at the medium, not just the topic.
- */
-const CHANNEL_PREVIEW: ReadonlyArray<{
-  category: string;
-  channels: ReadonlyArray<{ name: string; description: string; type: string }>;
-}> = [
-  {
-    category: "PDCA",
-    channels: [
-      {
-        name: "ꓑlan-計画",
-        description: "やりたいことや目標を宣言する。",
-        type: "text",
-      },
-      {
-        name: "ꓓo-実行",
-        description: "試したことや制作の進み具合を共有する。",
-        type: "text",
-      },
-      {
-        name: "転送-補足",
-        description: "評価対象への補足やフィードバックをまとめる。",
-        type: "forum",
-      },
-    ],
-  },
-  {
-    category: "共有",
-    channels: [
-      {
-        name: "素材・配布",
-        description: "制作に使える素材を共有・配布する。",
-        type: "text",
-      },
-      {
-        name: "チートシート",
-        description: "手元で参照できる資料を共有する。",
-        type: "text",
-      },
-      {
-        name: "宣伝・拡散希望",
-        description: "公開した作品やツールを知らせる。",
-        type: "text",
-      },
-    ],
-  },
-  {
-    category: "作業",
-    channels: [
-      {
-        name: "作業（無言）",
-        description: "会話せず同じ場所で作業する音声チャンネル。",
-        type: "voice",
-      },
-      {
-        name: "作業（雑）",
-        description: "雑談を交えながら作業する音声チャンネル。",
-        type: "voice",
-      },
-      {
-        name: "聞き専",
-        description: "作業中の音声を聞く人向けのテキストチャンネル。",
-        type: "text",
-      },
-    ],
-  },
-];
+const CHANNEL_PREVIEW = getChannelPreviewByCategory();
 
 const sectionLabel = css({
   fontSize: "xs",
@@ -149,7 +76,9 @@ const viewAllLink = css({
   fontSize: "sm",
   textDecoration: "none",
   width: "fit-content",
-  _hover: { color: "accent.default" },
+  transition: "color 150ms ease",
+  _hover: { color: "accent.DEFAULT" },
+  _focusVisible: { outline: "2px solid", outlineColor: "accent.DEFAULT", outlineOffset: "2px" },
 });
 
 /**
@@ -158,6 +87,12 @@ const viewAllLink = css({
  * X link as a clear CTA at the bottom. No background, no border,
  * no radius — it lives in the column rhythm and uses scale to
  * stand out from the contribution links beside it.
+ *
+ * Implementation note: the block is built inline with `css({...})`
+ * calls below rather than as a named `const profileBlock` because the
+ * four sub-styles (avatar frame, name+role stack, summary paragraph,
+ * X CTA) are each tuned for their local context — extracting them
+ * into a single recipe would over-constrain the surrounding layout.
  */
 
 /**
@@ -172,7 +107,9 @@ const contributionLink = css({
   gap: "1",
   color: "fg.DEFAULT",
   textDecoration: "none",
+  transition: "color 150ms ease",
   _hover: { color: "accent.default" },
+  _focusVisible: { outline: "2px solid", outlineColor: "accent.DEFAULT", outlineOffset: "2px" },
 });
 
 /**
@@ -619,17 +556,17 @@ export default function Home() {
           >
             <Link href="/news" className={featureLink}>
               <span className={sectionLabel}>News</span>
-              <h2 className={css({ fontSize: "xl", fontWeight: "bold" })}>最新の動き</h2>
+              <h3 className={css({ fontSize: "xl", fontWeight: "bold" })}>最新の動き</h3>
               <span className={css({ color: "fg.muted" })}>サイトとサーバーに関する更新</span>
             </Link>
             <Link href="/welcome" className={featureLink}>
               <span className={sectionLabel}>Welcome</span>
-              <h2 className={css({ fontSize: "xl", fontWeight: "bold" })}>初めての方へ</h2>
+              <h3 className={css({ fontSize: "xl", fontWeight: "bold" })}>初めての方へ</h3>
               <span className={css({ color: "fg.muted" })}>参加前後に読む案内</span>
             </Link>
             <Link href="/community/rules" className={featureLink}>
               <span className={sectionLabel}>Guide</span>
-              <h2 className={css({ fontSize: "xl", fontWeight: "bold" })}>ルール・ガイドライン</h2>
+              <h3 className={css({ fontSize: "xl", fontWeight: "bold" })}>ルール・ガイドライン</h3>
               <span className={css({ color: "fg.muted" })}>参加前に確認しておきたいこと</span>
             </Link>
           </div>

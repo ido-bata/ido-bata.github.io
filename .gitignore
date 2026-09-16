@@ -51,6 +51,7 @@ next-env.d.ts
 # project-local 一時領域・参照リポジトリ
 .tmp/
 .reference/
+agent.stash.tmp/
 
 # Panda CSS generated runtime (do NOT commit)
 /src/styled-system/

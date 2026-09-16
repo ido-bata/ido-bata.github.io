@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { css, cx } from "@/styled-system/css";
-import { container, grid, section, stack } from "@/styles/recipes";
+import { cluster, container, grid, section, stack } from "@/styles/recipes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { ADMINISTRATOR, CONTRIBUTION_LINKS } from "@/content/community";
+import { ABOUT_SECTIONS, ADMINISTRATOR } from "@/content/community";
 
 export const metadata: Metadata = {
   title: "About | ido-bata",
-  description: "いど端 Discord サーバーの考え方、管理者、サイトへの参加方法。",
+  description: "いど端 Discord サーバーの運営スタンス、 管理者、 このサイトへの貢献方法。",
 };
 
 const eyebrow = css({
@@ -17,6 +17,43 @@ const eyebrow = css({
   textTransform: "uppercase",
   color: "fg.muted",
 });
+
+const ledeParagraph = css({
+  fontSize: { base: "md", md: "lg" },
+  color: "fg.muted",
+  lineHeight: "relaxed",
+});
+
+const roleStyle = css({
+  color: "fg.muted",
+  lineHeight: "relaxed",
+});
+
+const contributionLink = css({
+  display: "flex",
+  flexDirection: "column",
+  gap: "1",
+  color: "fg.DEFAULT",
+  textDecoration: "none",
+  _hover: { color: "accent.DEFAULT" },
+  _focusVisible: { outline: "2px solid", outlineColor: "accent.DEFAULT", outlineOffset: "2px" },
+});
+
+const contributionLinkHeading = css({
+  display: "inline-flex",
+  alignItems: "baseline",
+  gap: "2",
+  width: "fit-content",
+});
+
+const contributionLinkArrow = css({
+  color: "fg.subtle",
+  fontSize: "sm",
+});
+
+function sectionNumber(index: number): string {
+  return String(index + 1).padStart(2, "0");
+}
 
 export default function AboutPage() {
   return (
@@ -40,26 +77,8 @@ export default function AboutPage() {
               いど端について
             </h1>
             <div className={cx(stack({ gap: 4 }), css({ maxW: "52ch" }))}>
-              <p
-                className={css({
-                  fontSize: { base: "md", md: "lg" },
-                  color: "fg.muted",
-                  lineHeight: "relaxed",
-                })}
-              >
-                いど端、 Discord で動いてる小さいサーバー。 名前は井戸端会議の響きだけ借りてる。
-                うちは交流じゃなくて情報共有のためのサーバーってとこでやってる。
-              </p>
-              <p
-                className={css({
-                  fontSize: { base: "md", md: "lg" },
-                  color: "fg.muted",
-                  lineHeight: "relaxed",
-                })}
-              >
-                関心領域は映像 / プログラミング / デザインあたり、 各自で調べて書いて共有する。
-                ウェルカムも入会の儀式もないし、 誰が来たかは誰にも分からない。
-                ひとりごと / wip は反応より書くことを優先するチャネル。
+              <p className={ledeParagraph}>
+                クリエイターやエンジニアが、制作や開発を実際に進めるためのDiscordサーバーです。
               </p>
             </div>
           </div>
@@ -96,7 +115,7 @@ export default function AboutPage() {
                 <h2 className={css({ fontSize: "2xl", fontWeight: "bold", color: "fg.DEFAULT" })}>
                   {ADMINISTRATOR.name}
                 </h2>
-                <p className={css({ color: "fg.muted" })}>{ADMINISTRATOR.role}</p>
+                <p className={roleStyle}>{ADMINISTRATOR.role}</p>
               </div>
               <p className={css({ color: "fg.muted", lineHeight: "relaxed" })}>
                 {ADMINISTRATOR.summary}
@@ -104,9 +123,9 @@ export default function AboutPage() {
               <a
                 href={ADMINISTRATOR.xUrl}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className={css({
-                  color: "accent.default",
+                  color: "accent.DEFAULT",
                   fontWeight: "semibold",
                   width: "fit-content",
                 })}
@@ -118,23 +137,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {[
-        {
-          id: "principle",
-          label: "01 / Principle",
-          title: "実利を重視する",
-          body: "専門分野の質問をする、制作途中のものを見せる、使える資料を共有する。必要なときに必要な相手と対話し、制作や開発が前へ進むことを大切にしています。",
-        },
-        {
-          id: "use",
-          label: "02 / Use",
-          title: "各自のために使う",
-          body: "話題、共有、WIP、PDCA、作業時間など、用途ごとに場所を分けています。それぞれがやりたいことを始め、続けるために使うサーバーです。",
-        },
-      ].map((item) => (
+      {ABOUT_SECTIONS.map((item, index) => (
         <section
-          key={item.id}
-          aria-labelledby={item.id}
+          key={item.kind}
+          aria-labelledby={`about-${item.kind.toLowerCase()}`}
           className={cx(
             section({ variant: "flow" }),
             css({ borderTop: "1px solid", borderColor: "border.hairline" }),
@@ -142,7 +148,7 @@ export default function AboutPage() {
         >
           <div className={cx(grid({ cols: 12, gap: 6 }))}>
             <p className={cx(eyebrow, css({ gridColumn: { base: "1", md: "span 4" } }))}>
-              {item.label}
+              {sectionNumber(index)} / {item.kind}
             </p>
             <div
               className={cx(
@@ -151,7 +157,7 @@ export default function AboutPage() {
               )}
             >
               <h2
-                id={item.id}
+                id={`about-${item.kind.toLowerCase()}`}
                 className={css({
                   fontSize: { base: "2xl", md: "3xl" },
                   fontWeight: "bold",
@@ -169,72 +175,32 @@ export default function AboutPage() {
               >
                 {item.body}
               </p>
+              {item.links ? (
+                <div className={cx(cluster({ gap: 5 }))}>
+                  {item.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={contributionLink}
+                    >
+                      <span className={contributionLinkHeading}>
+                        <strong className={css({ fontSize: "lg", fontWeight: "semibold" })}>
+                          {link.label}
+                        </strong>
+                        <span aria-hidden="true" className={contributionLinkArrow}>
+                          ↗
+                        </span>
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
         </section>
       ))}
-
-      <section
-        aria-labelledby="contribute-title"
-        className={cx(
-          section({ variant: "flow" }),
-          css({ borderTop: "1px solid", borderColor: "border.hairline" }),
-        )}
-      >
-        <div className={cx(grid({ cols: 12, gap: 6 }))}>
-          <div className={cx(stack({ gap: 2 }), css({ gridColumn: { base: "1", md: "span 4" } }))}>
-            <p className={eyebrow}>03 / Contribute</p>
-            <h2
-              id="contribute-title"
-              className={css({ fontSize: "2xl", fontWeight: "bold", color: "fg.DEFAULT" })}
-            >
-              このサイトを改善する
-            </h2>
-          </div>
-          <div className={cx(stack({ gap: 6 }), css({ gridColumn: { base: "1", md: "span 8" } }))}>
-            {CONTRIBUTION_LINKS.map((link) => (
-              <a
-                key={link.kind}
-                href={link.href}
-                target="_blank"
-                rel="noreferrer"
-                className={cx(
-                  stack({ gap: 1 }),
-                  css({
-                    color: "fg.DEFAULT",
-                    textDecoration: "none",
-                    _hover: { color: "accent.default" },
-                  }),
-                )}
-              >
-                <span
-                  className={css({
-                    display: "inline-flex",
-                    alignItems: "baseline",
-                    gap: "2",
-                    width: "fit-content",
-                  })}
-                >
-                  <strong className={css({ fontSize: "lg", fontWeight: "semibold" })}>
-                    {link.label}
-                  </strong>
-                  <span
-                    aria-hidden="true"
-                    className={css({ color: "fg.subtle", fontSize: "sm" })}
-                  >
-                    ↗
-                  </span>
-                </span>
-                <span
-                  className={css({ fontSize: "sm", color: "fg.muted", lineHeight: "relaxed" })}
-                >
-                  {link.description}
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

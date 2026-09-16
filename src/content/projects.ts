@@ -94,9 +94,19 @@ export const PROJECTS: readonly Project[] = [
   },
 ];
 
+/**
+ * Maximum number of projects shown on the home page's "featured" row.
+ *
+ * `src/app/page.tsx` renders `FEATURED_PROJECTS` next to `IDOBATA_TIME`
+ * inside a 3-column grid (1 IDOBATA_TIME + N projects). Increasing
+ * this value will break that row's layout, so any addition of a third
+ * featured project must be paired with a layout change here.
+ */
+export const HOMEPAGE_FEATURED_PROJECTS_LIMIT = 2;
+
 export const FEATURED_PROJECTS: readonly Project[] = PROJECTS.filter(
   (project) => project.featured,
-).slice(0, 2);
+).slice(0, HOMEPAGE_FEATURED_PROJECTS_LIMIT);
 
 /**
  * Slug → project lookup. Only `getProject` reads from it (called
