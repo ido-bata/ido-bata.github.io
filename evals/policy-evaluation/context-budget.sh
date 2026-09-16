@@ -28,6 +28,7 @@ required=(
   "fixtures/negative.md"
   "fixtures/regression.md"
   "fixtures/contradictory.md"
+  "fixtures/positive-transition.md"
 )
 
 missing=()
