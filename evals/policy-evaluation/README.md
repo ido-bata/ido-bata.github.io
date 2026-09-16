@@ -11,12 +11,14 @@ evals/policy-evaluation/
   scenarios/
     S-001-dependency-ownership.md  # 最初の live scenario (PR #111 で昇格)
   grade.sh                 # semantic grader (fixture **Answer:** ブロック本文を採点)
-  controls.sh              # positive / negative / regression control を 1 つで束ねる driver
+  controls.sh              # positive / negative / regression / contradictory control を 1 つで束ねる driver
   context-budget.sh        # policy 評価時に渡す最小 context budget の sanity check
   fixtures/
     positive.md            # current policy が意図する valid answer
     negative.md            # 典型的だが policy 上誤っている naive answer (FAIL 必須)
     regression.md          # 過去に誤って通った broken answer / behavior (FAIL 必須)
+    contradictory.md       # canonical-surface を肯定しつつ Projects-first write を
+                           # 戻す latent contradiction (PR #98 review follow-up)
 ```
 
 `grade.sh` / `controls.sh` / `context-budget.sh` は repository-controlled state として再現可能にする。model invocation はここでは行わず、deterministic な構造 / 存在 / 文面のチェックに絞る (Skill §3 cold eval contract: fresh agent を model runner 側で起動する経路は **external / CI service / manual** のいずれかとし、本 repo には同梱しない — provider-specific runner を canonical policy へ固定しないため)。
@@ -35,7 +37,7 @@ bash evals/policy-evaluation/controls.sh
 bash evals/policy-evaluation/grade.sh path/to/fixture.md
 ```
 
-`controls.sh` は negative / regression / positive を順に実行し、negative と regression が FAIL、positive が PASS することを assert する。
+`controls.sh` は negative / regression / contradictory / positive を順に実行し、negative / regression / contradictory が FAIL、positive が PASS することを assert する。
 
 ## Grader の semantic 性
 

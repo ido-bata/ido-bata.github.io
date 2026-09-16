@@ -18,8 +18,8 @@ permissions:
 
 jobs:
   check-head:
-    name: Verify PR head repo + ref match release-* (same repo)
-    runs-on: ubuntu-latest
+    name: release-source-check
+    runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
       - name: Inspect PR head repo and ref

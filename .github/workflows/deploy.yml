@@ -26,7 +26,7 @@ concurrency:
 jobs:
   build:
     name: Build static export
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -68,7 +68,7 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     # deploy は他ブランチの in-progress deploy および他の同時実行と衝突させない。
     environment:

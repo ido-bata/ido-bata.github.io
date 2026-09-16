@@ -57,7 +57,21 @@ main                 released source (protected)
 | `required_conversation_resolution` | true                                                      |
 | `enforce_admins`           | true                                                              |
 | `required_pull_request_reviews` | `required_approving_review_count: 1`, `dismiss_stale_reviews: true` |
-| `required_status_checks`   | `ci / quality`, `ci / e2e`, `release-source-check` (strict)        |
+| `required_status_checks`   | `Quality gate`, `E2E gate (Playwright)`, `release-source-check` (strict) |
+
+required status check context は各 workflow job の `name:` フィールドと一致する
+(workflow 名は prefix されない)。Check Runs API の `check-run.name` も job
+`name:` のみを返すため、branch protection の required status checks 設定は
+job `name:` と一字一致させ、`workflow_name / job_name` 形式にしない。
+
+PR #98 HEAD `e97ae18` 時点で Check Runs API が返した `check-run.name` は:
+
+- `Quality gate` (`.github/workflows/ci.yml` の `jobs.quality.name`)
+- `E2E gate (Playwright)` (`.github/workflows/ci.yml` の `jobs.e2e.name`)
+- `Verify PR head repo + ref match release-* (same repo)` (`.github/workflows/release-source-check.yml` の `jobs.check-head.name`、PR #113 で `release-source-check` へ rename)
+
+`jobs.<name>` を改名すると branch protection の required status check も
+追随して更新する必要があり、ADR update を伴わない job rename は禁止。
 
 `release-source-check` は `.github/workflows/release-source-check.yml` で実装し、
 次の 3 条件を同時に満たす場合のみ success を返す:
