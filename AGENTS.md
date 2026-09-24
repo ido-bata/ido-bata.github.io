@@ -155,3 +155,9 @@ fresh agent は chat history / native session なしで GitHub Issue / PR / comm
 - [`docs/adr/`](./docs/adr/)
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 - [`README.md`](./README.md)
+
+## Constitution / operating profile
+
+- 最上位 contract: [`constitution/CONSTITUTION.md`](constitution/CONSTITUTION.md)
+- current Operating Model: [`organization/profiles/release-driven-solo.md`](organization/profiles/release-driven-solo.md)
+- repository-specific architecture / runtime / release docs は、Constitution を満たす限り generic upstream Practice より具体的な authority として維持する。
